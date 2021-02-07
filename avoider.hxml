@@ -1,0 +1,16 @@
+-js bin/avoider.js
+-cp src
+-main org.skyfire2008.avoider.Main
+-D js-flatten
+-D source-map-content
+-dce full
+
+--macro sys.io.File.copy("src/index.html", "bin/index.html")
+--macro org.skyfire2008.avoider.util.Scripts.createContentsJson("assets")
+--macro org.skyfire2008.avoider.util.Scripts.copyDir("assets", "bin/assets")
+
+--macro spork.core.Macro.setComponentsClassPath(["org.skyfire2008.avoider.game.components"])
+--macro spork.core.Macro.setPropertyHolder("org.skyfire2008.avoider.game.properties.MyHolder")
+
+-lib spork:dev
+-lib knockout.hx

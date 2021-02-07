@@ -1,0 +1,5 @@
+bin
+assets/contents.json
+.vscode
+hxformat.json
+dump
