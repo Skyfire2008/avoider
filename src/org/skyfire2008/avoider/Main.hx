@@ -13,8 +13,10 @@ import haxe.Json;
 import haxe.ds.StringMap;
 
 import spork.core.JsonLoader;
+import spork.core.JsonLoader.EntityFactoryMethod;
 import spork.core.PropertyHolder;
 
+import org.skyfire2008.avoider.game.Game;
 import org.skyfire2008.avoider.graphics.Renderer;
 import org.skyfire2008.avoider.graphics.Shape;
 import org.skyfire2008.avoider.util.Util;
@@ -52,7 +54,7 @@ class Main {
 
 		// when shaders are loaded, init renderer
 		Promise.all(rendererPromises).then((shaders) -> {
-			Renderer.initGLProgram(gl, shaders[0], shaders[1]);
+			Renderer.setInstance(new Renderer(gl, shaders[0], shaders[1]));
 		});
 
 		var loadPromises: Array<Promise<Dynamic>> = [];
@@ -61,6 +63,9 @@ class Main {
 			var contents: Array<DirContent> = Json.parse(text);
 			var shapesDir = contents.find((item) -> {
 				return item.path == "shapes";
+			});
+			var entsDir = contents.find((item) -> {
+				return item.path == "entities";
 			});
 
 			// load all shapes
@@ -77,8 +82,22 @@ class Main {
 			Promise.all(loadPromises).then((_) -> {
 				// init render component
 				RenderComponent.setShapes(shapes);
+				Renderer.instance.start();
 
 				// load entities
+				var entFactories = new StringMap<EntityFactoryMethod>();
+				var entPromises: Array<Promise<Void>> = [];
+				for (kid in entsDir.kids) {
+					entPromises.push(Util.fetchFile('assets/entities/${kid.path}').then((file) -> {
+						entFactories.set(kid.path, JsonLoader.makeLoader(Json.parse(file)));
+						return;
+					}));
+				}
+
+				Promise.all(entPromises).then((_) -> {
+					var game = new Game(entFactories);
+					Game.setInstance(game);
+				});
 			});
 		});
 	}
