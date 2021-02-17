@@ -1,0 +1,27 @@
+{
+	"properties": {},
+	"components": [
+		{
+			"name": "moveComponent",
+			"params": {}
+		},
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "player.json"
+			}
+		},
+		{
+			"name": "controlComponent",
+			"params": {
+				"a": 800,
+				"maxVel": 1500,
+				"mju": 0.95
+			}
+		},
+		{
+			"name": "alwaysAlive",
+			"params": {}
+		}
+	]
+}

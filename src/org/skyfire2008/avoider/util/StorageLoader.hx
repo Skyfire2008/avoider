@@ -50,7 +50,7 @@ class StorageLoader {
 		this.data = Object.assign({}, data, defaultData);
 	}
 
-	public function write() {
+	public function save() {
 		if (storage != null) {
 			storage.setItem(storageName, Json.stringify(this.data));
 		}

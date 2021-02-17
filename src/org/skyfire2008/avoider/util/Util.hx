@@ -13,6 +13,14 @@ class Util {
 		return a < b ? a : b;
 	}
 
+	public static inline function sgn(a: Float): Int {
+		var result: Int = 0;
+		if (a != 0) {
+			result = (a > 0) ? 1 : -1;
+		}
+		return result;
+	}
+
 	public static inline function rand(val: Float): Float {
 		return val * (Math.random() - 0.5);
 	}

@@ -5,7 +5,6 @@ import js.html.KeyboardEvent;
 import js.lib.Map;
 import js.lib.Set;
 
-import org.skyfire2008.avoider.util.StorageLoader.Settings;
 import org.skyfire2008.avoider.game.components.Interfaces.KBComponent;
 
 typedef KeyBindings = {
@@ -29,9 +28,9 @@ class Controller {
 
 	public var pauseAction: DownAction;
 
-	private static var instance(default, null): Controller;
+	public static var instance(default, null): Controller;
 
-	private function new(config: KeyBindings) {
+	public function new(config: KeyBindings) {
 		downActions = new Map<String, DownAction>();
 		upActions = new Map<String, DownAction>();
 		heldActions = new Map<String, HeldAction>();

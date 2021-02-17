@@ -15,11 +15,14 @@ import haxe.ds.StringMap;
 import spork.core.JsonLoader;
 import spork.core.JsonLoader.EntityFactoryMethod;
 import spork.core.PropertyHolder;
+import spork.core.Wrapper;
 
+import org.skyfire2008.avoider.game.Controller;
 import org.skyfire2008.avoider.game.Game;
 import org.skyfire2008.avoider.graphics.Renderer;
 import org.skyfire2008.avoider.graphics.Shape;
 import org.skyfire2008.avoider.util.Util;
+import org.skyfire2008.avoider.util.StorageLoader;
 import org.skyfire2008.avoider.util.Scripts.DirContent;
 import org.skyfire2008.avoider.geom.Point;
 import org.skyfire2008.avoider.game.components.RenderComponent;
@@ -30,10 +33,36 @@ class Main {
 	private static var document: Document;
 	private static var gl: GL;
 
-	private static var shapes: StringMap<Shape> = new StringMap<Shape>();
+	private static var running: Bool = true;
+	private static var prevTime: Float = -1;
+	private static var timeStore: Float = 0;
+	private static var timeCount: Float = 0;
 
 	public static function main() {
 		Browser.window.addEventListener("load", init);
+	}
+
+	private static function onEnterFrameFirst(timestamp: Float) {
+		prevTime = timestamp;
+		Browser.window.requestAnimationFrame(onEnterFrame);
+	}
+
+	private static function onEnterFrame(timestamp: Float) {
+		var delta = (timestamp - prevTime) / 1000;
+		timeStore += delta;
+		timeCount++;
+		if (timeCount >= 600) {
+			trace("fps: " + timeCount / timeStore);
+			timeStore = 0;
+			timeCount = 0;
+		}
+		prevTime = timestamp;
+
+		if (running) {
+			Controller.instance.update(delta);
+			Game.instance.update(delta);
+		}
+		Browser.window.requestAnimationFrame(onEnterFrame);
 	}
 
 	private static function init() {
@@ -69,6 +98,7 @@ class Main {
 			});
 
 			// load all shapes
+			var shapes: StringMap<Shape> = new StringMap<Shape>();
 			for (kid in shapesDir.kids) {
 				loadPromises.push(Util.fetchFile('assets/shapes/${kid.path}').then((file) -> {
 					var shape = Shape.fromJson(Json.parse(file));
@@ -97,6 +127,22 @@ class Main {
 				Promise.all(entPromises).then((_) -> {
 					var game = new Game(entFactories);
 					Game.setInstance(game);
+
+					var storage = new StorageLoader();
+					StorageLoader.setInstance(storage);
+
+					var controller = new Controller(storage.data.keyBindings);
+					controller.register(Browser.window);
+					Controller.setInstance(controller);
+
+					game.addEntity(entFactories.get("player.json")((holder) -> {
+						holder.position = new Point(640, 360);
+						holder.velocity = new Point();
+						holder.rotation = new Wrapper<Float>(0);
+						holder.angVel = new Wrapper<Float>(0);
+					}));
+
+					Browser.window.requestAnimationFrame(onEnterFrameFirst);
 				});
 			});
 		});

@@ -15,7 +15,7 @@ interface InitComponent extends Component {
 }
 
 @singular
-interface IsAlivecomponent extends Component {
+interface IsAliveComponent extends Component {
 	@callback
 	function isAlive(): Bool;
 	@callback
