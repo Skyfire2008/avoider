@@ -14,10 +14,13 @@
 		{
 			"name": "controlComponent",
 			"params": {
-				"a": 800,
-				"maxVel": 1500,
-				"mju": 0.95
+				"a": 1000,
+				"maxVel": 1500
 			}
+		},
+		{
+			"name": "hitsWalls",
+			"params": {}
 		},
 		{
 			"name": "alwaysAlive",

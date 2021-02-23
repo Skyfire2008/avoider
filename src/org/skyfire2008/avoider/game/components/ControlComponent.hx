@@ -6,6 +6,7 @@ import spork.core.Wrapper;
 
 import org.skyfire2008.avoider.util.Util;
 import org.skyfire2008.avoider.game.Controller;
+import org.skyfire2008.avoider.game.Constants;
 import org.skyfire2008.avoider.game.components.Interfaces.InitComponent;
 import org.skyfire2008.avoider.game.components.Interfaces.KBComponent;
 import org.skyfire2008.avoider.game.components.Interfaces.DeathComponent;
@@ -19,17 +20,14 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	private var normDir: Point;
 	private var a: Float;
 	private var maxSpeed: Float;
-	// TODO: put mju into a separate file
-	private var mju: Float;
 	private var vel: Point;
 	private var rotation: Wrapper<Float>;
 
-	public function new(a: Float, maxSpeed: Float, mju: Float) {
+	public function new(a: Float, maxSpeed: Float) {
 		dir = new Point();
 		normDir = new Point();
 		this.a = a;
 		this.maxSpeed = maxSpeed;
-		this.mju = mju;
 	}
 
 	public function assignProps(holder: PropertyHolder) {
@@ -42,7 +40,8 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		dir.y += y;
 		normDir.x = dir.x;
 		normDir.y = dir.y;
-		normDir.normalize();
+		// normalize to make sure that diagonal movement is not faster
+		// normDir.normalize();
 	}
 
 	public function onInit() {
@@ -50,13 +49,29 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	}
 
 	public function onUpdate(time: Float) {
-		var friction = Math.pow(mju, time * 60);
+		var friction = Math.pow(Constants.mju, time * 60);
+
+		// applies friction only if no movement keys are held
+		/*if (dir.x == 0 && dir.y == 0) {
+			vel.mult(friction);
+		}*/
+
 		if (Util.sgn(vel.x) != Util.sgn(dir.x)) {
 			vel.x *= friction;
 		}
 		if (Util.sgn(vel.y) != Util.sgn(dir.y)) {
 			vel.y *= friction;
 		}
+
+		// applies scale based on direciton difference between velocity and movement direction
+		/*var normVel = vel.copy();
+			normVel.normalize();
+			var fricScale = normDir.dot(normVel);
+			if (fricScale < 0) {
+				fricScale = 0;
+			}
+			fricScale = 1 - fricScale;
+			vel.mult((1 - fricScale) + friction * fricScale); */
 
 		vel.add(Point.scale(normDir, a * time));
 
