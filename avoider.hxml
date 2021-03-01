@@ -14,3 +14,4 @@
 
 -lib spork:dev
 -lib knockout.hx
+-lib polygonal-ds
