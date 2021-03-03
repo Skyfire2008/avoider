@@ -15,13 +15,15 @@ class Collider implements Hashable {
 	public var y(get, set): Float;
 	public var radius(default, null): Float;
 	public var side: Side;
+	public var ephemeral: Bool;
 	public var key(default, null): Int;
 
-	public function new(owner: Entity, pos: Point, radius: Float, side: Side) {
+	public function new(owner: Entity, pos: Point, radius: Float, side: Side, ephemeral: Bool = false) {
 		this.owner = owner;
 		this.pos = pos;
 		this.radius = radius;
 		this.side = side;
+		this.ephemeral = ephemeral;
 		this.key = owner.id;
 	}
 

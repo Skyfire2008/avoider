@@ -1,6 +1,7 @@
 package org.skyfire2008.avoider.game.properties;
 
 import org.skyfire2008.avoider.geom.Point;
+import org.skyfire2008.avoider.game.Side;
 
 import spork.core.Wrapper;
 
@@ -11,4 +12,5 @@ class MyHolder {
 	public var rotation: Wrapper<Float>;
 	public var angVel: Wrapper<Float>;
 	public var scale: Wrapper<Float>;
+	public var side: Wrapper<Side>;
 }

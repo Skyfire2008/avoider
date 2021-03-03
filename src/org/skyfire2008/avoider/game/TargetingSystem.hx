@@ -28,6 +28,12 @@ class TargetingSystem {
 		targetObservers.clear();
 	}
 
+	/**
+	 * Adds an observer function to be notified about a group of targets.
+	 * If group is not empty, observer is added to array to be called later, when group gets members, otherwise it's called right away.
+	 * @param groupName name of group to observe
+	 * @param obs 		observer
+	 */
 	public function addTargetGroupObserver(groupName: String, obs: TargetObserver) {
 		var group = targetGroups.get(groupName);
 		// if group is empty...
@@ -49,6 +55,15 @@ class TargetingSystem {
 		}
 	}
 
+	public function removeTargetGroupObserver(groupName: String, obs: TargetObserver) {
+		targetObservers.get(groupName).remove(obs);
+	}
+
+	/**
+	 * Adds an observer to be notified of death of given target
+	 * @param targetId 	target id
+	 * @param obs 		observer
+	 */
 	public function addTargetDeathObserver(targetId: Int, obs: TargetDeathObserver) {
 		var observers = targetDeathObservers.get(targetId);
 		if (observers == null) {
@@ -56,6 +71,10 @@ class TargetingSystem {
 		} else {
 			observers.push(obs);
 		}
+	}
+
+	public function removeTargetDeathObserver(targetId: Int, obs: TargetDeathObserver) {
+		targetDeathObservers.get(targetId).remove(obs);
 	}
 
 	/**
@@ -77,6 +96,8 @@ class TargetingSystem {
 				for (obs in observers) {
 					obs([{id: entId, pos: pos}]);
 				}
+				// clean the observers
+				targetObservers.set(groupName, []);
 			}
 		}
 		group.set(entId, pos);
