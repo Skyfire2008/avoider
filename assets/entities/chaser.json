@@ -1,0 +1,34 @@
+{
+	"properties": {
+		"side": "Enemy",
+		"rotation": 0,
+		"velocity": {
+			"x": 0,
+			"y": 0
+		}
+	},
+	"components": [
+		{
+			"name": "enemyMoveComponent",
+			"params": {}
+		},
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "heavyUfo.json"
+			}
+		},
+		{
+			"name": "chaserBehaviour",
+			"params": {}
+		},
+		{
+			"name": "hitsWalls",
+			"params": {}
+		},
+		{
+			"name": "alwaysAlive",
+			"params": {}
+		}
+	]
+}

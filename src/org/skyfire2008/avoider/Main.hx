@@ -17,6 +17,7 @@ import spork.core.JsonLoader.EntityFactoryMethod;
 import spork.core.PropertyHolder;
 import spork.core.Wrapper;
 
+import org.skyfire2008.avoider.game.Constants;
 import org.skyfire2008.avoider.game.Controller;
 import org.skyfire2008.avoider.game.Game;
 import org.skyfire2008.avoider.graphics.Renderer;
@@ -135,11 +136,10 @@ class Main {
 					controller.register(Browser.window);
 					Controller.setInstance(controller);
 
-					game.addEntity(entFactories.get("player.json")((holder) -> {
-						holder.position = new Point(640, 360);
-						holder.velocity = new Point();
-						holder.rotation = new Wrapper<Float>(0);
-						holder.angVel = new Wrapper<Float>(0);
+					game.addEntity(entFactories.get("player.json")());
+
+					game.addEntity(entFactories.get("chaser.json")((holder) -> {
+						holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 					}));
 
 					Browser.window.requestAnimationFrame(onEnterFrameFirst);

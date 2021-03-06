@@ -3,6 +3,7 @@ package org.skyfire2008.avoider.game.components;
 import spork.core.PropertyHolder;
 import spork.core.Wrapper;
 
+import org.skyfire2008.avoider.game.Constants;
 import org.skyfire2008.avoider.game.Side;
 import org.skyfire2008.avoider.game.components.Interfaces.DeathComponent;
 import org.skyfire2008.avoider.game.components.Interfaces.CollisionComponent;
@@ -21,29 +22,56 @@ using org.skyfire2008.avoider.geom.Point;
 }*/
 interface ChaserState {
 	function onUpdate(time: Float): Void;
+
+	function onDeath(): Void;
 }
 
 class ChaserIdling implements ChaserState {
 	private var parent: ChaserBehaviour;
-	private var observingTargets: Bool;
+	private var observingTargets: Bool = false;
+	private var targetPos: Point;
 
 	public function new(parent: ChaserBehaviour) {
 		this.parent = parent;
-		TargetingSystem.instance.addTargetGroupObserver(parent.baseSide.value.opposite(), notifyAboutTargets);
-		observingTargets = true;
+		targetPos = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 	}
 
 	public function onUpdate(time: Float) {
+		// if not subscribed to targeting system, subscribe!
 		if (!observingTargets) {
-			TargetingSystem.instance.addTargetGroupObserver(parent.baseSide.value.opposite(), notifyAboutTargets);
 			observingTargets = true;
+			TargetingSystem.instance.addTargetGroupObserver(parent.baseSide.value.opposite(), notifyAboutTargets);
+		}
+
+		// if too close to target, reset it
+		if (targetPos.distance(parent.pos) < ChaserBehaviour.idleTargetRadius) {
+			targetPos = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
+		}
+
+		// move towards target
+		var angVel = ChaserBehaviour.rotSpeed * time;
+		Util.turnTo(parent.pos, parent.vel, angVel, targetPos);
+
+		// accelerate if needed
+		parent.accelerateIfNeeded(time);
+	}
+
+	public function onDeath() {
+		if (observingTargets) {
+			// remove callback on death
+			TargetingSystem.instance.removeTargetGroupObserver(parent.baseSide.value.opposite(), notifyAboutTargets);
 		}
 	}
 
+	/**
+	 * Observer callback method ffor targeting system
+	 * @param targets targets in given group
+	 */
 	public function notifyAboutTargets(targets: Array<{id: Int, pos: Point}>) {
 		var closest: {id: Int, pos: Point} = null;
 		var closestDist: Float = Math.POSITIVE_INFINITY;
 
+		// go through all possible targets to select the closest one within range
 		for (target in targets) {
 			var distance = Point.distance(target.pos, parent.pos);
 			if (distance <= ChaserBehaviour.detectionRadius && distance < closestDist) {
@@ -52,7 +80,9 @@ class ChaserIdling implements ChaserState {
 			}
 		}
 
-		if (closest != null) {} else {
+		if (closest != null) {
+			parent.changeState(new ChaserChasing(closest.id, closest.pos, parent));
+		} else {
 			observingTargets = false;
 		}
 	}
@@ -60,34 +90,51 @@ class ChaserIdling implements ChaserState {
 
 class ChaserChasing implements ChaserState {
 	private var targetPos: Point;
+	private var targetId: Int;
 	private var parent: ChaserBehaviour;
 
-	public function new(targetPos: Point, parent: ChaserBehaviour) {
+	public function new(targetId: Int, targetPos: Point, parent: ChaserBehaviour) {
+		TargetingSystem.instance.addTargetDeathObserver(targetId, onTargetDeath);
+		this.targetId = targetId;
 		this.targetPos = targetPos;
 		this.parent = parent;
 	}
 
 	public function onUpdate(time: Float) {
+		// if target still in detection range...
 		if (Point.distance(targetPos, parent.pos) < ChaserBehaviour.detectionRadius) {
+			// move towards target
 			var angVel = ChaserBehaviour.rotSpeed * time;
-			Util.turnTo(parent.pos, parent.vel, parent.rotation, angVel, targetPos);
+			Util.turnTo(parent.pos, parent.vel, angVel, targetPos);
 		} else {
-			// return to idling state
-			parent.state = new ChaserIdling(parent);
+			// otherwise return to idling state
+			parent.changeState(new ChaserIdling(parent));
 		}
+
+		// accelerate if needed
+		parent.accelerateIfNeeded(time);
+	}
+
+	public function onDeath() {
+		TargetingSystem.instance.removeTargetDeathObserver(targetId, onTargetDeath);
+	}
+
+	private function onTargetDeath() {
+		parent.changeState(new ChaserIdling(parent));
 	}
 }
 
 class ChaserBehaviour implements InitComponent implements UpdateComponent implements CollisionComponent implements DeathComponent {
-	public static inline var detectionRadius = 720;
-	public static inline var attackRadius = 400;
+	public static inline var idleTargetRadius = 40;
+	public static inline var detectionRadius = 560;
+	public static inline var attackRadius = 280;
 	public static inline var a = 256;
-	public static inline var idleSpeed = 256;
+	public static inline var idleSpeed = 160;
 	public static inline var attackSpeed = 1024;
-	public static inline var rotSpeed = 2; // in radians
+	public static inline var rotSpeed = 4; // in radians
 	public static inline var maxDeviation = 0.15; // in radians
 
-	public var state: ChaserState;
+	private var state: ChaserState;
 
 	public var pos: Point;
 	public var vel: Point;
@@ -96,6 +143,18 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 
 	public function new() {}
 
+	public function changeState(state: ChaserState) {
+		this.state = state;
+	}
+
+	public function accelerateIfNeeded(time: Float) {
+		var velLength = vel.length;
+		if (velLength < idleSpeed) {
+			var addVel = vel.scale(1 / velLength * time * a);
+			vel.add(addVel);
+		}
+	}
+
 	public function assignProps(holder: PropertyHolder) {
 		pos = holder.position;
 		vel = holder.velocity;
@@ -103,17 +162,22 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 		baseSide = holder.side;
 	}
 
-	public function onInit() {}
-
-	public function onUpdate(time: Float) {
-		/*switch (state) {
-			case Idling:
-			case Chasing:
-			case Attacking:
-		}*/
+	public function onInit() {
+		// init state here, so that targeting system, etc are available
+		state = new ChaserIdling(this);
+		// init speed
+		vel.x += 1;
 	}
 
-	public function onCollide(other: Collider) {}
+	public function onUpdate(time: Float) {
+		state.onUpdate(time);
+	}
 
-	public function onDeath() {}
+	public function onCollide(other: Collider) {
+		owner.kill();
+	}
+
+	public function onDeath() {
+		state.onDeath();
+	}
 }

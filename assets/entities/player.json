@@ -1,8 +1,24 @@
 {
-	"properties": {},
+	"properties": {
+		"side": "Player",
+		"position": {
+			"x": 0,
+			"y": 0
+		},
+		"velocity": {
+			"x": 0,
+			"y": 0
+		},
+		"rotation": 0,
+		"angVel": 0
+	},
 	"components": [
 		{
 			"name": "moveComponent",
+			"params": {}
+		},
+		{
+			"name": "targeted",
 			"params": {}
 		},
 		{

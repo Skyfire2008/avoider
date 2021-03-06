@@ -27,3 +27,26 @@ class MoveComponent implements Interfaces.UpdateComponent {
 		angVel = holder.angVel;
 	}
 }
+
+/**
+ * Always rotates the entity along its velocity
+ */
+class EnemyMoveComponent implements Interfaces.UpdateComponent {
+	private var pos: Point;
+	private var rotation: Wrapper<Float>;
+	private var vel: Point;
+	private var owner: Entity;
+
+	public function new() {}
+
+	public function onUpdate(time: Float) {
+		pos.add(Point.scale(vel, time));
+		rotation.value = Math.atan2(vel.y, vel.x) + Math.PI / 2;
+	}
+
+	public function assignProps(holder: PropertyHolder) {
+		pos = holder.position;
+		vel = holder.velocity;
+		rotation = holder.rotation;
+	}
+}

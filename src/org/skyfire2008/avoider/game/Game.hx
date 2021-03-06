@@ -8,7 +8,6 @@ import spork.core.JsonLoader.EntityFactoryMethod;
 import org.skyfire2008.avoider.graphics.Renderer;
 import org.skyfire2008.avoider.spatial.UniformGrid;
 import org.skyfire2008.avoider.spatial.Collider;
-import org.skyfire2008.avoider.game.components.ChaserBehaviour;
 
 class Game {
 	public static var instance(default, null): Game;

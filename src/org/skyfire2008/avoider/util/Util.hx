@@ -13,23 +13,26 @@ class Util {
 	 * Turns an entity towards its target
 	 * @param pos entity position
 	 * @param vel entity velocity
-	 * @param rotation entity rotation
 	 * @param angVel entity's angular velocity in this frame
 	 * @param targetPos target position
 	 */
-	public static inline function turnTo(pos: Point, vel: Point, rotation: Wrapper<Float>, angVel: Float, targetPos: Point) {
+	public static inline function turnTo(pos: Point, vel: Point, angVel: Float, targetPos: Point) {
 		var dir = targetPos.difference(pos);
 		var yAxis = new Point(-vel.y, vel.x);
 
 		var requiredAngle = Math.acos(Point.dot(dir, vel) / (dir.length * vel.length));
 		angVel = angVel >= requiredAngle ? requiredAngle : angVel;
 
-		if (dir.dot(yAxis) > 0) {
-			vel.turn(angVel);
-			rotation.value += angVel;
+		if (angVel < requiredAngle) {
+			if (dir.dot(yAxis) > 0) {
+				vel.turn(angVel);
+			} else {
+				vel.turn(-angVel);
+			}
 		} else {
-			vel.turn(-angVel);
-			rotation.value -= angVel;
+			var newVel = Point.fromPolar(dir.angle, vel.length);
+			vel.x = newVel.x;
+			vel.y = newVel.y;
 		}
 	}
 
