@@ -1,10 +1,38 @@
 package org.skyfire2008.avoider.util;
 
+import spork.core.Wrapper;
+
 import js.html.XMLHttpRequest;
 import js.html.ProgressEvent;
 import js.lib.Promise;
 
+using org.skyfire2008.avoider.geom.Point;
+
 class Util {
+	/**
+	 * Turns an entity towards its target
+	 * @param pos entity position
+	 * @param vel entity velocity
+	 * @param rotation entity rotation
+	 * @param angVel entity's angular velocity in this frame
+	 * @param targetPos target position
+	 */
+	public static inline function turnTo(pos: Point, vel: Point, rotation: Wrapper<Float>, angVel: Float, targetPos: Point) {
+		var dir = targetPos.difference(pos);
+		var yAxis = new Point(-vel.y, vel.x);
+
+		var requiredAngle = Math.acos(Point.dot(dir, vel) / (dir.length * vel.length));
+		angVel = angVel >= requiredAngle ? requiredAngle : angVel;
+
+		if (dir.dot(yAxis) > 0) {
+			vel.turn(angVel);
+			rotation.value += angVel;
+		} else {
+			vel.turn(-angVel);
+			rotation.value -= angVel;
+		}
+	}
+
 	public static inline function max(a: Int, b: Int): Int {
 		return a > b ? a : b;
 	}

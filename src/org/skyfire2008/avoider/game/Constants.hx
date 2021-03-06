@@ -1,9 +1,11 @@
 package org.skyfire2008.avoider.game;
 
 class Constants {
-	public static var mju(default, never): Float = 0.95;
-	public static var k(default, never): Float = 0.5;
+	public static inline var mju: Float = 0.95;
+	public static inline var k: Float = 0.5;
 
-	public static var gameWidth(default, never): Int = 1280;
-	public static var gameHeight(default, never): Int = 720;
+	public static inline var reactionTime = 0.02; // 150-300 ms
+
+	public static inline var gameWidth: Int = 1280;
+	public static inline var gameHeight: Int = 720;
 }
