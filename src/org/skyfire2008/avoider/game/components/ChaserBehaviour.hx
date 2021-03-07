@@ -101,9 +101,13 @@ class ChaserChasing implements ChaserState {
 	}
 
 	public function onUpdate(time: Float) {
-		// if target still in detection range...
-		if (Point.distance(targetPos, parent.pos) < ChaserBehaviour.detectionRadius) {
-			// move towards target
+		var distance = Point.distance(targetPos, parent.pos);
+
+		if (distance < ChaserBehaviour.closeAttackRadius) {
+			// if target in attack range, start aiming
+			parent.changeState(new ChaserAiming(targetId, targetPos, parent, onTargetDeath));
+		} else if (distance < ChaserBehaviour.detectionRadius) {
+			// if target still in detection range move towards target
 			var angVel = ChaserBehaviour.rotSpeed * time;
 			Util.turnTo(parent.pos, parent.vel, angVel, targetPos);
 		} else {
@@ -124,15 +128,79 @@ class ChaserChasing implements ChaserState {
 	}
 }
 
+class ChaserAiming implements ChaserState {
+	private var parent: ChaserBehaviour;
+	private var targetPos: Point;
+	private var targetId: Int;
+	private var onTargetDeath: () -> Void;
+	private var delay: Float;
+
+	public function new(targetId: Int, targetPos: Point, parent: ChaserBehaviour, onTargetDeath: () -> Void) {
+		this.targetId = targetId;
+		this.targetPos = targetPos;
+		this.parent = parent;
+		this.onTargetDeath = onTargetDeath;
+		delay = 0;
+	}
+
+	public function onUpdate(time: Float) {
+		if (parent.vel.length2 > 1) {
+			var friction = Math.pow(Constants.mju, time * 60);
+			parent.vel.mult(friction);
+		}
+
+		var angVel = ChaserBehaviour.rotSpeed * time;
+		Util.turnTo(parent.pos, parent.vel, angVel, targetPos);
+
+		if (Point.distance(targetPos, parent.pos) > ChaserBehaviour.farAttackRadius) {
+			parent.changeState(new ChaserChasing(targetId, targetPos, parent));
+		} else if (delay >= ChaserBehaviour.armTime) {
+			TargetingSystem.instance.removeTargetDeathObserver(targetId, onTargetDeath);
+			parent.changeState(new ChaserAttacking(parent));
+		}
+
+		delay += time;
+	}
+
+	public function onDeath() {
+		TargetingSystem.instance.removeTargetDeathObserver(targetId, onTargetDeath);
+	}
+}
+
+class ChaserAttacking implements ChaserState {
+	private var parent: ChaserBehaviour;
+	private var delay: Float;
+
+	public function new(parent: ChaserBehaviour) {
+		this.parent = parent;
+		delay = 0;
+		// accelerate!
+		this.parent.vel.normalize();
+		this.parent.vel.mult(ChaserBehaviour.attackSpeed);
+	}
+
+	public function onUpdate(time: Float) {
+		if (delay >= ChaserBehaviour.attackTime) {
+			parent.changeState(new ChaserIdling(parent));
+		}
+
+		delay += time;
+	}
+
+	public function onDeath() {}
+}
+
 class ChaserBehaviour implements InitComponent implements UpdateComponent implements CollisionComponent implements DeathComponent {
 	public static inline var idleTargetRadius = 40;
-	public static inline var detectionRadius = 560;
-	public static inline var attackRadius = 280;
-	public static inline var a = 256;
+	public static inline var detectionRadius = 640;
+	public static inline var closeAttackRadius = 240;
+	public static inline var farAttackRadius = 320;
+	public static inline var a = 160;
 	public static inline var idleSpeed = 160;
-	public static inline var attackSpeed = 1024;
+	public static inline var attackSpeed = 1600;
+	public static inline var armTime = 1.0;
+	public static inline var attackTime = 1.0;
 	public static inline var rotSpeed = 4; // in radians
-	public static inline var maxDeviation = 0.15; // in radians
 
 	private var state: ChaserState;
 
@@ -152,6 +220,9 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 		if (velLength < idleSpeed) {
 			var addVel = vel.scale(1 / velLength * time * a);
 			vel.add(addVel);
+		} else if (velLength > idleSpeed) {
+			var friction = Math.pow(Constants.mju, time * 60);
+			vel.mult(friction);
 		}
 	}
 
