@@ -13,4 +13,5 @@ class MyHolder {
 	public var angVel: Wrapper<Float>;
 	public var scale: Wrapper<Float>;
 	public var side: Wrapper<Side>;
+	public var colliderRadius: Wrapper<Float>;
 }

@@ -2,6 +2,7 @@
 	"properties": {
 		"side": "Enemy",
 		"rotation": 0,
+		"colliderRadius": 30,
 		"velocity": {
 			"x": 0,
 			"y": 0
@@ -10,6 +11,14 @@
 	"components": [
 		{
 			"name": "enemyMoveComponent",
+			"params": {}
+		},
+		{
+			"name": "hasCollider",
+			"params": {}
+		},
+		{
+			"name": "diesOnCollision",
 			"params": {}
 		},
 		{

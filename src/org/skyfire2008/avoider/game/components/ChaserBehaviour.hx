@@ -40,7 +40,7 @@ class ChaserIdling implements ChaserState {
 		// if not subscribed to targeting system, subscribe!
 		if (!observingTargets) {
 			observingTargets = true;
-			TargetingSystem.instance.addTargetGroupObserver(parent.baseSide.value.opposite(), notifyAboutTargets);
+			TargetingSystem.instance.addTargetGroupObserver(parent.baseSide.opposite(), notifyAboutTargets);
 		}
 
 		// if too close to target, reset it
@@ -59,7 +59,7 @@ class ChaserIdling implements ChaserState {
 	public function onDeath() {
 		if (observingTargets) {
 			// remove callback on death
-			TargetingSystem.instance.removeTargetGroupObserver(parent.baseSide.value.opposite(), notifyAboutTargets);
+			TargetingSystem.instance.removeTargetGroupObserver(parent.baseSide.opposite(), notifyAboutTargets);
 		}
 	}
 
@@ -149,13 +149,21 @@ class ChaserAiming implements ChaserState {
 			parent.vel.mult(friction);
 		}
 
-		var angVel = ChaserBehaviour.rotSpeed * time;
-		Util.turnTo(parent.pos, parent.vel, angVel, targetPos);
-
-		if (Point.distance(targetPos, parent.pos) > ChaserBehaviour.farAttackRadius) {
-			parent.changeState(new ChaserChasing(targetId, targetPos, parent));
-		} else if (delay >= ChaserBehaviour.armTime) {
+		// if inside arm time, continue turning
+		// if inside arm time and outside range, change state
+		// if outside arm time but within reaction time, stop turning
+		// if outside all time, change state
+		if (delay < ChaserBehaviour.armTime) {
+			var angVel = ChaserBehaviour.rotSpeed * time;
+			Util.turnTo(parent.pos, parent.vel, angVel, targetPos);
+			if (Point.distance(targetPos, parent.pos) > ChaserBehaviour.farAttackRadius) {
+				parent.changeState(new ChaserChasing(targetId, targetPos, parent));
+			}
+		} else if (delay < ChaserBehaviour.armTime + Constants.reactionTime) {
+			// change shape here...
+		} else {
 			TargetingSystem.instance.removeTargetDeathObserver(targetId, onTargetDeath);
+			parent.side.value = Side.Hostile;
 			parent.changeState(new ChaserAttacking(parent));
 		}
 
@@ -181,6 +189,7 @@ class ChaserAttacking implements ChaserState {
 
 	public function onUpdate(time: Float) {
 		if (delay >= ChaserBehaviour.attackTime) {
+			parent.side.value = parent.baseSide;
 			parent.changeState(new ChaserIdling(parent));
 		}
 
@@ -190,24 +199,25 @@ class ChaserAttacking implements ChaserState {
 	public function onDeath() {}
 }
 
-class ChaserBehaviour implements InitComponent implements UpdateComponent implements CollisionComponent implements DeathComponent {
+class ChaserBehaviour implements InitComponent implements UpdateComponent implements DeathComponent {
 	public static inline var idleTargetRadius = 40;
 	public static inline var detectionRadius = 640;
-	public static inline var closeAttackRadius = 240;
-	public static inline var farAttackRadius = 320;
-	public static inline var a = 160;
-	public static inline var idleSpeed = 160;
-	public static inline var attackSpeed = 1600;
+	public static inline var closeAttackRadius = 360;
+	public static inline var farAttackRadius = 400;
+	public static inline var a = 128;
+	public static inline var idleSpeed = 128;
+	public static inline var attackSpeed = 1280;
 	public static inline var armTime = 1.0;
 	public static inline var attackTime = 1.0;
-	public static inline var rotSpeed = 4; // in radians
+	public static inline var rotSpeed = 3; // in radians
 
 	private var state: ChaserState;
 
 	public var pos: Point;
 	public var vel: Point;
 	public var rotation: Wrapper<Float>;
-	public var baseSide: Wrapper<Side>; // side, that doesn't change(e.g. to hostile when attacking)
+	public var baseSide: Side; // side, that doesn't change(e.g. to hostile when attacking)
+	public var side: Wrapper<Side>;
 
 	public function new() {}
 
@@ -230,7 +240,8 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 		pos = holder.position;
 		vel = holder.velocity;
 		rotation = holder.rotation;
-		baseSide = holder.side;
+		baseSide = holder.side.value;
+		side = holder.side;
 	}
 
 	public function onInit() {
@@ -242,10 +253,6 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 
 	public function onUpdate(time: Float) {
 		state.onUpdate(time);
-	}
-
-	public function onCollide(other: Collider) {
-		owner.kill();
 	}
 
 	public function onDeath() {

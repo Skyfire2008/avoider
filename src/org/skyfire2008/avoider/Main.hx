@@ -138,9 +138,11 @@ class Main {
 
 					game.addEntity(entFactories.get("player.json")());
 
-					game.addEntity(entFactories.get("chaser.json")((holder) -> {
-						holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
-					}));
+					for (i in 0...4) {
+						game.addEntity(entFactories.get("chaser.json")((holder) -> {
+							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
+						}));
+					}
 
 					Browser.window.requestAnimationFrame(onEnterFrameFirst);
 				});

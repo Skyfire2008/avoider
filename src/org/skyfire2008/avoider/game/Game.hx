@@ -55,7 +55,7 @@ class Game {
 			var query = grid.queryRect(col.rect());
 			for (other in query) {
 				if (col.intersects(other)) {
-					// only call onCollide if collides with pysical object
+					// only call onCollide if collides with physical object
 					if (!other.ephemeral) {
 						col.owner.onCollide(other);
 					}

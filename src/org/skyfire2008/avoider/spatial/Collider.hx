@@ -3,6 +3,7 @@ package org.skyfire2008.avoider.spatial;
 import polygonal.ds.Hashable;
 
 import spork.core.Entity;
+import spork.core.Wrapper;
 
 import org.skyfire2008.avoider.game.Side;
 import org.skyfire2008.avoider.geom.Point;
@@ -14,11 +15,11 @@ class Collider implements Hashable {
 	public var x(get, set): Float;
 	public var y(get, set): Float;
 	public var radius(default, null): Float;
-	public var side: Side;
+	public var side: Wrapper<Side>;
 	public var ephemeral: Bool;
 	public var key(default, null): Int;
 
-	public function new(owner: Entity, pos: Point, radius: Float, side: Side, ephemeral: Bool = false) {
+	public function new(owner: Entity, pos: Point, radius: Float, side: Wrapper<Side>, ephemeral: Bool = false) {
 		this.owner = owner;
 		this.pos = pos;
 		this.radius = radius;
