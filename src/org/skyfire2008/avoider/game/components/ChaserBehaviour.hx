@@ -6,12 +6,12 @@ import spork.core.Wrapper;
 import org.skyfire2008.avoider.game.Constants;
 import org.skyfire2008.avoider.game.Side;
 import org.skyfire2008.avoider.game.components.Interfaces.DeathComponent;
-import org.skyfire2008.avoider.game.components.Interfaces.CollisionComponent;
 import org.skyfire2008.avoider.game.components.Interfaces.UpdateComponent;
 import org.skyfire2008.avoider.game.components.Interfaces.InitComponent;
 import org.skyfire2008.avoider.game.TargetingSystem;
-import org.skyfire2008.avoider.spatial.Collider;
 import org.skyfire2008.avoider.util.Util;
+import org.skyfire2008.avoider.graphics.Renderer;
+import org.skyfire2008.avoider.graphics.Shape;
 
 using org.skyfire2008.avoider.geom.Point;
 
@@ -33,6 +33,7 @@ class ChaserIdling implements ChaserState {
 
 	public function new(parent: ChaserBehaviour) {
 		this.parent = parent;
+		parent.currentShape = ChaserBehaviour.baseShape;
 		targetPos = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 	}
 
@@ -53,7 +54,7 @@ class ChaserIdling implements ChaserState {
 		Util.turnTo(parent.pos, parent.vel, angVel, targetPos);
 
 		// accelerate if needed
-		parent.accelerateIfNeeded(time);
+		parent.accelerateIfNeeded(time, ChaserBehaviour.idleSpeed);
 	}
 
 	public function onDeath() {
@@ -95,6 +96,7 @@ class ChaserChasing implements ChaserState {
 
 	public function new(targetId: Int, targetPos: Point, parent: ChaserBehaviour) {
 		TargetingSystem.instance.addTargetDeathObserver(targetId, onTargetDeath);
+		parent.currentShape = ChaserBehaviour.chasingShape;
 		this.targetId = targetId;
 		this.targetPos = targetPos;
 		this.parent = parent;
@@ -116,7 +118,7 @@ class ChaserChasing implements ChaserState {
 		}
 
 		// accelerate if needed
-		parent.accelerateIfNeeded(time);
+		parent.accelerateIfNeeded(time, ChaserBehaviour.chaseSpeed);
 	}
 
 	public function onDeath() {
@@ -180,6 +182,7 @@ class ChaserAttacking implements ChaserState {
 	private var delay: Float;
 
 	public function new(parent: ChaserBehaviour) {
+		parent.currentShape = ChaserBehaviour.attackingShape;
 		this.parent = parent;
 		delay = 0;
 		// accelerate!
@@ -205,11 +208,16 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 	public static inline var closeAttackRadius = 360;
 	public static inline var farAttackRadius = 400;
 	public static inline var a = 128;
-	public static inline var idleSpeed = 128;
+	public static inline var idleSpeed = 64;
+	public static inline var chaseSpeed = 160;
 	public static inline var attackSpeed = 1280;
 	public static inline var armTime = 1.0;
-	public static inline var attackTime = 1.0;
-	public static inline var rotSpeed = 3; // in radians
+	public static inline var attackTime = 0.75;
+	public static inline var rotSpeed = 2.5; // in radians
+
+	public static var baseShape: Shape;
+	public static var chasingShape: Shape;
+	public static var attackingShape: Shape;
 
 	private var state: ChaserState;
 
@@ -219,18 +227,26 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 	public var baseSide: Side; // side, that doesn't change(e.g. to hostile when attacking)
 	public var side: Wrapper<Side>;
 
+	public var currentShape: Shape;
+
 	public function new() {}
+
+	public static function initShapes() {
+		baseShape = Shape.getShape("chaser.json");
+		chasingShape = Shape.getShape("chaserChasing.json");
+		attackingShape = Shape.getShape("chaserAttacking.json");
+	}
 
 	public function changeState(state: ChaserState) {
 		this.state = state;
 	}
 
-	public function accelerateIfNeeded(time: Float) {
+	public function accelerateIfNeeded(time: Float, maxSpeed: Float) {
 		var velLength = vel.length;
-		if (velLength < idleSpeed) {
+		if (velLength < maxSpeed) {
 			var addVel = vel.scale(1 / velLength * time * a);
 			vel.add(addVel);
-		} else if (velLength > idleSpeed) {
+		} else if (velLength > maxSpeed) {
 			var friction = Math.pow(Constants.mju, time * 60);
 			vel.mult(friction);
 		}
@@ -249,10 +265,13 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 		state = new ChaserIdling(this);
 		// init speed
 		vel.x += 1;
+		// init shape
+		currentShape = baseShape;
 	}
 
 	public function onUpdate(time: Float) {
 		state.onUpdate(time);
+		Renderer.instance.render(currentShape, pos.x, pos.y, rotation.value, 1);
 	}
 
 	public function onDeath() {

@@ -112,7 +112,7 @@ class Main {
 			// when shapes are loaded...
 			Promise.all(loadPromises).then((_) -> {
 				// init render component
-				RenderComponent.setShapes(shapes);
+				Shape.setShapes(shapes);
 				Renderer.instance.start();
 
 				// load entities
@@ -135,6 +135,9 @@ class Main {
 					var controller = new Controller(storage.data.keyBindings);
 					controller.register(Browser.window);
 					Controller.setInstance(controller);
+
+					// init components
+					org.skyfire2008.avoider.game.components.ChaserBehaviour.initShapes();
 
 					game.addEntity(entFactories.get("player.json")());
 

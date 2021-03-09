@@ -19,12 +19,6 @@ class RenderComponent implements UpdateComponent {
 	private var colorMult: Wrapper<Float>;
 	private var scale: Wrapper<Float>;
 
-	private static var shapes: StringMap<Shape>;
-
-	public static function setShapes(shapes: StringMap<Shape>) {
-		RenderComponent.shapes = shapes;
-	}
-
 	/**
 	 * Factory function to create a ShapeRenderComponent from JSON template
 	 * Properties: shapeRef
@@ -32,10 +26,11 @@ class RenderComponent implements UpdateComponent {
 	 * @return ShapeRenderComponent
 	 */
 	public static function fromJson(json: Dynamic): RenderComponent {
-		if (!shapes.exists(json.shapeRef)) {
+		var shape = Shape.getShape(json.shapeRef);
+		if (shape == null) {
 			throw 'No shape for ${json.shapeRef} exists';
 		}
-		return new RenderComponent(shapes.get(json.shapeRef));
+		return new RenderComponent(shape);
 	}
 
 	public function new(shape: Shape) {

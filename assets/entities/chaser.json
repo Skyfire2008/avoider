@@ -2,7 +2,7 @@
 	"properties": {
 		"side": "Enemy",
 		"rotation": 0,
-		"colliderRadius": 30,
+		"colliderRadius": 24,
 		"velocity": {
 			"x": 0,
 			"y": 0
@@ -20,12 +20,6 @@
 		{
 			"name": "diesOnCollision",
 			"params": {}
-		},
-		{
-			"name": "renderComponent",
-			"params": {
-				"shapeRef": "heavyUfo.json"
-			}
 		},
 		{
 			"name": "chaserBehaviour",

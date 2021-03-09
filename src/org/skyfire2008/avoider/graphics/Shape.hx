@@ -1,5 +1,7 @@
 package org.skyfire2008.avoider.graphics;
 
+import haxe.ds.StringMap;
+
 import js.lib.Float32Array;
 import js.lib.Int32Array;
 import js.html.webgl.RenderingContext;
@@ -36,6 +38,16 @@ class Shape {
 	private var posVbo: Buffer;
 	private var colorVbo: Buffer;
 	private var indexVbo: Buffer;
+
+	private static var shapes: StringMap<Shape>;
+
+	public static function setShapes(shapes: StringMap<Shape>) {
+		Shape.shapes = shapes;
+	}
+
+	public static function getShape(ref: String): Shape {
+		return shapes.get(ref);
+	}
 
 	public static function fromJson(json: ShapeJson): Shape {
 		var positions: Array<Float> = [];
