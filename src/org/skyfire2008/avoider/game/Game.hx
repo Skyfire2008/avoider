@@ -16,6 +16,7 @@ class Game {
 	private var entities: Array<Entity>;
 	private var grid: UniformGrid;
 	private var colliders: Array<Collider>;
+	private var collidersToRemove: Array<Int>;
 
 	public static function setInstance(instance: Game) {
 		Game.instance = instance;
@@ -26,6 +27,8 @@ class Game {
 		this.entMap = entMap;
 		grid = new UniformGrid(10, 10, Std.int(Constants.gameWidth / 10), Std.int(Constants.gameHeight / 10));
 		colliders = [];
+
+		collidersToRemove = [];
 	}
 
 	public function addEntity(entity: Entity, addToFront: Bool = false) {
@@ -39,6 +42,10 @@ class Game {
 
 	public function addCollider(collider: Collider) {
 		colliders.push(collider);
+	}
+
+	public function removeCollider(ownerId: Int) {
+		collidersToRemove.push(ownerId);
 	}
 
 	public function update(time: Float) {
@@ -71,11 +78,12 @@ class Game {
 		// remove dead colliders
 		var newColliders: Array<Collider> = [];
 		for (col in colliders) {
-			if (col.owner.isAlive()) {
+			if (col.owner.isAlive() && !collidersToRemove.contains(col.owner.id)) {
 				newColliders.push(col);
 			}
 		}
 		colliders = newColliders;
+		collidersToRemove = [];
 
 		// remove dead entities
 		var newEntities: Array<Entity> = [];

@@ -1,6 +1,7 @@
 {
 	"properties": {
 		"side": "Player",
+		"colliderRadius": 30,
 		"position": {
 			"x": 0,
 			"y": 0
@@ -18,8 +19,19 @@
 			"params": {}
 		},
 		{
+			"name": "hasCollider",
+			"params": {}
+		},
+		{
 			"name": "targeted",
 			"params": {}
+		},
+		{
+			"name": "invulnerableOnCollision",
+			"params": {
+				"invulnTime": 1,
+				"blinkTime": 0.1
+			}
 		},
 		{
 			"name": "renderComponent",

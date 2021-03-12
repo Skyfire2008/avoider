@@ -213,7 +213,7 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 	public static inline var attackSpeed = 1280;
 	public static inline var armTime = 1.0;
 	public static inline var attackTime = 0.75;
-	public static inline var rotSpeed = 2.5; // in radians
+	public static inline var rotSpeed = 3; // in radians
 
 	public static var baseShape: Shape;
 	public static var chasingShape: Shape;
