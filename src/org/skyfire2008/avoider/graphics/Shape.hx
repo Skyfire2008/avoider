@@ -2,12 +2,14 @@ package org.skyfire2008.avoider.graphics;
 
 import haxe.ds.StringMap;
 
+#if !macro
 import js.lib.Float32Array;
 import js.lib.Int32Array;
 import js.html.webgl.RenderingContext;
 import js.html.webgl.VertexArrayObject;
 import js.html.webgl.Buffer;
 import js.html.webgl.GL;
+#end
 
 typedef MyPoint = {
 	var x: Float;
@@ -26,6 +28,7 @@ typedef ShapeJson = {
 }
 
 // copied from TDS
+#if !macro
 class Shape {
 	private var positions: Float32Array;
 	private var colors: Float32Array;
@@ -112,3 +115,4 @@ class Shape {
 		// gl.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, null);
 	}
 }
+#end

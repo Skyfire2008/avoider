@@ -1,5 +1,8 @@
 package org.skyfire2008.avoider.util;
 
+import org.skyfire2008.avoider.game.Constants;
+import org.skyfire2008.avoider.graphics.Shape.ShapeJson;
+
 #if macro
 import haxe.Json;
 import haxe.io.Path;
@@ -66,5 +69,60 @@ class Scripts {
 		output.writeString(Json.stringify(contents, "   "));
 		output.close();
 	}
+
+	public static function makeBgShape(path: String, step: Int, color1: String, color2: String): Void {
+		// if (!FileSystem.exists(path)) {
+		var shape: ShapeJson = {
+			points: [],
+			lines: []
+		};
+
+		// border
+		shape.points.push({x: 0, y: 0, color: color2});
+		shape.points.push({x: Constants.gameWidth, y: 0, color: color2});
+		shape.points.push({x: 0, y: Constants.gameHeight, color: color2});
+		shape.points.push({x: Constants.gameWidth, y: Constants.gameHeight, color: color2});
+
+		shape.lines.push({from: 0, to: 1});
+		shape.lines.push({from: 1, to: 3});
+		shape.lines.push({from: 3, to: 2});
+		shape.lines.push({from: 2, to: 0});
+
+		// grid
+		var pointNum = 4;
+		var endNum: Int = Std.int(Constants.gameWidth / step);
+		for (i in 1...endNum) {
+			if (i % 2 == 0) {
+				shape.points.push({x: i * step + 0.5, y: 0, color: color1});
+				shape.points.push({x: i * step + 0.5, y: Constants.gameHeight, color: color2});
+			} else {
+				shape.points.push({x: i * step + 0.5, y: 0, color: color2});
+				shape.points.push({x: i * step + 0.5, y: Constants.gameHeight, color: color1});
+			}
+
+			shape.lines.push({from: pointNum, to: pointNum + 1});
+			pointNum += 2;
+		}
+
+		var endNum: Int = Std.int(Constants.gameHeight / step);
+		for (i in 1...endNum) {
+			if (i % 2 == 0) {
+				shape.points.push({y: i * step + 0.5, x: 0, color: color1});
+				shape.points.push({y: i * step + 0.5, x: Constants.gameWidth, color: color2});
+			} else {
+				shape.points.push({y: i * step + 0.5, x: 0, color: color2});
+				shape.points.push({y: i * step + 0.5, x: Constants.gameWidth, color: color1});
+			}
+
+			shape.lines.push({from: pointNum, to: pointNum + 1});
+			pointNum += 2;
+		}
+
+		var output = File.write(path, false);
+		output.writeString(Json.stringify(shape));
+		output.close();
+	}
+
+	// }
 }
 #end

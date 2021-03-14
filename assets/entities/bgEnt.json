@@ -1,0 +1,35 @@
+{
+	"properties": {
+		"side": "Enemy",
+		"rotation": 0,
+		"angVel": 0,
+		"position": {
+			"x": 0,
+			"y": 0
+		},
+		"velocity": {
+			"x": 0,
+			"y": 0
+		}
+	},
+	"components": [
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "bgShape.json"
+			}
+		},
+		{
+			"name": "alwaysBlink",
+			"params": {
+				"blinkTime": 0.1,
+				"startColorMult": 0.6,
+				"endColorMult": 1
+			}
+		},
+		{
+			"name": "alwaysAlive",
+			"params": {}
+		}
+	]
+}

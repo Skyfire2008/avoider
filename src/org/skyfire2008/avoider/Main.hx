@@ -140,6 +140,7 @@ class Main {
 					org.skyfire2008.avoider.game.components.ChaserBehaviour.initShapes();
 
 					game.addEntity(entFactories.get("player.json")());
+					game.addEntity(entFactories.get("bgEnt.json")());
 
 					for (i in 0...4) {
 						game.addEntity(entFactories.get("chaser.json")((holder) -> {

@@ -1,5 +1,6 @@
 bin
 assets/contents.json
+assets/shapes/bgShape.json
 .vscode
 hxformat.json
 dump

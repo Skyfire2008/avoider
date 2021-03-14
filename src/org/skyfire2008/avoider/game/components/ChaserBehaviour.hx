@@ -163,6 +163,7 @@ class ChaserAiming implements ChaserState {
 			}
 		} else if (delay < ChaserBehaviour.armTime + Constants.reactionTime) {
 			// change shape here...
+			parent.currentShape = ChaserBehaviour.attackingShape;
 		} else {
 			TargetingSystem.instance.removeTargetDeathObserver(targetId, onTargetDeath);
 			parent.side.value = Side.Hostile;
@@ -182,7 +183,6 @@ class ChaserAttacking implements ChaserState {
 	private var delay: Float;
 
 	public function new(parent: ChaserBehaviour) {
-		parent.currentShape = ChaserBehaviour.attackingShape;
 		this.parent = parent;
 		delay = 0;
 		// accelerate!
