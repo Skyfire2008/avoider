@@ -5,7 +5,7 @@
 -D source-map-content
 -dce full
 
---macro org.skyfire2008.avoider.util.Scripts.makeBgShape("assets/shapes/bgShape.json", 20, "#000000", "#202060")
+--macro org.skyfire2008.avoider.util.Scripts.makeBgShape("assets/shapes/bgShape.json", 40, "#000000", "#204080")
 --macro sys.io.File.copy("src/index.html", "bin/index.html")
 --macro org.skyfire2008.avoider.util.Scripts.createContentsJson("assets")
 --macro org.skyfire2008.avoider.util.Scripts.copyDir("assets", "bin/assets")
@@ -14,5 +14,6 @@
 --macro spork.core.Macro.setPropertyHolder("org.skyfire2008.avoider.game.properties.MyHolder")
 
 -lib spork:dev
+-lib howlerjs
 -lib knockout.hx
 -lib polygonal-ds

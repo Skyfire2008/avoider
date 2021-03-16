@@ -92,30 +92,24 @@ class Scripts {
 		var pointNum = 4;
 		var endNum: Int = Std.int(Constants.gameWidth / step);
 		for (i in 1...endNum) {
-			if (i % 2 == 0) {
-				shape.points.push({x: i * step + 0.5, y: 0, color: color1});
-				shape.points.push({x: i * step + 0.5, y: Constants.gameHeight, color: color2});
-			} else {
-				shape.points.push({x: i * step + 0.5, y: 0, color: color2});
-				shape.points.push({x: i * step + 0.5, y: Constants.gameHeight, color: color1});
-			}
+			shape.points.push({x: i * step + 0.5, y: 0, color: color2});
+			shape.points.push({x: i * step + 0.5, y: Constants.gameHeight * 0.5, color: color1});
+			shape.points.push({x: i * step + 0.5, y: Constants.gameHeight, color: color2});
 
 			shape.lines.push({from: pointNum, to: pointNum + 1});
-			pointNum += 2;
+			shape.lines.push({from: pointNum + 1, to: pointNum + 2});
+			pointNum += 3;
 		}
 
-		var endNum: Int = Std.int(Constants.gameHeight / step);
+		endNum = Std.int(Constants.gameHeight / step);
 		for (i in 1...endNum) {
-			if (i % 2 == 0) {
-				shape.points.push({y: i * step + 0.5, x: 0, color: color1});
-				shape.points.push({y: i * step + 0.5, x: Constants.gameWidth, color: color2});
-			} else {
-				shape.points.push({y: i * step + 0.5, x: 0, color: color2});
-				shape.points.push({y: i * step + 0.5, x: Constants.gameWidth, color: color1});
-			}
+			shape.points.push({y: i * step + 0.5, x: 0, color: color2});
+			shape.points.push({y: i * step + 0.5, x: Constants.gameWidth * 0.5, color: color1});
+			shape.points.push({y: i * step + 0.5, x: Constants.gameWidth, color: color2});
 
 			shape.lines.push({from: pointNum, to: pointNum + 1});
-			pointNum += 2;
+			shape.lines.push({from: pointNum + 1, to: pointNum + 2});
+			pointNum += 3;
 		}
 
 		var output = File.write(path, false);

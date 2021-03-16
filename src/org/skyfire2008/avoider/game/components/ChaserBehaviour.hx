@@ -151,26 +151,31 @@ class ChaserAiming implements ChaserState {
 			parent.vel.mult(friction);
 		}
 
-		// if inside arm time, continue turning
-		// if inside arm time and outside range, change state
-		// if outside arm time but within reaction time, stop turning
-		// if outside all time, change state
 		if (delay < ChaserBehaviour.armTime) {
 			var angVel = ChaserBehaviour.rotSpeed * time;
 			Util.turnTo(parent.pos, parent.vel, angVel, targetPos);
 			if (Point.distance(targetPos, parent.pos) > ChaserBehaviour.farAttackRadius) {
 				parent.changeState(new ChaserChasing(targetId, targetPos, parent));
 			}
+
+			// check rotations
+			var diff = targetPos.difference(parent.pos);
+			var cos = Point.dot(parent.vel, diff) / (diff.length * parent.vel.length);
+			cos = cos > 1 ? 1 : cos;
+			if (Math.acos(cos) < ChaserBehaviour.angleThresh) {
+				delay += time;
+			} else {
+				delay = 0;
+			}
 		} else if (delay < ChaserBehaviour.armTime + Constants.reactionTime) {
-			// change shape here...
+			// change shape and stop rotationg
 			parent.currentShape = ChaserBehaviour.attackingShape;
+			delay += time;
 		} else {
 			TargetingSystem.instance.removeTargetDeathObserver(targetId, onTargetDeath);
 			parent.side.value = Side.Hostile;
 			parent.changeState(new ChaserAttacking(parent));
 		}
-
-		delay += time;
 	}
 
 	public function onDeath() {
@@ -214,6 +219,7 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 	public static inline var armTime = 1.0;
 	public static inline var attackTime = 0.75;
 	public static inline var rotSpeed = 3; // in radians
+	public static inline var angleThresh = 0.1;
 
 	public static var baseShape: Shape;
 	public static var chasingShape: Shape;

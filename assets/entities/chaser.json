@@ -32,6 +32,19 @@
 		{
 			"name": "alwaysAlive",
 			"params": {}
+		},
+		{
+			"name": "spawnsOnDeath",
+			"params": {
+				"entityName": "spark.json",
+				"spawnTime": 1,
+				"angleRand": 1,
+				"velRand": 50,
+				"spawnNum": 10,
+				"isVelRelative": false,
+				"spawnVel": 100,
+				"spreadAngle": 0.5
+			}
 		}
 	]
 }

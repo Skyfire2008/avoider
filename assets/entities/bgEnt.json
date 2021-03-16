@@ -22,8 +22,8 @@
 		{
 			"name": "alwaysBlink",
 			"params": {
-				"blinkTime": 0.1,
-				"startColorMult": 0.6,
+				"blinkTime": 0.2,
+				"startColorMult": 0.9,
 				"endColorMult": 1
 			}
 		},
