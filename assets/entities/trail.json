@@ -1,0 +1,35 @@
+{
+	"properties": {
+		"timeToLive": 0.5
+	},
+	"components": [
+		{
+			"name": "moveComponent",
+			"params": {}
+		},
+		{
+			"name": "timed",
+			"params": {}
+		},
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "triangle.json"
+			}
+		},
+		{
+			"name": "changesScale",
+			"params": {
+				"scale1": 0,
+				"scale2": 10
+			}
+		},
+		{
+			"name": "changesColorMult",
+			"params": {
+				"mult1": 1,
+				"mult2": 0
+			}
+		}
+	]
+}

@@ -16,7 +16,7 @@ typedef SpawnerConfig = {
 	var spawnTime: Float;
 	var spawnVel: Float;
 	var spawnNum: Int;
-	var isVelRelative: Bool;
+	var relVelMult: Float;
 	@:optional var velRand: Float;
 	@:optional var spreadAngle: Float;
 	@:optional var angleRand: Float;
@@ -65,7 +65,7 @@ class Spawner {
 			spawnTime: config.spawnTime,
 			spawnVel: config.spawnVel,
 			spawnNum: config.spawnNum,
-			isVelRelative: config.isVelRelative,
+			relVelMult: config.relVelMult,
 			velRand: config.velRand,
 			spreadAngle: config.spreadAngle,
 			angleRand: config.angleRand,
@@ -100,10 +100,8 @@ class Spawner {
 				holder.angVel = new Wrapper<Float>(0);
 
 				holder.velocity = Point.fromPolar(angle + rotation, config.spawnVel + Util.rand(config.velRand));
-				if (config.isVelRelative) {
-					holder.velocity.x += vel.x;
-					holder.velocity.y += vel.y;
-				}
+				holder.velocity.x += vel.x * config.relVelMult;
+				holder.velocity.y += vel.y * config.relVelMult;
 
 				// assign properties to extras
 				for (component in extras) {

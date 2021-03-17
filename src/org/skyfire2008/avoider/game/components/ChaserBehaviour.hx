@@ -5,6 +5,7 @@ import spork.core.Wrapper;
 
 import org.skyfire2008.avoider.game.Constants;
 import org.skyfire2008.avoider.game.Side;
+import org.skyfire2008.avoider.game.Spawner;
 import org.skyfire2008.avoider.game.components.Interfaces.DeathComponent;
 import org.skyfire2008.avoider.game.components.Interfaces.UpdateComponent;
 import org.skyfire2008.avoider.game.components.Interfaces.InitComponent;
@@ -193,14 +194,17 @@ class ChaserAttacking implements ChaserState {
 		// accelerate!
 		this.parent.vel.normalize();
 		this.parent.vel.mult(ChaserBehaviour.attackSpeed);
+		parent.trailSpawner.startSpawn();
 	}
 
 	public function onUpdate(time: Float) {
 		if (delay >= ChaserBehaviour.attackTime) {
 			parent.side.value = parent.baseSide;
 			parent.changeState(new ChaserIdling(parent));
+			parent.trailSpawner.stopSpawn();
 		}
 
+		parent.trailSpawner.update(time, parent.pos, parent.rotation.value, parent.vel);
 		delay += time;
 	}
 
@@ -232,10 +236,22 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 	public var rotation: Wrapper<Float>;
 	public var baseSide: Side; // side, that doesn't change(e.g. to hostile when attacking)
 	public var side: Wrapper<Side>;
+	public var trailSpawner: Spawner;
 
 	public var currentShape: Shape;
 
-	public function new() {}
+	public function new() {
+		trailSpawner = new Spawner({
+			entityName: "trail.json",
+			spawnTime: 0.016,
+			spawnVel: 20,
+			velRand: 10,
+			spawnNum: 3,
+			relVelMult: 0,
+			spreadAngle: 2.09,
+			angleRand: 1.045
+		});
+	}
 
 	public static function initShapes() {
 		baseShape = Shape.getShape("chaser.json");
@@ -273,6 +289,7 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 		vel.x += 1;
 		// init shape
 		currentShape = baseShape;
+		trailSpawner.init();
 	}
 
 	public function onUpdate(time: Float) {
