@@ -1,7 +1,7 @@
 package org.skyfire2008.avoider.game;
 
 class Constants {
-	public static inline var mju: Float = 0.95;
+	public static inline var mju: Float = 0.9;
 	public static inline var k: Float = 0.25;
 
 	public static inline var reactionTime = 0.15; // 150-300 ms

@@ -1,7 +1,7 @@
 {
 	"properties": {
 		"side": "Player",
-		"colliderRadius": 30,
+		"colliderRadius": 15,
 		"position": {
 			"x": 0,
 			"y": 0
@@ -42,7 +42,7 @@
 		{
 			"name": "controlComponent",
 			"params": {
-				"a": 1000,
+				"a": 1250,
 				"maxVel": 1500
 			}
 		},

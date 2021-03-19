@@ -23,6 +23,13 @@
 				"scale1": 16,
 				"scale2": 0
 			}
+		},
+		{
+			"name": "changesColorMult",
+			"params": {
+				"mult1": 1,
+				"mult2": 0
+			}
 		}
 	]
 }

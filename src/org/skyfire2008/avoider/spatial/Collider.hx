@@ -40,6 +40,15 @@ class Collider implements Hashable {
 		return dx * dx + dy * dy < rSum * rSum;
 	}
 
+	public function intersectsLine(p0: Point, p1: Point): Bool {
+		var v = Point.difference(p1, p0);
+		var o = Point.difference(pos, p0);
+		var proj = v.copy(); // projection of center of collier onto line p0-p1
+		proj.mult(Point.dot(o, v) / v.length2);
+		proj.add(p0);
+		return Point.distance(pos, proj) < radius;
+	}
+
 	// GETTERS AND SETTERS
 	private inline function get_x(): Float {
 		return pos.x;

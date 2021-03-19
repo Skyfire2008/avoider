@@ -5,6 +5,7 @@ import haxe.ds.StringMap;
 import spork.core.Entity;
 import spork.core.JsonLoader.EntityFactoryMethod;
 
+import org.skyfire2008.avoider.geom.Point;
 import org.skyfire2008.avoider.graphics.Renderer;
 import org.skyfire2008.avoider.spatial.UniformGrid;
 import org.skyfire2008.avoider.spatial.Collider;
@@ -26,6 +27,11 @@ class Game {
 		entities = [];
 		this.entMap = entMap;
 		grid = new UniformGrid(10, 10, Std.int(Constants.gameWidth / 10), Std.int(Constants.gameHeight / 10));
+
+		grid.queryLine(new Point(0, 0), new Point(1280, 720));
+		grid.queryLine(new Point(1280, 720), new Point(0, 0));
+		grid.queryLine(new Point(0, 720), new Point(1280, 720));
+		grid.queryLine(new Point(1280, 0), new Point(1280, 720));
 		colliders = [];
 
 		collidersToRemove = [];
