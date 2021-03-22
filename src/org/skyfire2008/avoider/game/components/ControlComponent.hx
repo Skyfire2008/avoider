@@ -6,7 +6,6 @@ import spork.core.Wrapper;
 
 import org.skyfire2008.avoider.util.Util;
 import org.skyfire2008.avoider.game.Controller;
-import org.skyfire2008.avoider.game.Constants;
 import org.skyfire2008.avoider.game.components.Interfaces.InitComponent;
 import org.skyfire2008.avoider.game.components.Interfaces.KBComponent;
 import org.skyfire2008.avoider.game.components.Interfaces.DeathComponent;
@@ -19,15 +18,18 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	private var dir: Point;
 	private var normDir: Point;
 	private var a: Float;
+	private var brakeMult: Float;
 	private var maxSpeed: Float;
 	private var vel: Point;
 	private var rotation: Wrapper<Float>;
 
-	public function new(a: Float, maxSpeed: Float) {
+	public function new(a: Float, maxSpeed: Float, brakeMult: Float) {
 		dir = new Point();
 		normDir = new Point();
 		this.a = a;
 		this.maxSpeed = maxSpeed;
+		this.brakeMult = brakeMult;
+		trace(maxSpeed);
 	}
 
 	public function assignProps(holder: PropertyHolder) {
@@ -49,7 +51,7 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	}
 
 	public function onUpdate(time: Float) {
-		var friction = Math.pow(Constants.mju, time * 60);
+		var friction = Math.pow(brakeMult, time * 60);
 
 		// applies friction only if no movement keys are held
 		/*if (dir.x == 0 && dir.y == 0) {
@@ -77,7 +79,7 @@ class ControlComponent implements KBComponent implements InitComponent implement
 
 		var velLength = vel.length;
 		if (velLength > maxSpeed) {
-			vel.mult(velLength / maxSpeed);
+			vel.mult(maxSpeed / velLength);
 		}
 
 		rotation.value = vel.angle;

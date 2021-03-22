@@ -16,11 +16,6 @@ import org.skyfire2008.avoider.graphics.Shape;
 
 using org.skyfire2008.avoider.geom.Point;
 
-/*enum State {
-	Idling;
-	Chasing;
-	Attacking;
-}*/
 interface ChaserState {
 	function onUpdate(time: Float): Void;
 

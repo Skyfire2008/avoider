@@ -2,7 +2,7 @@
 	"properties": {
 		"side": "Enemy",
 		"rotation": 0,
-		"colliderRadius": 18,
+		"colliderRadius": 15,
 		"velocity": {
 			"x": 0,
 			"y": 0
@@ -14,11 +14,17 @@
 			"params": {}
 		},
 		{
-			"name": "hasCollider",
-			"params": {}
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "shooterBase.json"
+			}
 		},
 		{
 			"name": "targeted",
+			"params": {}
+		},
+		{
+			"name": "hasCollider",
 			"params": {}
 		},
 		{
@@ -26,7 +32,7 @@
 			"params": {}
 		},
 		{
-			"name": "chaserBehaviour",
+			"name": "shooterBehaviour",
 			"params": {}
 		},
 		{

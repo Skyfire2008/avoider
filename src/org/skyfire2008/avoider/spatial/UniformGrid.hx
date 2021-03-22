@@ -109,12 +109,12 @@ class UniformGrid {
 			tMaxY = (y * cellHeight - p0.y) / v.y;
 		}
 
-		var result: Array<Collider> = [];
+		var result: HashSet<Collider> = new HashSet<Collider>(17, 17);
 		while (true) {
 			var current = cells[cellIndex(x, y)];
 			for (col in current.iterator()) {
 				if (col.intersectsLine(p0, p1)) {
-					result.push(col);
+					result.set(col);
 				}
 			}
 
@@ -130,7 +130,7 @@ class UniformGrid {
 				y += stepY;
 			}
 		}
-		return result;
+		return result.toArray();
 	}
 
 	public function queryRect(rect: Rectangle): Array<Collider> {

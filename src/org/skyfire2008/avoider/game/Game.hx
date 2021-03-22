@@ -54,6 +54,10 @@ class Game {
 		collidersToRemove.push(ownerId);
 	}
 
+	public function queryLine(p0: Point, p1: Point): Array<Collider> {
+		return grid.queryLine(p0, p1);
+	}
+
 	public function update(time: Float) {
 		Renderer.instance.clear();
 

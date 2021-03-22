@@ -42,8 +42,9 @@
 		{
 			"name": "controlComponent",
 			"params": {
-				"a": 1250,
-				"maxVel": 1500
+				"a": 1920,
+				"maxSpeed": 1280,
+				"brakeMult": 0.85
 			}
 		},
 		{
