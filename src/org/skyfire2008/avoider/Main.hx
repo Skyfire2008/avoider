@@ -144,11 +144,11 @@ class Main {
 					game.addEntity(entFactories.get("player.json")());
 					game.addEntity(entFactories.get("bgEnt.json")());
 
-					/*for (i in 0...4) {
+					for (i in 0...1000) {
 						game.addEntity(entFactories.get("chaser.json")((holder) -> {
 							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 						}));
-					}*/
+					}
 					for (i in 0...1000) {
 						game.addEntity(entFactories.get("shooter.json")((holder) -> {
 							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));

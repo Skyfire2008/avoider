@@ -35,8 +35,6 @@ class RenderComponent implements UpdateComponent {
 
 	public function new(shape: Shape) {
 		this.shape = shape;
-		this.colorMult = new Wrapper<Float>(1.0);
-		this.scale = new Wrapper<Float>(1.0);
 	}
 
 	public function onUpdate(time: Float): Void {
@@ -46,10 +44,10 @@ class RenderComponent implements UpdateComponent {
 	public function assignProps(holder: PropertyHolder) {
 		pos = holder.position;
 		rotation = holder.rotation;
-	}
-
-	public function createProps(holder: PropertyHolder) {
-		holder.colorMult = colorMult;
-		holder.scale = scale;
+		scale = holder.scale;
+		colorMult = holder.colorMult;
+		if (colorMult == null) {
+			trace(colorMult);
+		}
 	}
 }

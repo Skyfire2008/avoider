@@ -29,7 +29,6 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		this.a = a;
 		this.maxSpeed = maxSpeed;
 		this.brakeMult = brakeMult;
-		trace(maxSpeed);
 	}
 
 	public function assignProps(holder: PropertyHolder) {

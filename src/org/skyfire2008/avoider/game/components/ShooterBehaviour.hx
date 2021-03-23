@@ -21,12 +21,12 @@ enum ShooterState {
 class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfaces.DeathComponent {
 	private static inline var idleSpeed = 64.0;
 	private static inline var rotSpeed = 1.0;
-	private static inline var reloadTime = 5.0;
+	private static inline var reloadTime = 5;
 	private static inline var idleTargetRadius = 40;
-	private static inline var crosshairSpeed = 320;
+	private static inline var aimTime = 1;
 	private static inline var a = 64;
 
-	private static var crosshairFactory: EntityFactoryMethod;
+	private static var beamFactory: EntityFactoryMethod;
 
 	private var state: ShooterState;
 	private var pos: Point;
@@ -38,18 +38,22 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 	private var shootTargetId: Int;
 	private var observingTargets: Bool;
 
-	private var crosshair: Entity;
 	private var crosshairPos: Point;
+	private var beam: Entity;
+	private var beamAngle: Wrapper<Float>;
+	private var beamMult: Wrapper<Float>;
 
 	public static function init() {
-		crosshairFactory = Game.instance.entMap.get("shooterCrosshair.json");
+		beamFactory = Game.instance.entMap.get("shooterBeam.json");
 	}
 
 	public function new() {
 		state = Idling;
-		time = 0;
+		time = -Math.random() * reloadTime;
 		observingTargets = false;
 		crosshairPos = new Point(0, 0);
+		beamAngle = new Wrapper(0.0);
+		beamMult = new Wrapper(0.0);
 		moveTargetPos = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 	}
 
@@ -63,7 +67,6 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 	public function onUpdate(time: Float) {
 		if (state == Idling) {
 			// if idling, wait until gun reloads, then request a target
-			this.time += time;
 			if (this.time > reloadTime && !observingTargets) {
 				observingTargets = true;
 				TargetingSystem.instance.addTargetGroupObserver(side.value.opposite(), notifyAboutTargets);
@@ -74,18 +77,22 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 				vel.add(vel.scale(1 / vel.length * a));
 			}
 		} else if (state == Aiming) {
-			// if aiming, move the crosshair towards target
-			var crosshairVel = shootTargetPos.difference(crosshairPos);
-			var dist = crosshairVel.length;
+			// if aimed enough, fire!
+			if (this.time < aimTime) {
+				// if aiming, move the crosshair towards target
+				var crosshairVel = shootTargetPos.difference(crosshairPos);
+				crosshairVel.mult(Math.pow(this.time / aimTime, 4));
+				crosshairPos.add(crosshairVel);
 
-			if (dist <= crosshairSpeed * time) {
-				state = Firing;
-				crosshairPos.add(crosshairVel);
-				this.time = 0;
+				// set beam props
+				var dir = crosshairPos.difference(pos);
+				beamAngle.value = Math.atan2(dir.y, dir.x);
+				beamMult.value = this.time / aimTime;
 			} else {
-				crosshairVel.mult(1 / dist);
-				crosshairVel.mult(crosshairSpeed * time);
-				crosshairPos.add(crosshairVel);
+				state = Firing;
+				this.time = 0;
+				crosshairPos.x = shootTargetPos.x;
+				crosshairPos.y = shootTargetPos.y;
 			}
 
 			// decelerate if needed
@@ -95,7 +102,6 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 			}
 		} else {
 			// if firing, delay and shoot
-			this.time += time;
 			if (this.time >= Constants.reactionTime) {
 				var myCol = new Collider(this.owner, pos, 0, new Wrapper(Side.Hostile));
 
@@ -103,14 +109,16 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 				for (col in colliders) {
 					if (col.owner != this.owner) {
 						col.owner.onCollide(myCol);
+						break;
 					}
 				}
 
 				// reset state
 				this.time = 0;
 				state = Idling;
-				crosshair.kill();
-				crosshair = null;
+				beam.kill();
+				beam = null;
+				beamMult.value = 0.0;
 			}
 		}
 
@@ -122,11 +130,13 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 		if (moveTargetPos.distance(pos) < ChaserBehaviour.idleTargetRadius) {
 			moveTargetPos = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 		}
+
+		this.time += time;
 	}
 
 	public function onDeath() {
-		if (crosshair != null) {
-			crosshair.kill();
+		if (beam != null) {
+			beam.kill();
 		}
 
 		if (shootTargetId > 0) {
@@ -148,16 +158,20 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 				closestDist = distance;
 			}
 		}
+		time = 0;
 		shootTargetPos = closest.pos;
 		shootTargetId = closest.id;
 		observingTargets = false;
 		state = Aiming;
-		crosshair = crosshairFactory((holder) -> {
-			holder.position = crosshairPos;
+		beam = beamFactory((holder) -> {
+			holder.position = pos;
+			holder.rotation = beamAngle;
+			holder.colorMult = beamMult;
 		});
 		crosshairPos.x = pos.x;
 		crosshairPos.y = pos.y;
-		Game.instance.addEntity(crosshair);
+		crosshairPos.add(vel);
+		Game.instance.addEntity(beam);
 
 		TargetingSystem.instance.addTargetDeathObserver(shootTargetId, notifyAboutDeath);
 	}

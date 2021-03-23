@@ -11,7 +11,9 @@
 			"y": 0
 		},
 		"rotation": 0,
-		"angVel": 0
+		"angVel": 0,
+		"scale": 1.0,
+		"colorMult": 1.0
 	},
 	"components": [
 		{
@@ -44,7 +46,7 @@
 			"params": {
 				"a": 1920,
 				"maxSpeed": 1280,
-				"brakeMult": 0.85
+				"brakeMult": 0.8
 			}
 		},
 		{

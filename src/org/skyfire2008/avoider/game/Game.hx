@@ -26,12 +26,7 @@ class Game {
 	public function new(entMap: StringMap<EntityFactoryMethod>) {
 		entities = [];
 		this.entMap = entMap;
-		grid = new UniformGrid(10, 10, Std.int(Constants.gameWidth / 10), Std.int(Constants.gameHeight / 10));
-
-		grid.queryLine(new Point(0, 0), new Point(1280, 720));
-		grid.queryLine(new Point(1280, 720), new Point(0, 0));
-		grid.queryLine(new Point(0, 720), new Point(1280, 720));
-		grid.queryLine(new Point(1280, 0), new Point(1280, 720));
+		grid = new UniformGrid(20, 20, Std.int(Constants.gameWidth / 20), Std.int(Constants.gameHeight / 20));
 		colliders = [];
 
 		collidersToRemove = [];
