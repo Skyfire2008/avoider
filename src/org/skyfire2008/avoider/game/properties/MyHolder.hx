@@ -5,8 +5,10 @@ import org.skyfire2008.avoider.game.Side;
 
 import spork.core.Wrapper;
 
+import org.skyfire2008.avoider.graphics.ColorMult;
+
 class MyHolder {
-	public var colorMult: Wrapper<Float>;
+	public var colorMult: ColorMult;
 	public var position: Point;
 	public var velocity: Point;
 	public var rotation: Wrapper<Float>;

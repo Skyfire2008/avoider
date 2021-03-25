@@ -4,7 +4,7 @@ attribute vec3 rgb;
 uniform vec2 pos;
 uniform vec2 scale;
 uniform float rotation;
-uniform float colorMult;
+uniform vec3 colorMult;
 
 varying vec4 color;
 

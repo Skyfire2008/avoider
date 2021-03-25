@@ -10,13 +10,14 @@ import org.skyfire2008.avoider.game.components.Interfaces.UpdateComponent;
 import org.skyfire2008.avoider.graphics.Shape;
 import org.skyfire2008.avoider.graphics.Renderer;
 import org.skyfire2008.avoider.geom.Point;
+import org.skyfire2008.avoider.graphics.ColorMult;
 
 class RenderComponent implements UpdateComponent {
 	private var shape: Shape;
 	private var pos: Point;
 	private var rotation: Wrapper<Float>;
 	private var owner: Entity;
-	private var colorMult: Wrapper<Float>;
+	private var colorMult: ColorMult;
 	private var scale: Wrapper<Float>;
 
 	/**
@@ -38,7 +39,7 @@ class RenderComponent implements UpdateComponent {
 	}
 
 	public function onUpdate(time: Float): Void {
-		Renderer.instance.render(shape, pos.x, pos.y, rotation.value, scale.value, colorMult.value);
+		Renderer.instance.render(shape, pos.x, pos.y, rotation.value, scale.value, colorMult);
 	}
 
 	public function assignProps(holder: PropertyHolder) {
@@ -46,8 +47,5 @@ class RenderComponent implements UpdateComponent {
 		rotation = holder.rotation;
 		scale = holder.scale;
 		colorMult = holder.colorMult;
-		if (colorMult == null) {
-			trace(colorMult);
-		}
 	}
 }

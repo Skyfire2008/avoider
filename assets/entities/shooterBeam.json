@@ -1,7 +1,11 @@
 {
 	"properties": {
 		"scale": 1600.0,
-		"colorMult": 1.0
+		"colorMult": [
+			1.0,
+			1.0,
+			1.0
+		]
 	},
 	"components": [
 		{

@@ -47,11 +47,11 @@ class Renderer {
 		gl.clear(GL.COLOR_BUFFER_BIT);
 	}
 
-	public inline function render(shape: Shape, posX: Float, posY: Float, rotation: Float, scale: Float, colorMult: Float = 1.0) {
+	public inline function render(shape: Shape, posX: Float, posY: Float, rotation: Float, scale: Float, colorMult: ColorMult) {
 		gl.uniform2f(scaleLoc, scale, scale);
 		gl.uniform1f(rotationLoc, rotation);
 		gl.uniform2f(posLoc, posX, posY);
-		gl.uniform1f(colorMultLoc, colorMult);
+		gl.uniform3f(colorMultLoc, colorMult.r, colorMult.g, colorMult.b);
 
 		ext.bindVertexArrayOES(shape.vao);
 

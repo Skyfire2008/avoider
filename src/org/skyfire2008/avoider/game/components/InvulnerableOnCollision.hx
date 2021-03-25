@@ -6,10 +6,11 @@ import spork.core.PropertyHolder;
 import org.skyfire2008.avoider.game.Side;
 import org.skyfire2008.avoider.geom.Point;
 import org.skyfire2008.avoider.spatial.Collider;
+import org.skyfire2008.avoider.graphics.ColorMult;
 
 class InvulnerableOnCollision implements Interfaces.CollisionComponent implements Interfaces.UpdateComponent {
 	private var side: Wrapper<Side>;
-	private var colorMult: Wrapper<Float>;
+	private var colorMult: ColorMult;
 	private var radius: Wrapper<Float>;
 	private var pos: Point;
 
@@ -39,7 +40,7 @@ class InvulnerableOnCollision implements Interfaces.CollisionComponent implement
 		if (this.side.value == Side.Hostile || this.side.value != other.side.value) {
 			isInvuln = true;
 			curBlinkTime = 0;
-			colorMult.value = 0;
+			colorMult.setAll(0);
 			Game.instance.removeCollider(owner.id);
 		}
 	}
@@ -50,10 +51,10 @@ class InvulnerableOnCollision implements Interfaces.CollisionComponent implement
 			curBlinkTime += time;
 			if (curBlinkTime >= blinkTime) {
 				curBlinkTime -= blinkTime;
-				colorMult.value = 1.0 - colorMult.value;
+				colorMult.setAll(1.0 - colorMult.r);
 			}
 			if (curTime >= invulnTime) {
-				colorMult.value = 1;
+				colorMult.setAll(1);
 				curTime = 0;
 				isInvuln = false;
 				Game.instance.addCollider(new Collider(owner, pos, radius.value, side));

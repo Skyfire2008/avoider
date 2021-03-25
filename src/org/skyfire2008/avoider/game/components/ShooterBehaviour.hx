@@ -9,6 +9,7 @@ import spork.core.Entity;
 
 import org.skyfire2008.avoider.game.TargetingSystem;
 import org.skyfire2008.avoider.util.Util;
+import org.skyfire2008.avoider.graphics.ColorMult;
 
 using org.skyfire2008.avoider.geom.Point;
 
@@ -19,12 +20,12 @@ enum ShooterState {
 }
 
 class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfaces.DeathComponent {
-	private static inline var idleSpeed = 64.0;
+	private static inline var idleSpeed = 32.0;
 	private static inline var rotSpeed = 1.0;
 	private static inline var reloadTime = 5;
 	private static inline var idleTargetRadius = 40;
 	private static inline var aimTime = 1;
-	private static inline var a = 64;
+	private static inline var a = 32;
 
 	private static var beamFactory: EntityFactoryMethod;
 
@@ -41,7 +42,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 	private var crosshairPos: Point;
 	private var beam: Entity;
 	private var beamAngle: Wrapper<Float>;
-	private var beamMult: Wrapper<Float>;
+	private var beamMult: ColorMult;
 
 	public static function init() {
 		beamFactory = Game.instance.entMap.get("shooterBeam.json");
@@ -53,7 +54,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 		observingTargets = false;
 		crosshairPos = new Point(0, 0);
 		beamAngle = new Wrapper(0.0);
-		beamMult = new Wrapper(0.0);
+		beamMult = [0.0, 0.0, 0.0];
 		moveTargetPos = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 	}
 
@@ -87,7 +88,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 				// set beam props
 				var dir = crosshairPos.difference(pos);
 				beamAngle.value = Math.atan2(dir.y, dir.x);
-				beamMult.value = this.time / aimTime;
+				beamMult.setAll(this.time / aimTime);
 			} else {
 				state = Firing;
 				this.time = 0;
@@ -118,7 +119,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 				state = Idling;
 				beam.kill();
 				beam = null;
-				beamMult.value = 0.0;
+				beamMult.setAll(0.0);
 			}
 		}
 
