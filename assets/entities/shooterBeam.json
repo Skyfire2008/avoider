@@ -15,7 +15,7 @@
 		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "shooterBeam.json"
+				"shapeRef": "beam.json"
 			}
 		}
 	]

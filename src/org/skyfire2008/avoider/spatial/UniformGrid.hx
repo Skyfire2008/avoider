@@ -63,7 +63,7 @@ class UniformGrid {
 		}
 	}
 
-	public function queryLine(p0: Point, p1: Point): Array<Collider> {
+	public function querySegment(p0: Point, p1: Point): Array<Collider> {
 		// uses the Fast Voxel Traversal Algorithm for Ray Tracing: https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.42.3443&rep=rep1&type=pdf
 		// starting cell
 		var x = Std.int(p0.x / cellWidth);
@@ -113,7 +113,7 @@ class UniformGrid {
 		while (true) {
 			var current = cells[cellIndex(x, y)];
 			for (col in current.iterator()) {
-				if (col.intersectsLine(p0, p1)) {
+				if (!Math.isNaN(col.intersectsLine(p0, p1, Segment))) {
 					result.set(col);
 				}
 			}

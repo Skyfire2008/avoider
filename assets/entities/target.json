@@ -1,0 +1,49 @@
+{
+	"properties": {
+		"side": "Enemy",
+		"colliderRadius": 15,
+		"position": {
+			"x": 0,
+			"y": 0
+		},
+		"velocity": {
+			"x": 0,
+			"y": 0
+		},
+		"rotation": 0,
+		"angVel": 0,
+		"scale": 15.0,
+		"colorMult": [
+			1.0,
+			1.0,
+			1.0
+		]
+	},
+	"components": [
+		{
+			"name": "hasCollider",
+			"params": {}
+		},
+		{
+			"name": "targeted",
+			"params": {}
+		},
+		{
+			"name": "invulnerableOnCollision",
+			"params": {
+				"invulnTime": 2,
+				"blinkTime": 0.1
+			}
+		},
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "target.json"
+			}
+		},
+		{
+			"name": "alwaysAlive",
+			"params": {}
+		}
+	]
+}

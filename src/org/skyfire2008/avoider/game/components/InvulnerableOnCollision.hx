@@ -51,7 +51,7 @@ class InvulnerableOnCollision implements Interfaces.CollisionComponent implement
 			curBlinkTime += time;
 			if (curBlinkTime >= blinkTime) {
 				curBlinkTime -= blinkTime;
-				colorMult.setAll(1.0 - colorMult.r);
+				colorMult.set([1.0 - colorMult.r, 1.0 - colorMult.g, 1.0 - colorMult.b]);
 			}
 			if (curTime >= invulnTime) {
 				colorMult.setAll(1);

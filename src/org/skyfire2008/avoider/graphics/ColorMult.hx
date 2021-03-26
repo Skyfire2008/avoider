@@ -2,7 +2,7 @@ package org.skyfire2008.avoider.graphics;
 
 abstract ColorMult(Array<Float>) from Array<Float> to Array<Float> {
 	public static function fromJson(json: Dynamic): ColorMult {
-		return json;
+		return new ColorMult(json[0], json[1], json[2]);
 	}
 
 	public var r(get, set): Float;
@@ -17,6 +17,12 @@ abstract ColorMult(Array<Float>) from Array<Float> to Array<Float> {
 		r = v;
 		g = v;
 		b = v;
+	}
+
+	public inline function set(values: ColorMult) {
+		this[0] = values[0];
+		this[1] = values[1];
+		this[2] = values[2];
 	}
 
 	private inline function get_r(): Float {

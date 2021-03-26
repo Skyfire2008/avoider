@@ -22,9 +22,9 @@ enum ShooterState {
 class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfaces.DeathComponent {
 	private static inline var idleSpeed = 32.0;
 	private static inline var rotSpeed = 1.0;
-	private static inline var reloadTime = 5;
+	private static inline var reloadTime = 5.0;
 	private static inline var idleTargetRadius = 40;
-	private static inline var aimTime = 1;
+	private static inline var aimTime = 1.0;
 	private static inline var a = 32;
 
 	private static var beamFactory: EntityFactoryMethod;
@@ -88,10 +88,12 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 				// set beam props
 				var dir = crosshairPos.difference(pos);
 				beamAngle.value = Math.atan2(dir.y, dir.x);
-				beamMult.setAll(this.time / aimTime);
+				beamMult.setAll(0.5 * this.time / aimTime);
+				beamMult.b = 0;
 			} else {
 				state = Firing;
 				this.time = 0;
+				beamMult.set([1.0, 0.0, 0.0]);
 				crosshairPos.x = shootTargetPos.x;
 				crosshairPos.y = shootTargetPos.y;
 			}
@@ -106,7 +108,26 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 			if (this.time >= Constants.reactionTime) {
 				var myCol = new Collider(this.owner, pos, 0, new Wrapper(Side.Hostile));
 
-				var colliders = Game.instance.queryLine(pos, crosshairPos);
+				var k = Point.difference(crosshairPos, pos);
+				var tx: Float;
+				var ty: Float;
+				if (k.x > 0) {
+					tx = (Constants.gameWidth - pos.x) / (crosshairPos.x - pos.x);
+				} else {
+					tx = (0 - pos.x) / (crosshairPos.x - pos.x);
+				}
+
+				if (k.y > 0) {
+					ty = (Constants.gameHeight - pos.y) / (crosshairPos.y - pos.y);
+				} else {
+					ty = (0 - pos.y) / (crosshairPos.y - pos.y);
+				}
+
+				var t = tx;
+				t = (ty < t) ? ty : t;
+
+				var colliders = Game.instance.querySegment(pos, Point.translate(pos, Point.scale(k, t)));
+				trace(Point.translate(pos, Point.scale(k, t)));
 				for (col in colliders) {
 					if (col.owner != this.owner) {
 						col.owner.onCollide(myCol);
