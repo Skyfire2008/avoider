@@ -25,9 +25,11 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 	private static inline var reloadTime = 5.0;
 	private static inline var idleTargetRadius = 40;
 	private static inline var aimTime = 1.0;
-	private static inline var a = 32;
+	private static inline var a = 16;
+	private static inline var trailLength = 10.0;
 
 	private static var beamFactory: EntityFactoryMethod;
+	private static var trailFactory: EntityFactoryMethod;
 
 	private var state: ShooterState;
 	private var pos: Point;
@@ -46,6 +48,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 
 	public static function init() {
 		beamFactory = Game.instance.entMap.get("shooterBeam.json");
+		trailFactory = Game.instance.entMap.get("shooterTrail.json");
 	}
 
 	public function new() {
@@ -74,8 +77,11 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 			}
 
 			// accelerate if needed
-			if (vel.length < idleSpeed) {
-				vel.add(vel.scale(1 / vel.length * a));
+			var velLength = vel.length;
+			if (velLength < idleSpeed) {
+				vel.add(vel.scale(1 / velLength * a));
+			} else if (velLength > idleSpeed) {
+				vel.mult(idleSpeed / velLength);
 			}
 		} else if (state == Aiming) {
 			// if aimed enough, fire!
@@ -108,6 +114,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 			if (this.time >= Constants.reactionTime) {
 				var myCol = new Collider(this.owner, pos, 0, new Wrapper(Side.Hostile));
 
+				// find the end point(where beam intersects the reactagnle containing the game)
 				var k = Point.difference(crosshairPos, pos);
 				var tx: Float;
 				var ty: Float;
@@ -123,16 +130,35 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 					ty = (0 - pos.y) / (crosshairPos.y - pos.y);
 				}
 
-				var t = tx;
-				t = (ty < t) ? ty : t;
+				var t = Math.min(tx, ty);
 
-				var colliders = Game.instance.querySegment(pos, Point.translate(pos, Point.scale(k, t)));
-				trace(Point.translate(pos, Point.scale(k, t)));
-				for (col in colliders) {
-					if (col.owner != this.owner) {
-						col.owner.onCollide(myCol);
+				var trailT = 1.0; // t for bullet trail length
+
+				var pos2 = Point.translate(pos, Point.scale(k, t));
+				var collisions = Game.instance.querySegment(pos, pos2);
+				for (res in collisions) {
+					if (res.col.owner != this.owner) {
+						res.col.owner.onCollide(myCol);
+						trailT = res.t;
 						break;
 					}
+				}
+
+				// draw the bullet trail
+				k = pos2.difference(pos).scale(trailT);
+				var pos1 = k.translate(pos);
+				var trailNum = Std.int(pos1.difference(pos).length / trailLength) + 1;
+				var step = 1 / trailNum;
+
+				for (i in 0...trailNum) {
+					Game.instance.addEntity(trailFactory((holder) -> {
+						holder.scale = new Wrapper(trailLength);
+						holder.timeToLive = new Wrapper(0.5 + Math.sqrt(i) / 8);
+						holder.rotation = new Wrapper(Math.atan2(k.y, k.x));
+						holder.position = k.scale(step * i).translate(pos);
+						holder.velocity = Point.fromPolar(Math.random() * Math.PI * 2, Math.sqrt(trailNum - i) * 3);
+						holder.angVel = new Wrapper(Util.rand(9) / Math.sqrt(i));
+					}));
 				}
 
 				// reset state

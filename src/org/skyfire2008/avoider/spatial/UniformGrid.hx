@@ -4,16 +4,25 @@ import haxe.ds.Vector;
 
 import polygonal.ds.HashSet;
 import polygonal.ds.IntHashSet;
+import polygonal.ds.Hashable;
 
 import org.skyfire2008.avoider.geom.Rectangle;
 import org.skyfire2008.avoider.geom.Point;
 
 using Lambda;
 
-/**
- * ...
- * @author
- */
+class SegQueryRes implements Hashable {
+	public var col: Collider;
+	public var t: Float;
+	public var key(default, null): Int;
+
+	public function new(col: Collider, t: Float) {
+		this.col = col;
+		this.t = t;
+		key = col.owner.id;
+	}
+}
+
 class UniformGrid {
 	private var cells: Vector<List<Collider>>;
 	private var dirtyCells: IntHashSet;
@@ -63,7 +72,7 @@ class UniformGrid {
 		}
 	}
 
-	public function querySegment(p0: Point, p1: Point): Array<Collider> {
+	public function querySegment(p0: Point, p1: Point): Array<SegQueryRes> {
 		// uses the Fast Voxel Traversal Algorithm for Ray Tracing: https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.42.3443&rep=rep1&type=pdf
 		// starting cell
 		var x = Std.int(p0.x / cellWidth);
@@ -109,12 +118,13 @@ class UniformGrid {
 			tMaxY = (y * cellHeight - p0.y) / v.y;
 		}
 
-		var result: HashSet<Collider> = new HashSet<Collider>(17, 17);
+		var result: HashSet<SegQueryRes> = new HashSet<SegQueryRes>(17, 17);
 		while (true) {
 			var current = cells[cellIndex(x, y)];
 			for (col in current.iterator()) {
-				if (!Math.isNaN(col.intersectsLine(p0, p1, Segment))) {
-					result.set(col);
+				var t = col.intersectsLine(p0, p1, Segment);
+				if (!Math.isNaN(t)) {
+					result.set(new SegQueryRes(col, t));
 				}
 			}
 

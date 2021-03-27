@@ -8,6 +8,7 @@ import spork.core.JsonLoader.EntityFactoryMethod;
 import org.skyfire2008.avoider.geom.Point;
 import org.skyfire2008.avoider.graphics.Renderer;
 import org.skyfire2008.avoider.spatial.UniformGrid;
+import org.skyfire2008.avoider.spatial.UniformGrid.SegQueryRes;
 import org.skyfire2008.avoider.spatial.Collider;
 
 class Game {
@@ -49,7 +50,7 @@ class Game {
 		collidersToRemove.push(ownerId);
 	}
 
-	public function querySegment(p0: Point, p1: Point): Array<Collider> {
+	public function querySegment(p0: Point, p1: Point): Array<SegQueryRes> {
 		return grid.querySegment(p0, p1);
 	}
 

@@ -46,6 +46,7 @@ class Collider implements Hashable {
 	}
 
 	public function intersectsLine(p0: Point, p1: Point, type: LineIntersectionType): Float {
+		// find intersection by solving the system of equations line-circle
 		var k = Point.difference(p1, p0);
 		var d = Point.difference(p0, pos);
 
@@ -53,25 +54,28 @@ class Collider implements Hashable {
 		var b = 2 * Point.dot(d, k);
 		var c = Point.dot(d, d) - radius * radius;
 
-		var D = Math.sqrt(b * b - 4 * a * c);
+		var D = Math.sqrt(b * b - 4 * a * c); // discriminant
 		if (Math.isNaN(D)) {
 			return Math.NaN;
 		} else {
-			var t = (-b - D) / (2 * a);
+			// two possible solutions, filter them then select the closest one to p0
+			var t = [(-b - D) / (2 * a), (-b + D) / (2 * a)];
 			if (type == Segment) {
-				t = (t >= 0 && t <= 1) ? t : Math.NaN;
+				t = t.filter((elem) -> {
+					return elem >= 0 && elem <= 1;
+				});
 			} else {
-				t = (t >= 0) ? t : Math.NaN;
+				t = t.filter((elem) -> {
+					return elem >= 0;
+				});
 			}
-			return t;
-		}
 
-		/*var v = Point.difference(p1, p0);
-			var o = Point.difference(pos, p0);
-			var proj = v.copy(); // projection of center of collier onto line p0-p1
-			proj.mult(Point.dot(o, v) / v.length2);
-			proj.add(p0);
-			return Point.distance(pos, proj) < radius; */
+			if (t.length > 0) {
+				return t[0];
+			} else {
+				return Math.NaN;
+			}
+		}
 	}
 
 	// GETTERS AND SETTERS
