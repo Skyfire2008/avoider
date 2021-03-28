@@ -19,10 +19,11 @@ enum ShooterState {
 	Firing;
 }
 
-class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfaces.DeathComponent {
+class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfaces.DeathComponent implements Interfaces.InitComponent {
 	private static inline var idleSpeed = 32.0;
 	private static inline var rotSpeed = 1.0;
 	private static inline var reloadTime = 5.0;
+	private static inline var halfTime = 2.5; // half of reload time
 	private static inline var idleTargetRadius = 40;
 	private static inline var aimTime = 1.0;
 	private static inline var a = 16;
@@ -30,9 +31,11 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 
 	private static var beamFactory: EntityFactoryMethod;
 	private static var trailFactory: EntityFactoryMethod;
+	private static var indicatorFactory: EntityFactoryMethod;
 
 	private var state: ShooterState;
 	private var pos: Point;
+	private var rotation: Wrapper<Float>;
 	private var side: Wrapper<Side>;
 	private var vel: Point;
 	private var time: Float;
@@ -46,9 +49,13 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 	private var beamAngle: Wrapper<Float>;
 	private var beamMult: ColorMult;
 
+	private var indicator: Entity;
+	private var indicMult: ColorMult;
+
 	public static function init() {
 		beamFactory = Game.instance.entMap.get("shooterBeam.json");
 		trailFactory = Game.instance.entMap.get("shooterTrail.json");
+		indicatorFactory = Game.instance.entMap.get("shooterIndicator.json");
 	}
 
 	public function new() {
@@ -63,12 +70,23 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 
 	public function assignProps(holder: PropertyHolder) {
 		pos = holder.position;
+		rotation = holder.rotation;
 		vel = holder.velocity;
 		vel.x = idleSpeed;
 		side = holder.side;
 	}
 
-	public function onUpdate(time: Float) {
+	public function onInit() {
+		indicMult = [1.0, 0, 0];
+		indicator = indicatorFactory((holder) -> {
+			holder.position = pos;
+			holder.rotation = rotation;
+			holder.colorMult = indicMult;
+		});
+		Game.instance.addEntity(indicator);
+	}
+
+	public function onUpdate(deltaTime: Float) {
 		if (state == Idling) {
 			// if idling, wait until gun reloads, then request a target
 			if (this.time > reloadTime && !observingTargets) {
@@ -106,7 +124,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 
 			// decelerate if needed
 			if (vel.length > 1) {
-				var friction = Math.pow(Constants.mju, time * 60);
+				var friction = Math.pow(Constants.mju, deltaTime * 60);
 				vel.mult(friction);
 			}
 		} else {
@@ -171,7 +189,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 		}
 
 		// turn towards target
-		var angVel = rotSpeed * time;
+		var angVel = rotSpeed * deltaTime;
 		Util.turnTo(pos, vel, angVel, moveTargetPos);
 
 		// if close to the target, reset it
@@ -179,10 +197,21 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 			moveTargetPos = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 		}
 
-		this.time += time;
+		this.time += deltaTime;
+
+		// change indicator color multiplier
+		if (state == Idling) {
+			if (time < halfTime) {
+				indicMult.set([time / halfTime, 1.0, 0]);
+			} else {
+				indicMult.set([1.0, (reloadTime - time) / halfTime, 0]);
+			}
+		}
 	}
 
 	public function onDeath() {
+		indicator.kill();
+
 		if (beam != null) {
 			beam.kill();
 		}

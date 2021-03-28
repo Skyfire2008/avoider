@@ -1,0 +1,17 @@
+{
+	"properties": {
+		"scale": 1.0
+	},
+	"components": [
+		{
+			"name": "alwaysAlive",
+			"params": {}
+		},
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "shooterIndicator.json"
+			}
+		}
+	]
+}
