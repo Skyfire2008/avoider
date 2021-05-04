@@ -26,8 +26,7 @@ import org.skyfire2008.avoider.util.Util;
 import org.skyfire2008.avoider.util.StorageLoader;
 import org.skyfire2008.avoider.util.Scripts.DirContent;
 import org.skyfire2008.avoider.geom.Point;
-import org.skyfire2008.avoider.game.Side;
-import org.skyfire2008.avoider.game.components.RenderComponent;
+import org.skyfire2008.avoider.game.PlayerProps;
 
 using Lambda;
 
@@ -130,11 +129,13 @@ class Main {
 					var game = new Game(entFactories);
 					Game.setInstance(game);
 
+					PlayerProps.setInstance(new PlayerProps(320));
+
 					var storage = new StorageLoader();
 					StorageLoader.setInstance(storage);
 
 					var controller = new Controller(storage.data.keyBindings);
-					controller.register(Browser.window);
+					controller.register(document);
 					Controller.setInstance(controller);
 
 					// init components
@@ -144,12 +145,12 @@ class Main {
 					game.addEntity(entFactories.get("player.json")());
 					game.addEntity(entFactories.get("bgEnt.json")());
 
-					for (i in 0...4) {
+					for (i in 0...2) {
 						game.addEntity(entFactories.get("chaser.json")((holder) -> {
 							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 						}));
 					}
-					for (i in 0...4) {
+					for (i in 0...2) {
 						game.addEntity(entFactories.get("shooter.json")((holder) -> {
 							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 						}));

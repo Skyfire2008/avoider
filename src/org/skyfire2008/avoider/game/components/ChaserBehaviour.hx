@@ -164,11 +164,13 @@ class ChaserAiming implements ChaserState {
 				delay = 0;
 			}
 		} else if (delay < ChaserBehaviour.armTime + Constants.reactionTime) {
-			// change shape and stop rotationg
-			parent.currentShape = ChaserBehaviour.attackingShape;
+			// change shape and stop rotating
+			if (parent.currentShape != ChaserBehaviour.attackingShape) {
+				TargetingSystem.instance.removeTargetDeathObserver(targetId, onTargetDeath);
+				parent.currentShape = ChaserBehaviour.attackingShape;
+			}
 			delay += time;
 		} else {
-			TargetingSystem.instance.removeTargetDeathObserver(targetId, onTargetDeath);
 			parent.side.value = Side.Hostile;
 			parent.changeState(new ChaserAttacking(parent));
 		}

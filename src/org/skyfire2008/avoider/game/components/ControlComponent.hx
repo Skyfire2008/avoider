@@ -20,8 +20,12 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	private var a: Float;
 	private var brakeMult: Float;
 	private var maxSpeed: Float;
+	private var pos: Point;
+	private var side: Wrapper<Side>;
 	private var vel: Point;
 	private var rotation: Wrapper<Float>;
+
+	private var isRunning = false;
 
 	public function new(a: Float, maxSpeed: Float, brakeMult: Float) {
 		dir = new Point();
@@ -32,8 +36,10 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	}
 
 	public function assignProps(holder: PropertyHolder) {
+		pos = holder.position;
 		vel = holder.velocity;
 		rotation = holder.rotation;
+		side = holder.side;
 	}
 
 	public function addDir(x: Float, y: Float) {
@@ -43,6 +49,23 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		normDir.y = dir.y;
 		// normalize to make sure that diagonal movement is not faster
 		// normDir.normalize();
+	}
+
+	public function setRun(value: Bool): Void {
+		// TODO: just multiplying max speed and acceleraiton is not the best solution
+	}
+
+	public function blink(x: Float, y: Float): Void {
+		TargetingSystem.instance.removeTarget(owner.id, side.value);
+		var dir = new Point(x, y);
+		dir.sub(pos);
+		var dirLength = dir.length;
+		if (dirLength > PlayerProps.instance.blinkDist) {
+			dir.mult(PlayerProps.instance.blinkDist / dirLength);
+		}
+		pos.x += dir.x;
+		pos.y += dir.y;
+		TargetingSystem.instance.addTarget(owner.id, pos, side.value);
 	}
 
 	public function onInit() {

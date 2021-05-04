@@ -74,7 +74,10 @@ class TargetingSystem {
 	}
 
 	public function removeTargetDeathObserver(targetId: Int, obs: TargetDeathObserver) {
-		targetDeathObservers.get(targetId).remove(obs);
+		var observers = targetDeathObservers.get(targetId);
+		if (observers != null && observers.length > 0) {
+			targetDeathObservers.get(targetId).remove(obs);
+		}
 	}
 
 	/**

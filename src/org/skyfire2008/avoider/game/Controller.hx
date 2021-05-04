@@ -1,21 +1,17 @@
 package org.skyfire2008.avoider.game;
 
+import js.html.MouseEvent;
 import js.html.EventTarget;
 import js.html.KeyboardEvent;
 import js.lib.Map;
 import js.lib.Set;
 
 import org.skyfire2008.avoider.game.components.Interfaces.KBComponent;
-
-typedef KeyBindings = {
-	var up: String;
-	var left: String;
-	var right: String;
-	var down: String;
-};
+import org.skyfire2008.avoider.util.StorageLoader.KeyBindings;
 
 typedef DownAction = () -> Void;
 typedef HeldAction = (Float) -> Void;
+typedef MouseAction = (Float, Float) -> Void;
 
 class Controller {
 	private var heldKeys: Set<String>;
@@ -23,6 +19,7 @@ class Controller {
 	private var downActions: Map<String, DownAction>;
 	private var upActions: Map<String, DownAction>;
 	private var heldActions: Map<String, HeldAction>;
+	private var mouseDownActions: Map<Int, MouseAction>;
 
 	private var components: Array<KBComponent>;
 
@@ -36,6 +33,7 @@ class Controller {
 		heldActions = new Map<String, HeldAction>();
 		components = [];
 		heldKeys = new Set<String>();
+		mouseDownActions = new Map<Int, MouseAction>();
 
 		remap(config);
 	}
@@ -80,6 +78,11 @@ class Controller {
 				component.addDir(1, 0);
 			}
 		});
+		downActions.set(config.run, () -> {
+			for (component in components) {
+				component.setRun(true);
+			}
+		});
 
 		upActions.clear();
 		upActions.set(config.up, () -> {
@@ -102,6 +105,18 @@ class Controller {
 				component.addDir(-1, 0);
 			}
 		});
+		upActions.set(config.run, () -> {
+			for (component in components) {
+				component.setRun(false);
+			}
+		});
+
+		mouseDownActions.clear();
+		mouseDownActions.set(0, (x: Float, y: Float) -> {
+			for (component in components) {
+				component.blink(x, y);
+			}
+		});
 	}
 
 	private function onKeyDown(e: KeyboardEvent) {
@@ -121,6 +136,13 @@ class Controller {
 		}
 	}
 
+	private function onMouseDown(e: MouseEvent) {
+		var action = mouseDownActions.get(e.button);
+		if (action != null) {
+			action(e.clientX, e.clientY);
+		}
+	}
+
 	public function update(time: Float) {
 		for (key in heldKeys.iterator()) {
 			var action = heldActions.get(key);
@@ -133,6 +155,9 @@ class Controller {
 	public function register(target: EventTarget) {
 		target.addEventListener("keydown", onKeyDown);
 		target.addEventListener("keyup", onKeyUp);
+
+		// TODO: add support for mouse buttons to settings
+		target.addEventListener("mousedown", onMouseDown);
 	}
 
 	public function deregister(target: EventTarget) {

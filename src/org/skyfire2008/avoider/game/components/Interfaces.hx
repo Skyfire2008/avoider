@@ -34,4 +34,6 @@ interface CollisionComponent extends Component {
 
 interface KBComponent {
 	function addDir(x: Float, y: Float): Void;
+	function setRun(value: Bool): Void;
+	function blink(x: Float, y: Float): Void;
 }

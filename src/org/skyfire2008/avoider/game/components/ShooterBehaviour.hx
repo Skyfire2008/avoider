@@ -102,7 +102,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 				vel.mult(idleSpeed / velLength);
 			}
 		} else if (state == Aiming) {
-			// if aimed enough, fire!
+			// if aimed enough, aim
 			if (this.time < aimTime) {
 				// if aiming, move the crosshair towards target
 				var crosshairVel = shootTargetPos.difference(crosshairPos);
@@ -115,6 +115,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 				beamMult.setAll(0.5 * this.time / aimTime);
 				beamMult.b = 0;
 			} else {
+				TargetingSystem.instance.removeTargetDeathObserver(shootTargetId, notifyAboutDeath);
 				state = Firing;
 				this.time = 0;
 				beamMult.set([1.0, 0.0, 0.0]);
@@ -214,6 +215,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 
 		if (beam != null) {
 			beam.kill();
+			beam = null;
 		}
 
 		if (shootTargetId > 0) {
@@ -258,5 +260,10 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 		shootTargetId = -1;
 		state = Idling;
 		time = 0;
+		if (beam != null) {
+			beam.kill();
+			beam = null;
+			beamMult.setAll(0.0);
+		}
 	}
 }
