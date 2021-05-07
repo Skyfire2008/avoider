@@ -14,6 +14,8 @@ import org.skyfire2008.avoider.spatial.Collider;
 class Game {
 	public static var instance(default, null): Game;
 	public var entMap(default, null): StringMap<EntityFactoryMethod>;
+	public var livesCallback(default, null): (value: Int) -> Void;
+	public var blinkCallback(default, null): (value: Float) -> Void;
 
 	private var entities: Array<Entity>;
 	private var grid: UniformGrid;
@@ -24,9 +26,10 @@ class Game {
 		Game.instance = instance;
 	}
 
-	public function new(entMap: StringMap<EntityFactoryMethod>) {
+	public function new(entMap: StringMap<EntityFactoryMethod>, livesCallback: (value: Int) -> Void) {
 		entities = [];
 		this.entMap = entMap;
+		this.livesCallback = livesCallback;
 		grid = new UniformGrid(20, 20, Std.int(Constants.gameWidth / 20), Std.int(Constants.gameHeight / 20));
 		colliders = [];
 

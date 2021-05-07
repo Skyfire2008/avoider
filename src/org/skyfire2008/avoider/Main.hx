@@ -1,5 +1,6 @@
 package org.skyfire2008.avoider;
 
+import js.html.HtmlElement;
 import js.Browser;
 import js.lib.Promise;
 import js.html.Document;
@@ -39,6 +40,8 @@ class Main {
 	private static var timeStore: Float = 0;
 	private static var timeCount: Float = 0;
 
+	private static var playerHpDisplay: Element;
+
 	public static function main() {
 		Browser.window.addEventListener("load", init);
 	}
@@ -75,6 +78,9 @@ class Main {
 		}
 		gl.enable(GL.BLEND);
 		gl.blendFunc(GL.ONE, GL.ONE);
+
+		// get elements
+		playerHpDisplay = document.getElementById("playerHpDisplay");
 
 		// load shaders
 		var rendererPromises = [
@@ -126,7 +132,9 @@ class Main {
 				}
 
 				Promise.all(entPromises).then((_) -> {
-					var game = new Game(entFactories);
+					var game = new Game(entFactories, (value) -> {
+						playerHpDisplay.innerText = "Lives: " + value;
+					});
 					Game.setInstance(game);
 
 					PlayerProps.setInstance(new PlayerProps(320));
@@ -145,12 +153,12 @@ class Main {
 					game.addEntity(entFactories.get("player.json")());
 					game.addEntity(entFactories.get("bgEnt.json")());
 
-					for (i in 0...2) {
+					for (i in 0...0) {
 						game.addEntity(entFactories.get("chaser.json")((holder) -> {
 							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 						}));
 					}
-					for (i in 0...2) {
+					for (i in 0...500) {
 						game.addEntity(entFactories.get("shooter.json")((holder) -> {
 							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 						}));

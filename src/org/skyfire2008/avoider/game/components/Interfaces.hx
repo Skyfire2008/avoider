@@ -37,3 +37,13 @@ interface KBComponent {
 	function setRun(value: Bool): Void;
 	function blink(x: Float, y: Float): Void;
 }
+
+interface DamageComponent extends Component {
+	@callback
+	function onDamage(dmg: Int): Void;
+}
+
+interface HealComponent {
+	@callback
+	function onHeal(heal: Int): Void;
+}

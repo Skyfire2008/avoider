@@ -17,7 +17,8 @@
 			1.0,
 			1.0,
 			1.0
-		]
+		],
+		"hp": 3
 	},
 	"components": [
 		{
@@ -33,7 +34,7 @@
 			"params": {}
 		},
 		{
-			"name": "invulnerableOnCollision",
+			"name": "invulnerableOnDamage",
 			"params": {
 				"invulnTime": 1,
 				"blinkTime": 0.1
@@ -58,7 +59,15 @@
 			"params": {}
 		},
 		{
-			"name": "alwaysAlive",
+			"name": "hasHp",
+			"params": {}
+		},
+		{
+			"name": "damagedOnCollision",
+			"params": {}
+		},
+		{
+			"name": "displaysHp",
 			"params": {}
 		}
 	]

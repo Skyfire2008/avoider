@@ -17,4 +17,5 @@ class MyHolder {
 	public var side: Wrapper<Side>;
 	public var colliderRadius: Wrapper<Float>;
 	public var timeToLive: Wrapper<Float>;
+	public var hp: Wrapper<Int>;
 }

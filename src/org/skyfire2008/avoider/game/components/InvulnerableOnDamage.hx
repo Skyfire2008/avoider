@@ -8,7 +8,7 @@ import org.skyfire2008.avoider.geom.Point;
 import org.skyfire2008.avoider.spatial.Collider;
 import org.skyfire2008.avoider.graphics.ColorMult;
 
-class InvulnerableOnCollision implements Interfaces.CollisionComponent implements Interfaces.UpdateComponent {
+class InvulnerableOnDamage implements Interfaces.DamageComponent implements Interfaces.UpdateComponent {
 	private var side: Wrapper<Side>;
 	private var colorMult: ColorMult;
 	private var radius: Wrapper<Float>;
@@ -36,13 +36,11 @@ class InvulnerableOnCollision implements Interfaces.CollisionComponent implement
 		pos = holder.position;
 	}
 
-	public function onCollide(other: Collider) {
-		if (this.side.value == Side.Hostile || this.side.value != other.side.value) {
-			isInvuln = true;
-			curBlinkTime = 0;
-			colorMult.setAll(0);
-			Game.instance.removeCollider(owner.id);
-		}
+	public function onDamage(dmg: Int) {
+		isInvuln = true;
+		curBlinkTime = 0;
+		colorMult.setAll(0);
+		Game.instance.removeCollider(owner.id);
 	}
 
 	public function onUpdate(time: Float) {
