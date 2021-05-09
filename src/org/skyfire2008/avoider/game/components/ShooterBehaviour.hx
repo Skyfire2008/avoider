@@ -1,5 +1,7 @@
 package org.skyfire2008.avoider.game.components;
 
+import howler.Howl;
+
 import org.skyfire2008.avoider.spatial.Collider;
 
 import spork.core.Wrapper;
@@ -29,6 +31,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 	private static inline var a = 16;
 	private static inline var trailLength = 10.0;
 
+	private static var shootSound: Howl;
 	private static var beamFactory: EntityFactoryMethod;
 	private static var trailFactory: EntityFactoryMethod;
 	private static var indicatorFactory: EntityFactoryMethod;
@@ -56,6 +59,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 		beamFactory = Game.instance.entMap.get("shooterBeam.json");
 		trailFactory = Game.instance.entMap.get("shooterTrail.json");
 		indicatorFactory = Game.instance.entMap.get("shooterIndicator.json");
+		shootSound = new Howl({src: ["assets/sounds/shooterShoot.wav"]});
 	}
 
 	public function new() {
@@ -131,6 +135,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 		} else {
 			// if firing, delay and shoot
 			if (this.time >= Constants.reactionTime) {
+				shootSound.play();
 				var myCol = new Collider(this.owner, pos, 0, new Wrapper(Side.Hostile));
 
 				// find the end point(where beam intersects the reactagnle containing the game)

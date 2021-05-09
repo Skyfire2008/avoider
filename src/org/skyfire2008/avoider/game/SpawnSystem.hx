@@ -25,6 +25,15 @@ class SpawnSystem {
 		incWave();
 	}
 
+	public function reset() {
+		wave = 0;
+		enemiesOnScreen = 0;
+		incWave();
+		for (i in 0...2) {
+			spawnEnemy();
+		}
+	}
+
 	private function spawnEnemy() {
 		var shooterProb = 0.5 - 5 / (wave + 5);
 		var spawnFunc: EntityFactoryMethod;
@@ -34,21 +43,19 @@ class SpawnSystem {
 		} else {
 			spawnFunc = chaserSpawnFunc;
 		}
-
 		var startPos = new Point(0, 0);
 		var foobar = Std.random(4);
+
 		if (foobar == 0 || foobar == 2) {
 			startPos.x = Math.random() * Constants.gameWidth;
 		} else {
 			startPos.y = Math.random() * Constants.gameHeight;
 		}
-
 		if (foobar == 1) {
 			startPos.x = Constants.gameWidth;
 		} else if (foobar == 2) {
 			startPos.y = Constants.gameHeight;
 		}
-
 		var ent = spawnFunc((holder) -> {
 			holder.position = startPos;
 		});

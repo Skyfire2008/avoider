@@ -1,16 +1,13 @@
 package org.skyfire2008.avoider;
 
-import org.skyfire2008.avoider.game.SpawnSystem;
-import org.skyfire2008.avoider.game.ScoringSystem;
+import org.skyfire2008.avoider.game.TargetingSystem;
 
-import js.html.HtmlElement;
+import js.html.ButtonElement;
 import js.Browser;
 import js.lib.Promise;
 import js.html.Document;
 import js.html.Element;
 import js.html.CanvasElement;
-import js.html.KeyboardEvent;
-import js.html.webgl.RenderingContext;
 import js.html.webgl.GL;
 
 import haxe.Json;
@@ -18,9 +15,10 @@ import haxe.ds.StringMap;
 
 import spork.core.JsonLoader;
 import spork.core.JsonLoader.EntityFactoryMethod;
-import spork.core.PropertyHolder;
-import spork.core.Wrapper;
 
+import org.skyfire2008.avoider.game.components.CausesGameOver;
+import org.skyfire2008.avoider.game.SpawnSystem;
+import org.skyfire2008.avoider.game.ScoringSystem;
 import org.skyfire2008.avoider.game.Constants;
 import org.skyfire2008.avoider.game.Controller;
 import org.skyfire2008.avoider.game.Game;
@@ -47,6 +45,8 @@ class Main {
 	private static var scoreDisplay: Element;
 	private static var multDisplay: Element;
 	private static var multBar: Element;
+	private static var gameOverStuff: Element;
+	private static var restartButton: ButtonElement;
 
 	public static function main() {
 		Browser.window.addEventListener("load", init);
@@ -91,6 +91,23 @@ class Main {
 		scoreDisplay = document.getElementById("scoreDisplay");
 		multDisplay = document.getElementById("multDisplay");
 		multBar = document.getElementById("multBar");
+		gameOverStuff = document.getElementById("gameOverStuff");
+		restartButton = cast(document.getElementById("restartButton"));
+		restartButton.addEventListener("click", (e) -> {
+			gameOverStuff.style.display = "none";
+			Game.instance.reset();
+			TargetingSystem.instance.reset();
+			ScoringSystem.instance.reset();
+			SpawnSystem.instance.reset();
+			Game.instance.addEntity(Game.instance.entMap.get("player.json")((holder) -> {
+				holder.position = new Point(Constants.gameWidth / 2, Constants.gameHeight / 2);
+			}));
+			Game.instance.addEntity(Game.instance.entMap.get("bgEnt.json")());
+		});
+
+		CausesGameOver.init(() -> {
+			gameOverStuff.style.display = "block";
+		});
 
 		ScoringSystem.setInstance(new ScoringSystem((score) -> {
 			scoreDisplay.innerText = "Score: " + score;
@@ -171,7 +188,9 @@ class Main {
 					org.skyfire2008.avoider.game.components.ChaserBehaviour.initShapes();
 					org.skyfire2008.avoider.game.components.ShooterBehaviour.init();
 
-					game.addEntity(entFactories.get("player.json")());
+					game.addEntity(Game.instance.entMap.get("player.json")((holder) -> {
+						holder.position = new Point(Constants.gameWidth / 2, Constants.gameHeight / 2);
+					}));
 					game.addEntity(entFactories.get("bgEnt.json")());
 
 					for (i in 0...2) {

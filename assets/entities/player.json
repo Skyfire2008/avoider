@@ -73,6 +73,16 @@
 		{
 			"name": "resetsMultiplier",
 			"params": {}
+		},
+		{
+			"name": "causesGameOver",
+			"params": {}
+		},
+		{
+			"name": "playsSoundOnDeath",
+			"params": {
+				"soundSrc": "assets/sounds/playerExplosion.wav"
+			}
 		}
 	]
 }

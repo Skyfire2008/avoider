@@ -63,6 +63,12 @@
 		{
 			"name": "countedOnScreen",
 			"params": {}
+		},
+		{
+			"name": "playsSoundOnDeath",
+			"params": {
+				"soundSrc": "assets/sounds/enemyExplosion.wav"
+			}
 		}
 	]
 }

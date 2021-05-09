@@ -1,5 +1,7 @@
 package org.skyfire2008.avoider.game.components;
 
+import howler.Howl;
+
 import spork.core.Entity;
 import spork.core.PropertyHolder;
 import spork.core.Wrapper;
@@ -16,6 +18,7 @@ using org.skyfire2008.avoider.geom.Point;
 class ControlComponent implements KBComponent implements InitComponent implements UpdateComponent implements DeathComponent {
 	private static inline var blinkDist = 320;
 	private static inline var blinkRecharge = 3;
+	private static var blinkSound = new Howl({src: ["assets/sounds/teleport.wav"]});
 
 	private var owner: Entity;
 	private var dir: Point;
@@ -73,6 +76,8 @@ class ControlComponent implements KBComponent implements InitComponent implement
 			TargetingSystem.instance.addTarget(owner.id, pos, side.value);
 			blinkTime = 0;
 			Game.instance.blinkCallback(blinkTime / blinkRecharge);
+
+			blinkSound.play();
 		}
 	}
 

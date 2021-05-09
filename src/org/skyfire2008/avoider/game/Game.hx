@@ -37,6 +37,13 @@ class Game {
 		collidersToRemove = [];
 	}
 
+	public function reset() {
+		entities = [];
+		grid.reset();
+		colliders = [];
+		collidersToRemove = [];
+	}
+
 	public function addEntity(entity: Entity, addToFront: Bool = false) {
 		entity.onInit();
 		if (addToFront) {

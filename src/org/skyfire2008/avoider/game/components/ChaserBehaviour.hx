@@ -1,5 +1,7 @@
 package org.skyfire2008.avoider.game.components;
 
+import howler.Howl;
+
 import spork.core.PropertyHolder;
 import spork.core.Wrapper;
 
@@ -136,6 +138,8 @@ class ChaserAiming implements ChaserState {
 	private var onTargetDeath: () -> Void;
 	private var delay: Float;
 
+	private static var startSound = new Howl({src: ["assets/sounds/chaserStart.wav"]});
+
 	public function new(targetId: Int, targetPos: Point, parent: ChaserBehaviour, onTargetDeath: () -> Void) {
 		this.targetId = targetId;
 		this.targetPos = targetPos;
@@ -176,6 +180,7 @@ class ChaserAiming implements ChaserState {
 		} else {
 			parent.side.value = Side.Hostile;
 			parent.changeState(new ChaserAttacking(parent));
+			startSound.play();
 		}
 	}
 

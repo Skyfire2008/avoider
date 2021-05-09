@@ -27,9 +27,30 @@
 		border-color: white;
 		border-style: solid;
 	}
+
+	button {
+		font-family: monospace;
+		font-size: 20px;
+		font-weight: bold;
+		position: absolute;
+		border-radius: 12px;
+		border: 2px solid steelblue;
+		background-color: steelblue;
+		transition-duration: 0.5s;
+	}
+
+	button:hover {
+		background-color: lightblue;
+	}
+
+	button:active {
+		background-color: lightcyan;
+		transition-duration: 0.0s;
+	}
 </style>
 
 <body style="background-color: black;">
+	<script src="howler.core.js"></script>
 	<script src="avoider.js"></script>
 	<div id="content">
 		<canvas id="mainCanvas" width="1280" height="720" style="position: absolute; left: 0px; top: 0px;"></canvas>
@@ -43,6 +64,12 @@
 		<div class="display barRect" style="left: 125px; top: 695px; width: 100px; height: 10px;">
 			<div id="multBar" class="bar" style="width: 50%;"></div>
 		</div>
+	</div>
+	<div id="gameOverStuff" style="display: none">
+		<div class="display" style="color: red; font-size: 72px; left: 461px; top: 100px">
+			Game Over</div>
+		<button id="restartButton" style="top: 200px; left: 600px;">Restart!</button>
+	</div>
 </body>
 
 </html>

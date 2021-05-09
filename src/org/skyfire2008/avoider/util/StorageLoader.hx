@@ -46,7 +46,6 @@ class StorageLoader {
 			data = Json.parse(storage.getItem(storageName));
 		} catch (e) {
 			trace(e);
-			throw "Could not get local storage";
 		}
 
 		this.data = Object.assign({}, data, defaultData);
