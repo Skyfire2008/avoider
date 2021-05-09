@@ -15,7 +15,7 @@ using org.skyfire2008.avoider.geom.Point;
 
 class ControlComponent implements KBComponent implements InitComponent implements UpdateComponent implements DeathComponent {
 	private static inline var blinkDist = 320;
-	private static inline var blinkRecharge = 5;
+	private static inline var blinkRecharge = 3;
 
 	private var owner: Entity;
 	private var dir: Point;

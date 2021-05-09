@@ -78,10 +78,15 @@ class ChaserIdling implements ChaserState {
 		}
 
 		if (closest != null) {
-			parent.changeState(new ChaserChasing(closest.id, closest.pos, parent));
+			TargetingSystem.instance.addTargetDeathObserver(closest.id, onTargetDeath);
+			parent.changeState(new ChaserChasing(closest.id, closest.pos, parent, onTargetDeath));
 		} else {
 			observingTargets = false;
 		}
+	}
+
+	private function onTargetDeath() {
+		parent.changeState(new ChaserIdling(parent));
 	}
 }
 
@@ -89,10 +94,11 @@ class ChaserChasing implements ChaserState {
 	private var targetPos: Point;
 	private var targetId: Int;
 	private var parent: ChaserBehaviour;
+	private var onTargetDeath: () -> Void;
 
-	public function new(targetId: Int, targetPos: Point, parent: ChaserBehaviour) {
-		TargetingSystem.instance.addTargetDeathObserver(targetId, onTargetDeath);
+	public function new(targetId: Int, targetPos: Point, parent: ChaserBehaviour, onTargetDeath: () -> Void) {
 		parent.currentShape = ChaserBehaviour.chasingShape;
+		this.onTargetDeath = onTargetDeath;
 		this.targetId = targetId;
 		this.targetPos = targetPos;
 		this.parent = parent;
@@ -110,6 +116,7 @@ class ChaserChasing implements ChaserState {
 			Util.turnTo(parent.pos, parent.vel, angVel, targetPos);
 		} else {
 			// otherwise return to idling state
+			TargetingSystem.instance.removeTargetDeathObserver(targetId, onTargetDeath);
 			parent.changeState(new ChaserIdling(parent));
 		}
 
@@ -119,10 +126,6 @@ class ChaserChasing implements ChaserState {
 
 	public function onDeath() {
 		TargetingSystem.instance.removeTargetDeathObserver(targetId, onTargetDeath);
-	}
-
-	private function onTargetDeath() {
-		parent.changeState(new ChaserIdling(parent));
 	}
 }
 
@@ -151,7 +154,7 @@ class ChaserAiming implements ChaserState {
 			var angVel = ChaserBehaviour.rotSpeed * time;
 			Util.turnTo(parent.pos, parent.vel, angVel, targetPos);
 			if (Point.distance(targetPos, parent.pos) > ChaserBehaviour.farAttackRadius) {
-				parent.changeState(new ChaserChasing(targetId, targetPos, parent));
+				parent.changeState(new ChaserChasing(targetId, targetPos, parent, onTargetDeath));
 			}
 
 			// check rotations

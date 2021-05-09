@@ -1,5 +1,6 @@
 package org.skyfire2008.avoider;
 
+import org.skyfire2008.avoider.game.SpawnSystem;
 import org.skyfire2008.avoider.game.ScoringSystem;
 
 import js.html.HtmlElement;
@@ -61,7 +62,7 @@ class Main {
 		timeStore += delta;
 		timeCount++;
 		if (timeCount >= 600) {
-			trace("fps: " + timeCount / timeStore);
+			// trace("fps: " + timeCount / timeStore);
 			timeStore = 0;
 			timeCount = 0;
 		}
@@ -157,6 +158,8 @@ class Main {
 					});
 					Game.setInstance(game);
 
+					SpawnSystem.setInstance(new SpawnSystem());
+
 					var storage = new StorageLoader();
 					StorageLoader.setInstance(storage);
 
@@ -171,7 +174,7 @@ class Main {
 					game.addEntity(entFactories.get("player.json")());
 					game.addEntity(entFactories.get("bgEnt.json")());
 
-					for (i in 0...10) {
+					for (i in 0...2) {
 						game.addEntity(entFactories.get("chaser.json")((holder) -> {
 							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 						}));

@@ -59,6 +59,10 @@
 		{
 			"name": "addsScore",
 			"params": {}
+		},
+		{
+			"name": "countedOnScreen",
+			"params": {}
 		}
 	]
 }
