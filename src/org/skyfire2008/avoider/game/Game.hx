@@ -26,10 +26,11 @@ class Game {
 		Game.instance = instance;
 	}
 
-	public function new(entMap: StringMap<EntityFactoryMethod>, livesCallback: (value: Int) -> Void) {
+	public function new(entMap: StringMap<EntityFactoryMethod>, livesCallback: (value: Int) -> Void, blinkCallback: (value: Float) -> Void) {
 		entities = [];
 		this.entMap = entMap;
 		this.livesCallback = livesCallback;
+		this.blinkCallback = blinkCallback;
 		grid = new UniformGrid(20, 20, Std.int(Constants.gameWidth / 20), Std.int(Constants.gameHeight / 20));
 		colliders = [];
 
@@ -104,5 +105,7 @@ class Game {
 			}
 		}
 		entities = newEntities;
+
+		ScoringSystem.instance.update(time);
 	}
 }

@@ -8,12 +8,24 @@
 
 <style>
 	.display {
-		color: whitesmoke;
+		color: white;
 		position: absolute;
 		pointer-events: none;
+		font-family: monospace;
 		font-size: 20px;
 		font-weight: bold;
 		text-shadow: 0px 0px 4px;
+		opacity: 0.75
+	}
+
+	.bar {
+		height: 100%;
+		background-color: white;
+	}
+
+	.barRect {
+		border-color: white;
+		border-style: solid;
 	}
 </style>
 
@@ -22,7 +34,15 @@
 	<div id="content">
 		<canvas id="mainCanvas" width="1280" height="720" style="position: absolute; left: 0px; top: 0px;"></canvas>
 		<div class="display" id="playerHpDisplay" style="left: 10px; top: 10px;">Lives: </div>
-	</div>
+		<div class="display" style="left: 10px; top: 35px">Blink: </div>
+		<div class="display barRect" style="left: 85px; top: 40px; width: 100px; height: 10px;">
+			<div id="blinkBar" class="bar" style="width: 50%;"></div>
+		</div>
+		<div class="display" id="scoreDisplay" style="left: 10px; top: 665px;">Score: </div>
+		<div class="display" id="multDisplay" style="left: 10px; top: 690px;">Mult : </div>
+		<div class="display barRect" style="left: 125px; top: 695px; width: 100px; height: 10px;">
+			<div id="multBar" class="bar" style="width: 50%;"></div>
+		</div>
 </body>
 
 </html>

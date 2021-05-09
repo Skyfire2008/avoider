@@ -1,5 +1,7 @@
 package org.skyfire2008.avoider;
 
+import org.skyfire2008.avoider.game.ScoringSystem;
+
 import js.html.HtmlElement;
 import js.Browser;
 import js.lib.Promise;
@@ -27,7 +29,6 @@ import org.skyfire2008.avoider.util.Util;
 import org.skyfire2008.avoider.util.StorageLoader;
 import org.skyfire2008.avoider.util.Scripts.DirContent;
 import org.skyfire2008.avoider.geom.Point;
-import org.skyfire2008.avoider.game.PlayerProps;
 
 using Lambda;
 
@@ -41,6 +42,10 @@ class Main {
 	private static var timeCount: Float = 0;
 
 	private static var playerHpDisplay: Element;
+	private static var blinkBar: Element;
+	private static var scoreDisplay: Element;
+	private static var multDisplay: Element;
+	private static var multBar: Element;
 
 	public static function main() {
 		Browser.window.addEventListener("load", init);
@@ -81,6 +86,19 @@ class Main {
 
 		// get elements
 		playerHpDisplay = document.getElementById("playerHpDisplay");
+		blinkBar = document.getElementById("blinkBar");
+		scoreDisplay = document.getElementById("scoreDisplay");
+		multDisplay = document.getElementById("multDisplay");
+		multBar = document.getElementById("multBar");
+
+		ScoringSystem.setInstance(new ScoringSystem((score) -> {
+			scoreDisplay.innerText = "Score: " + score;
+		}, (mult) -> {
+			multDisplay.innerText = "Mult : " + mult;
+		}, (value) -> {
+			multBar.style.width = Std.int(value * 100) + "%";
+		}));
+		ScoringSystem.instance.reset();
 
 		// load shaders
 		var rendererPromises = [
@@ -134,10 +152,10 @@ class Main {
 				Promise.all(entPromises).then((_) -> {
 					var game = new Game(entFactories, (value) -> {
 						playerHpDisplay.innerText = "Lives: " + value;
+					}, (value) -> {
+						blinkBar.style.width = Std.int(value * 100) + "%";
 					});
 					Game.setInstance(game);
-
-					PlayerProps.setInstance(new PlayerProps(320));
 
 					var storage = new StorageLoader();
 					StorageLoader.setInstance(storage);
@@ -153,12 +171,12 @@ class Main {
 					game.addEntity(entFactories.get("player.json")());
 					game.addEntity(entFactories.get("bgEnt.json")());
 
-					for (i in 0...0) {
+					for (i in 0...10) {
 						game.addEntity(entFactories.get("chaser.json")((holder) -> {
 							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 						}));
 					}
-					for (i in 0...500) {
+					for (i in 0...0) {
 						game.addEntity(entFactories.get("shooter.json")((holder) -> {
 							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 						}));

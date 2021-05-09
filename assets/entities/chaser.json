@@ -55,6 +55,10 @@
 				"spawnVel": 80,
 				"spreadAngle": 0.5
 			}
+		},
+		{
+			"name": "addsScore",
+			"params": {}
 		}
 	]
 }
