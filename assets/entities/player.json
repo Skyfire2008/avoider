@@ -36,7 +36,7 @@
 		{
 			"name": "invulnerableOnDamage",
 			"params": {
-				"invulnTime": 1,
+				"invulnTime": 2,
 				"blinkTime": 0.1
 			}
 		},
@@ -50,8 +50,8 @@
 			"name": "controlComponent",
 			"params": {
 				"a": 6400,
-				"maxSpeed": 800,
-				"brakeMult": 0.75
+				"maxSpeed": 720,
+				"brakeMult": 0.6
 			}
 		},
 		{

@@ -4,7 +4,7 @@ class CountedOnScreen implements Interfaces.InitComponent implements Interfaces.
 	public function new() {}
 
 	public function onInit() {
-		SpawnSystem.instance.incCount();
+		// SpawnSystem.instance.incCount();
 	}
 
 	public function onDeath() {

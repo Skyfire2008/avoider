@@ -1,17 +1,21 @@
 package org.skyfire2008.avoider.game;
 
+import haxe.Timer;
+
 import spork.core.JsonLoader.EntityFactoryMethod;
 
 import org.skyfire2008.avoider.geom.Point;
 
 class SpawnSystem {
 	public static var instance(default, null): SpawnSystem;
+	private static inline var border = 30.0;
 
 	private var expectedEnemiesOnScreen = 0;
 	private var enemiesOnScreen = 0;
 	private var enemiesTotal = 2;
 	private var wave = 0;
 
+	private var warningSpawnFunc: EntityFactoryMethod;
 	private var chaserSpawnFunc: EntityFactoryMethod;
 	private var shooterSpawnFunc: EntityFactoryMethod;
 
@@ -20,6 +24,7 @@ class SpawnSystem {
 	}
 
 	public function new() {
+		warningSpawnFunc = Game.instance.entMap.get("warning.json");
 		chaserSpawnFunc = Game.instance.entMap.get("chaser.json");
 		shooterSpawnFunc = Game.instance.entMap.get("shooter.json");
 		incWave();
@@ -56,10 +61,24 @@ class SpawnSystem {
 		} else if (foobar == 2) {
 			startPos.y = Constants.gameHeight;
 		}
+
+		startPos.x = Math.max(border, startPos.x);
+		startPos.x = Math.min(Constants.gameWidth - border, startPos.x);
+		startPos.y = Math.max(border, startPos.y);
+		startPos.y = Math.min(Constants.gameHeight - border, startPos.y);
+
 		var ent = spawnFunc((holder) -> {
 			holder.position = startPos;
 		});
-		Game.instance.addEntity(ent);
+		var warning = warningSpawnFunc((holder) -> {
+			holder.position = startPos;
+		});
+		Game.instance.addEntity(warning);
+		incCount();
+
+		Timer.delay(() -> {
+			Game.instance.addEntity(ent);
+		}, 1000); // TODO: timeout should be the same as warning's time to live
 	}
 
 	private function incWave() {

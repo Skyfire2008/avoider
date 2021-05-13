@@ -242,6 +242,7 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 	public var baseSide: Side; // side, that doesn't change(e.g. to hostile when attacking)
 	public var side: Wrapper<Side>;
 	public var trailSpawner: Spawner;
+	private var scale: Wrapper<Float>;
 
 	public var currentShape: Shape;
 
@@ -285,6 +286,7 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 		rotation = holder.rotation;
 		baseSide = holder.side.value;
 		side = holder.side;
+		scale = holder.scale;
 	}
 
 	public function onInit() {
@@ -299,7 +301,7 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 
 	public function onUpdate(time: Float) {
 		state.onUpdate(time);
-		Renderer.instance.render(currentShape, pos.x, pos.y, rotation.value, 1, [1.0, 1.0, 1.0]);
+		Renderer.instance.render(currentShape, pos.x, pos.y, rotation.value, scale.value, [1.0, 1.0, 1.0]);
 	}
 
 	public function onDeath() {
