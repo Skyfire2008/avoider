@@ -20,6 +20,7 @@ class Controller {
 	private var upActions: Map<String, DownAction>;
 	private var heldActions: Map<String, HeldAction>;
 	private var mouseDownActions: Map<Int, MouseAction>;
+	private var mouseUpActions: Map<Int, MouseAction>;
 
 	private var components: Array<KBComponent>;
 
@@ -34,6 +35,7 @@ class Controller {
 		components = [];
 		heldKeys = new Set<String>();
 		mouseDownActions = new Map<Int, MouseAction>();
+		mouseUpActions = new Map<Int, MouseAction>();
 
 		remap(config);
 	}
@@ -78,11 +80,6 @@ class Controller {
 				component.addDir(1, 0);
 			}
 		});
-		downActions.set(config.run, () -> {
-			for (component in components) {
-				component.setRun(true);
-			}
-		});
 
 		upActions.clear();
 		upActions.set(config.up, () -> {
@@ -105,16 +102,23 @@ class Controller {
 				component.addDir(-1, 0);
 			}
 		});
-		upActions.set(config.run, () -> {
-			for (component in components) {
-				component.setRun(false);
-			}
-		});
 
 		mouseDownActions.clear();
 		mouseDownActions.set(0, (x: Float, y: Float) -> {
 			for (component in components) {
 				component.blink(x, y);
+			}
+		});
+		mouseDownActions.set(2, (X: Float, y: Float) -> {
+			for (component in components) {
+				component.setWalk(true);
+			}
+		});
+
+		mouseUpActions.clear();
+		mouseUpActions.set(2, (X: Float, y: Float) -> {
+			for (component in components) {
+				component.setWalk(false);
 			}
 		});
 	}
@@ -138,6 +142,21 @@ class Controller {
 
 	private function onMouseDown(e: MouseEvent) {
 		var action = mouseDownActions.get(e.button);
+		if (e.button == 2) {
+			e.stopPropagation();
+			e.preventDefault();
+		}
+		if (action != null) {
+			action(e.clientX, e.clientY);
+		}
+	}
+
+	private function onMouseUp(e: MouseEvent) {
+		var action = mouseUpActions.get(e.button);
+		if (e.button == 2) {
+			e.stopPropagation();
+			e.preventDefault();
+		}
 		if (action != null) {
 			action(e.clientX, e.clientY);
 		}
@@ -158,6 +177,7 @@ class Controller {
 
 		// TODO: add support for mouse buttons to settings
 		target.addEventListener("mousedown", onMouseDown);
+		target.addEventListener("mouseup", onMouseUp);
 	}
 
 	public function deregister(target: EventTarget) {

@@ -17,7 +17,7 @@ using org.skyfire2008.avoider.geom.Point;
 
 class ControlComponent implements KBComponent implements InitComponent implements UpdateComponent implements DeathComponent {
 	private static inline var blinkDist = 320;
-	private static inline var blinkRecharge = 3;
+	private static inline var blinkRecharge = 5;
 	private static var blinkSound = new Howl({src: ["assets/sounds/teleport.wav"]});
 
 	private var owner: Entity;
@@ -26,6 +26,8 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	private var a: Float;
 	private var brakeMult: Float;
 	private var maxSpeed: Float;
+	private var runSpeed: Float;
+	private var walkSpeed: Float;
 	private var pos: Point;
 	private var side: Wrapper<Side>;
 	private var vel: Point;
@@ -39,6 +41,8 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		normDir = new Point();
 		this.a = a;
 		this.maxSpeed = maxSpeed;
+		this.runSpeed = maxSpeed;
+		this.walkSpeed = maxSpeed / 4;
 		this.brakeMult = brakeMult;
 	}
 
@@ -58,8 +62,12 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		// normDir.normalize();
 	}
 
-	public function setRun(value: Bool): Void {
-		// TODO: just multiplying max speed and acceleraiton is not the best solution
+	public function setWalk(value: Bool): Void {
+		if (value) {
+			maxSpeed = walkSpeed;
+		} else {
+			maxSpeed = runSpeed;
+		}
 	}
 
 	public function blink(x: Float, y: Float): Void {

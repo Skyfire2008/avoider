@@ -62,7 +62,7 @@ class Main {
 		timeStore += delta;
 		timeCount++;
 		if (timeCount >= 600) {
-			// trace("fps: " + timeCount / timeStore);
+			trace("fps: " + timeCount / timeStore);
 			timeStore = 0;
 			timeCount = 0;
 		}
@@ -78,6 +78,7 @@ class Main {
 	private static function init() {
 		document = Browser.document;
 
+		document.addEventListener('contextmenu', e -> e.preventDefault());
 		gl = cast(document.getElementById("mainCanvas"), CanvasElement).getContextWebGL();
 		if (gl == null) {
 			Browser.alert("WebGL is not supported!");
