@@ -1,0 +1,28 @@
+{
+	"properties": {
+		"timeToLive": 0.5
+	},
+	"components": [
+		{
+			"name": "moveComponent",
+			"params": {}
+		},
+		{
+			"name": "timed",
+			"params": {}
+		},
+		{
+			"name": "spawnsOnUpdate",
+			"params": {
+				"entityName": "star.json",
+				"spawnTime": 0.025,
+				"angleRand": 6.28,
+				"velRand": 40,
+				"spawnNum": 1,
+				"relVelMult": 0,
+				"spawnVel": 0,
+				"spreadAngle": 0
+			}
+		}
+	]
+}

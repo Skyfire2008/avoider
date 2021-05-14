@@ -83,6 +83,19 @@
 			"params": {
 				"soundSrc": "assets/sounds/playerExplosion.wav"
 			}
+		},
+		{
+			"name": "spawnsOnDeath",
+			"params": {
+				"entityName": "starSpawner.json",
+				"spawnTime": 1,
+				"angleRand": 0.5,
+				"velRand": 80,
+				"spawnNum": 10,
+				"relVelMult": 0.0,
+				"spawnVel": 320,
+				"spreadAngle": 0.63
+			}
 		}
 	]
 }

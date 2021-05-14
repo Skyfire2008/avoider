@@ -40,7 +40,7 @@ class SpawnSystem {
 	}
 
 	private function spawnEnemy() {
-		var shooterProb = 0.4 - 4 / (wave + 4);
+		var shooterProb = 0.5 - 4 / (wave + 4);
 		var spawnFunc: EntityFactoryMethod;
 
 		if (Math.random() < shooterProb) {

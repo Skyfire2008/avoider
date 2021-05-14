@@ -1,0 +1,55 @@
+{
+	"properties": {
+		"timeToLive": 0.5,
+		"scale": 1.0,
+		"colorMult": [
+			1.0,
+			1.0,
+			1.0
+		],
+		"velocity": {
+			"x": 0,
+			"y": 0
+		},
+		"rotation": 0,
+		"angVel": 0
+	},
+	"components": [
+		{
+			"name": "moveComponent",
+			"params": {}
+		},
+		{
+			"name": "timed",
+			"params": {}
+		},
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "playerGhost.json"
+			}
+		},
+		{
+			"name": "changesScale",
+			"params": {
+				"scale1": 0,
+				"scale2": 5
+			}
+		},
+		{
+			"name": "changesColorMult",
+			"params": {
+				"mult1": [
+					1,
+					1,
+					1
+				],
+				"mult2": [
+					0,
+					0,
+					0
+				]
+			}
+		}
+	]
+}

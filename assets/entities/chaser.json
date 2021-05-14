@@ -46,14 +46,14 @@
 		{
 			"name": "spawnsOnDeath",
 			"params": {
-				"entityName": "spark.json",
+				"entityName": "starSpawner.json",
 				"spawnTime": 1,
-				"angleRand": 1,
-				"velRand": 50,
-				"spawnNum": 16,
-				"relVelMult": 0.25,
-				"spawnVel": 80,
-				"spreadAngle": 0.5
+				"angleRand": 0.5,
+				"velRand": 80,
+				"spawnNum": 5,
+				"relVelMult": 0.0,
+				"spawnVel": 160,
+				"spreadAngle": 1.25
 			}
 		},
 		{

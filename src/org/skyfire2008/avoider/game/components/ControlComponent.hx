@@ -5,6 +5,7 @@ import howler.Howl;
 import spork.core.Entity;
 import spork.core.PropertyHolder;
 import spork.core.Wrapper;
+import spork.core.JsonLoader.EntityFactoryMethod;
 
 import org.skyfire2008.avoider.util.Util;
 import org.skyfire2008.avoider.game.Controller;
@@ -18,7 +19,10 @@ using org.skyfire2008.avoider.geom.Point;
 class ControlComponent implements KBComponent implements InitComponent implements UpdateComponent implements DeathComponent {
 	private static inline var blinkDist = 320;
 	private static inline var blinkRecharge = 5;
+	private static inline var ghostDist = 30.0;
 	private static var blinkSound = new Howl({src: ["assets/sounds/teleport.wav"]});
+
+	private var ghostMethod: EntityFactoryMethod;
 
 	private var owner: Entity;
 	private var dir: Point;
@@ -79,6 +83,22 @@ class ControlComponent implements KBComponent implements InitComponent implement
 			if (dirLength > blinkDist) {
 				dir.mult(blinkDist / dirLength);
 			}
+
+			// add ghosts
+			var ghostNum = Std.int(dir.length / ghostDist);
+			var uDir = dir.copy();
+			uDir.normalize();
+			for (i in 0...ghostNum) {
+				var ghostPos = uDir.scale(i * ghostDist);
+				ghostPos.add(pos);
+				var ghost = ghostMethod((holder) -> {
+					holder.timeToLive = new Wrapper(0.75 * i / ghostNum);
+					holder.position = ghostPos;
+					holder.rotation.value = rotation.value;
+				});
+				Game.instance.addEntity(ghost);
+			}
+
 			pos.x += dir.x;
 			pos.y += dir.y;
 			TargetingSystem.instance.addTarget(owner.id, pos, side.value);
@@ -92,6 +112,7 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	public function onInit() {
 		Controller.instance.addComponent(this);
 		Game.instance.blinkCallback(blinkTime / blinkRecharge);
+		ghostMethod = Game.instance.entMap.get("playerGhost.json");
 	}
 
 	public function onUpdate(time: Float) {
