@@ -17,8 +17,11 @@ class Renderer {
 	private var posLoc: UniformLocation;
 	private var scaleLoc: UniformLocation;
 	private var colorMultLoc: UniformLocation;
+	private var blackRectangle: Shape;
 
 	public static var instance(default, null): Renderer;
+
+	public var trailsEnabled = false;
 
 	public static function setInstance(instance: Renderer) {
 		Renderer.instance = instance;
@@ -37,6 +40,9 @@ class Renderer {
 		rotationLoc = gl.getUniformLocation(prog, "rotation");
 		scaleLoc = gl.getUniformLocation(prog, "scale");
 		colorMultLoc = gl.getUniformLocation(prog, "colorMult");
+
+		blackRectangle = new Shape([0, 0, 0, 720, 1280, 0, 1280, 720], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 2, 1, 2, 3]);
+		blackRectangle.init(gl);
 	}
 
 	public inline function start() {
@@ -44,7 +50,22 @@ class Renderer {
 	}
 
 	public inline function clear() {
-		gl.clear(GL.COLOR_BUFFER_BIT);
+		if (!trailsEnabled) {
+			gl.clear(GL.COLOR_BUFFER_BIT);
+		} else {
+			gl.blendFunc(GL.ONE, GL.CONSTANT_COLOR);
+
+			render(blackRectangle, 0, 0, 0, 1, [1, 1, 1]);
+			gl.uniform2f(scaleLoc, 1, 1);
+			gl.uniform1f(rotationLoc, 0);
+			gl.uniform2f(posLoc, 0, 0);
+			gl.uniform3f(colorMultLoc, 1, 1, 1);
+
+			ext.bindVertexArrayOES(blackRectangle.vao);
+
+			gl.drawElements(GL.TRIANGLES, blackRectangle.indexNum, GL.UNSIGNED_INT, 0);
+			gl.blendFunc(GL.ONE, GL.ZERO);
+		}
 	}
 
 	public inline function render(shape: Shape, posX: Float, posY: Float, rotation: Float, scale: Float, colorMult: ColorMult) {

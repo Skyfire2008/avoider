@@ -79,12 +79,13 @@ class Main {
 		document = Browser.document;
 
 		document.addEventListener('contextmenu', e -> e.preventDefault());
-		gl = cast(document.getElementById("mainCanvas"), CanvasElement).getContextWebGL();
+		gl = cast(document.getElementById("mainCanvas"), CanvasElement).getContextWebGL({preserveDrawingBuffer: true});
 		if (gl == null) {
 			Browser.alert("WebGL is not supported!");
 		}
 		gl.enable(GL.BLEND);
 		gl.blendFunc(GL.ONE, GL.ONE);
+		gl.blendColor(0.9, 0.9, 0.9, 0);
 
 		// get elements
 		playerHpDisplay = document.getElementById("playerHpDisplay");
@@ -103,7 +104,7 @@ class Main {
 			Game.instance.addEntity(Game.instance.entMap.get("player.json")((holder) -> {
 				holder.position = new Point(Constants.gameWidth / 2, Constants.gameHeight / 2);
 			}));
-			Game.instance.addEntity(Game.instance.entMap.get("bgEnt.json")());
+			Game.instance.addEntity(Game.instance.entMap.get("bgEnt.json")(), true);
 		});
 
 		CausesGameOver.init(() -> {
@@ -192,7 +193,7 @@ class Main {
 					game.addEntity(Game.instance.entMap.get("player.json")((holder) -> {
 						holder.position = new Point(Constants.gameWidth / 2, Constants.gameHeight / 2);
 					}));
-					game.addEntity(entFactories.get("bgEnt.json")());
+					game.addEntity(entFactories.get("bgEnt.json")(), true);
 
 					SpawnSystem.instance.reset();
 
