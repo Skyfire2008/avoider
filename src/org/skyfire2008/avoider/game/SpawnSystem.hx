@@ -26,7 +26,7 @@ class SpawnSystem {
 	public function new() {
 		warningSpawnFunc = Game.instance.entMap.get("warning.json");
 		chaserSpawnFunc = Game.instance.entMap.get("chaser.json");
-		shooterSpawnFunc = Game.instance.entMap.get("shooter.json");
+		shooterSpawnFunc = Game.instance.entMap.get("howitzer.json");
 		incWave();
 	}
 
@@ -40,7 +40,7 @@ class SpawnSystem {
 	}
 
 	private function spawnEnemy() {
-		var shooterProb = 0.5 - 4 / (wave + 4);
+		var shooterProb = 1; // 0.5 - 4 / (wave + 4);
 		var spawnFunc: EntityFactoryMethod;
 
 		if (Math.random() < shooterProb) {

@@ -189,6 +189,7 @@ class Main {
 					// init components
 					org.skyfire2008.avoider.game.components.ChaserBehaviour.initShapes();
 					org.skyfire2008.avoider.game.components.ShooterBehaviour.init();
+					org.skyfire2008.avoider.game.components.HowitzerBehaviour.init();
 
 					game.addEntity(Game.instance.entMap.get("player.json")((holder) -> {
 						holder.position = new Point(Constants.gameWidth / 2, Constants.gameHeight / 2);
@@ -197,15 +198,15 @@ class Main {
 
 					SpawnSystem.instance.reset();
 
-					/*for (i in 0...2) {
-							game.addEntity(entFactories.get("chaser.json")((holder) -> {
-								holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
-							}));
-						}
-						for (i in 0...0) {
-							game.addEntity(entFactories.get("shooter.json")((holder) -> {
-								holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
-							}));
+					for (i in 0...20) {
+						game.addEntity(entFactories.get("howitzer.json")((holder) -> {
+							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
+						}));
+					}
+					/*for (i in 0...0) {
+						game.addEntity(entFactories.get("shooter.json")((holder) -> {
+							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
+						}));
 					}*/
 
 					Browser.window.requestAnimationFrame(onEnterFrameFirst);

@@ -1,0 +1,80 @@
+{
+	"properties": {
+		"side": "Enemy",
+		"rotation": 0,
+		"colliderRadius": 20,
+		"velocity": {
+			"x": 0,
+			"y": 0
+		},
+		"scale": 1.5,
+		"colorMult": [
+			1.0,
+			1.0,
+			1.0
+		]
+	},
+	"components": [
+		{
+			"name": "enemyMoveComponent",
+			"params": {}
+		},
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "howitzer.json"
+			}
+		},
+		{
+			"name": "targeted",
+			"params": {}
+		},
+		{
+			"name": "hasCollider",
+			"params": {}
+		},
+		{
+			"name": "diesOnCollision",
+			"params": {}
+		},
+		{
+			"name": "howitzerBehaviour",
+			"params": {}
+		},
+		{
+			"name": "hitsWalls",
+			"params": {}
+		},
+		{
+			"name": "alwaysAlive",
+			"params": {}
+		},
+		{
+			"name": "spawnsOnDeath",
+			"params": {
+				"entityName": "starSpawner.json",
+				"spawnTime": 1,
+				"angleRand": 0.5,
+				"velRand": 80,
+				"spawnNum": 5,
+				"relVelMult": 0.0,
+				"spawnVel": 160,
+				"spreadAngle": 1.25
+			}
+		},
+		{
+			"name": "addsScore",
+			"params": {}
+		},
+		{
+			"name": "countedOnScreen",
+			"params": {}
+		},
+		{
+			"name": "playsSoundOnDeath",
+			"params": {
+				"soundSrc": "assets/sounds/enemyExplosion.wav"
+			}
+		}
+	]
+}

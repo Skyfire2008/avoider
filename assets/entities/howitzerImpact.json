@@ -1,0 +1,17 @@
+{
+	"properties": {
+		"colliderRadius": 150.0,
+		"timeToLive": 0,
+		"side": "Hostile"
+	},
+	"components": [
+		{
+			"name": "timed",
+			"params": {}
+		},
+		{
+			"name": "hasCollider",
+			"params": {}
+		}
+	]
+}
