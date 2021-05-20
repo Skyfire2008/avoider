@@ -1,0 +1,45 @@
+{
+	"properties": {
+		"scale": 1.0,
+		"colorMult": [
+			1.0,
+			1.0,
+			1.0
+		],
+		"rotation": 0
+	},
+	"components": [
+		{
+			"name": "timed",
+			"params": {}
+		},
+		{
+			"name": "changesScale",
+			"params": {
+				"scale1": 1,
+				"scale2": 150
+			}
+		},
+		{
+			"name": "changesColorMult",
+			"params": {
+				"mult1": [
+					1,
+					1,
+					0
+				],
+				"mult2": [
+					1,
+					0,
+					0
+				]
+			}
+		},
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "circle.json"
+			}
+		}
+	]
+}

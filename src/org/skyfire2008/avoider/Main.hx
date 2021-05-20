@@ -192,17 +192,12 @@ class Main {
 					org.skyfire2008.avoider.game.components.HowitzerBehaviour.init();
 
 					game.addEntity(Game.instance.entMap.get("player.json")((holder) -> {
-						holder.position = new Point(Constants.gameWidth / 2, Constants.gameHeight / 2);
+						holder.position = new Point(0, 0);
 					}));
 					game.addEntity(entFactories.get("bgEnt.json")(), true);
 
 					SpawnSystem.instance.reset();
 
-					for (i in 0...20) {
-						game.addEntity(entFactories.get("howitzer.json")((holder) -> {
-							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
-						}));
-					}
 					/*for (i in 0...0) {
 						game.addEntity(entFactories.get("shooter.json")((holder) -> {
 							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));

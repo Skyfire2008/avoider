@@ -18,6 +18,7 @@ class SpawnSystem {
 	private var warningSpawnFunc: EntityFactoryMethod;
 	private var chaserSpawnFunc: EntityFactoryMethod;
 	private var shooterSpawnFunc: EntityFactoryMethod;
+	private var howitzerSpawnFunc: EntityFactoryMethod;
 
 	public static function setInstance(instance: SpawnSystem) {
 		SpawnSystem.instance = instance;
@@ -26,7 +27,8 @@ class SpawnSystem {
 	public function new() {
 		warningSpawnFunc = Game.instance.entMap.get("warning.json");
 		chaserSpawnFunc = Game.instance.entMap.get("chaser.json");
-		shooterSpawnFunc = Game.instance.entMap.get("howitzer.json");
+		shooterSpawnFunc = Game.instance.entMap.get("shooter.json");
+		howitzerSpawnFunc = Game.instance.entMap.get("howitzer.json");
 		incWave();
 	}
 
@@ -40,11 +42,16 @@ class SpawnSystem {
 	}
 
 	private function spawnEnemy() {
-		var shooterProb = 1; // 0.5 - 4 / (wave + 4);
+		var shooterProb = 0.5 - 4 / (wave + 4);
 		var spawnFunc: EntityFactoryMethod;
 
 		if (Math.random() < shooterProb) {
-			spawnFunc = shooterSpawnFunc;
+			var howitzerProb = 0.5 - 6 / (wave + 8);
+			if (Math.random() < howitzerProb) {
+				spawnFunc = howitzerSpawnFunc;
+			} else {
+				spawnFunc = shooterSpawnFunc;
+			}
 		} else {
 			spawnFunc = chaserSpawnFunc;
 		}

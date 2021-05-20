@@ -1,0 +1,49 @@
+{
+	"properties": {
+		"timeToLive": 0.2,
+		"scale": 1.0,
+		"colorMult": [
+			1.0,
+			1.0,
+			1.0
+		]
+	},
+	"components": [
+		{
+			"name": "moveComponent",
+			"params": {}
+		},
+		{
+			"name": "timed",
+			"params": {}
+		},
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "redStar.json"
+			}
+		},
+		{
+			"name": "changesScale",
+			"params": {
+				"scale1": 0,
+				"scale2": 40
+			}
+		},
+		{
+			"name": "changesColorMult",
+			"params": {
+				"mult1": [
+					1,
+					1,
+					1
+				],
+				"mult2": [
+					0,
+					0,
+					0
+				]
+			}
+		}
+	]
+}

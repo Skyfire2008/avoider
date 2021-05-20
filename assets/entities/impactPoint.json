@@ -3,8 +3,8 @@
 		"scale": 150.0,
 		"colorMult": [
 			1.0,
-			0.0,
-			0.0
+			1.0,
+			1.0
 		],
 		"rotation": 0,
 		"angVel": 3,
@@ -23,21 +23,15 @@
 			"params": {}
 		},
 		{
-			"name": "renderComponent",
-			"params": {
-				"shapeRef": "impactPoint.json"
-			}
-		},
-		{
 			"name": "spawnsOnDeath",
 			"params": {
-				"entityName": "starSpawner.json",
+				"entityName": "redStarSpawner.json",
 				"spawnTime": 1,
-				"angleRand": 0.5,
-				"velRand": 80,
-				"spawnNum": 5,
+				"angleRand": 0.75,
+				"velRand": 160,
+				"spawnNum": 10,
 				"relVelMult": 0.0,
-				"spawnVel": 160,
+				"spawnVel": 300,
 				"spreadAngle": 1.25
 			}
 		},
@@ -52,6 +46,27 @@
 				"relVelMult": 0.0,
 				"spawnVel": 0,
 				"spreadAngle": 0
+			}
+		},
+		{
+			"name": "changesColorMult",
+			"params": {
+				"mult1": [
+					1,
+					1,
+					0
+				],
+				"mult2": [
+					1,
+					0,
+					0
+				]
+			}
+		},
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "impactPoint.json"
 			}
 		}
 	]

@@ -20,12 +20,6 @@
 			"params": {}
 		},
 		{
-			"name": "renderComponent",
-			"params": {
-				"shapeRef": "howitzer.json"
-			}
-		},
-		{
 			"name": "targeted",
 			"params": {}
 		},
@@ -74,6 +68,12 @@
 			"name": "playsSoundOnDeath",
 			"params": {
 				"soundSrc": "assets/sounds/enemyExplosion.wav"
+			}
+		},
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "howitzer.json"
 			}
 		}
 	]
