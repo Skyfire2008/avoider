@@ -1,9 +1,8 @@
 package org.skyfire2008.avoider.game;
 
-import haxe.ds.StringMap;
-
 import howler.Howl;
 
+import spork.core.PropertyHolder;
 import spork.core.Wrapper;
 import spork.core.Component;
 import spork.core.JsonLoader.EntityFactoryMethod;
@@ -80,6 +79,55 @@ class Spawner {
 
 	public function stopSpawn() {
 		isSpawning = false;
+	}
+
+	/**
+	 * Spawns entities with post-processign of holder 
+	 * @param pos 
+	 * @param rotation 
+	 * @param vel 
+	 */
+	public function spawnWithProcessing(pos: Point, rotation: Float, vel: Point, func: (holder: PropertyHolder, num: Int) -> Void) {
+		var baseAngle = config.spawnNum * config.spreadAngle / 2.0;
+
+		for (i in 0...config.spawnNum) {
+			// create extra components
+			var extras: Array<Component> = [];
+			for (func in extraComponents) {
+				extras.push(func());
+			}
+
+			var ent = spawnFunc((holder) -> {
+				var angle = i * config.spreadAngle + Util.rand(config.angleRand);
+				angle -= baseAngle;
+				holder.position = pos.copy();
+				holder.rotation = new Wrapper<Float>(rotation + angle);
+				holder.angVel = new Wrapper<Float>(0);
+
+				holder.velocity = Point.fromPolar(angle + rotation, config.spawnVel + Util.rand(config.velRand));
+				holder.velocity.x += vel.x * config.relVelMult;
+				holder.velocity.y += vel.y * config.relVelMult;
+
+				// process holder
+				func(holder, i);
+
+				// assign properties to extras
+				for (component in extras) {
+					component.assignProps(holder);
+				}
+			});
+
+			// attach extra components
+			for (component in extras) {
+				component.attach(ent);
+			}
+
+			Game.instance.addEntity(ent);
+		}
+
+		if (howl != null && !howl.playing()) {
+			howl.play();
+		}
 	}
 
 	public function spawn(pos: Point, rotation: Float, vel: Point) {

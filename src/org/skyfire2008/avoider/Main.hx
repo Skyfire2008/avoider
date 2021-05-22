@@ -85,7 +85,7 @@ class Main {
 		}
 		gl.enable(GL.BLEND);
 		gl.blendFunc(GL.ONE, GL.ONE);
-		gl.blendColor(0.9, 0.9, 0.9, 0);
+		gl.blendColor(0.95, 0.95, 0.95, 0);
 
 		// get elements
 		playerHpDisplay = document.getElementById("playerHpDisplay");
@@ -192,13 +192,13 @@ class Main {
 					org.skyfire2008.avoider.game.components.HowitzerBehaviour.init();
 
 					game.addEntity(Game.instance.entMap.get("player.json")((holder) -> {
-						holder.position = new Point(0, 0);
+						holder.position = new Point(Constants.gameWidth / 2, Constants.gameHeight / 2);
 					}));
 					game.addEntity(entFactories.get("bgEnt.json")(), true);
 
 					SpawnSystem.instance.reset();
 
-					/*for (i in 0...0) {
+					/*for (i in 0...50) {
 						game.addEntity(entFactories.get("shooter.json")((holder) -> {
 							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 						}));

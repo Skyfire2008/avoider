@@ -1,10 +1,13 @@
 package org.skyfire2008.avoider.game.components;
 
+import howler.Howl;
+
 import spork.core.PropertyHolder;
 import spork.core.Entity;
 import spork.core.JsonLoader.EntityFactoryMethod;
 import spork.core.Wrapper;
 
+import org.skyfire2008.avoider.graphics.ColorMult;
 import org.skyfire2008.avoider.util.Util;
 
 using org.skyfire2008.avoider.geom.Point;
@@ -19,16 +22,19 @@ class HowitzerBehaviour implements Interfaces.UpdateComponent implements Interfa
 	private static inline var idleSpeed = 32.0;
 	private static inline var rotSpeed = 1.0;
 	private static inline var reloadTime = 5.0;
-	private static inline var crosshairTol = 30.0;
+	private static inline var halfTime = 2.5; // half of reload time
+	private static inline var crosshairTol = 60.0;
 	private static inline var crosshairSpeed = 640.0;
-	private static inline var crosshairA = 1280.0;
+	private static inline var crosshairA = 1024.0;
 	private static inline var shotSpeed = 1280.0;
 	private static inline var idleTargetR = 40;
 	private static inline var a = 16;
 
+	private static var shootSound: Howl;
 	private static var createCrosshair: EntityFactoryMethod;
 	private static var createImpact: EntityFactoryMethod;
 	private static var createCircle: EntityFactoryMethod;
+	private static var createIndicator: EntityFactoryMethod;
 
 	private var side: Wrapper<Side>;
 	private var state: State;
@@ -43,11 +49,17 @@ class HowitzerBehaviour implements Interfaces.UpdateComponent implements Interfa
 	private var crosshair: Entity;
 	private var crosshairPos: Point;
 	private var crosshairVel: Point;
+	private var muzzleFlashSpawner: Spawner;
+
+	private var indicator: Entity;
+	private var indicMult: ColorMult;
 
 	public static function init() {
 		createCrosshair = Game.instance.entMap.get("shooterCrosshair.json");
 		createImpact = Game.instance.entMap.get("impactPoint.json");
 		createCircle = Game.instance.entMap.get("howitzerCircle.json");
+		createIndicator = Game.instance.entMap.get("howitzerIndicator.json");
+		shootSound = new Howl({src: ["assets/sounds/shooterShoot.wav"]});
 	}
 
 	public function new() {
@@ -109,7 +121,27 @@ class HowitzerBehaviour implements Interfaces.UpdateComponent implements Interfa
 		side = holder.side;
 	}
 
-	public function onInit() {}
+	public function onInit() {
+		indicMult = [1.0, 0, 0];
+		indicator = createIndicator((holder) -> {
+			holder.position = pos;
+			holder.rotation = rotation;
+			holder.colorMult = indicMult;
+		});
+		Game.instance.addEntity(indicator);
+
+		muzzleFlashSpawner = new Spawner({
+			entityName: "spark.json",
+			spawnTime: 0,
+			spawnNum: 30,
+			spawnVel: 320,
+			velRand: 160,
+			spreadAngle: 0.5 * Math.PI / 180,
+			relVelMult: 0,
+			angleRand: 1 * Math.PI / 180
+		});
+		muzzleFlashSpawner.init();
+	}
 
 	public function onUpdate(dTime: Float) {
 		if (state == Idling) {
@@ -130,7 +162,20 @@ class HowitzerBehaviour implements Interfaces.UpdateComponent implements Interfa
 			var dirLength = dir.length;
 
 			if (dirLength <= Math.max(crosshairVel.length * dTime, crosshairTol)) {
-				// reached the target, spawn impact point
+				// reached the target, fire
+
+				shootSound.play();
+
+				// spawn muzzle flash
+				muzzleFlashSpawner.spawnWithProcessing(pos.translate(Point.fromPolar(rotation.value, 36)), rotation.value, vel, (holder, i) -> {
+					var mult = 1 - Math.abs(i - 30 / 2) / (30 / 2);
+					holder.rotation.value = 0;
+					holder.timeToLive.value += Math.random() * (1 - mult);
+					holder.velocity.mult(Math.sqrt(mult));
+					holder.colorMult = [1, Math.random() * mult, 0.05];
+				});
+
+				// spawn impact point
 				var entPos = crosshairPos.copy();
 				var entTtl = Constants.reactionTime + pos.difference(entPos).length / shotSpeed;
 				var impact = createImpact((holder) -> {
@@ -138,6 +183,7 @@ class HowitzerBehaviour implements Interfaces.UpdateComponent implements Interfa
 					holder.timeToLive = new Wrapper(entTtl);
 				});
 				Game.instance.addEntity(impact);
+
 				// also spawn circle signifying impact time
 				var circle = createCircle((holder) -> {
 					holder.position = entPos;
@@ -145,14 +191,19 @@ class HowitzerBehaviour implements Interfaces.UpdateComponent implements Interfa
 				});
 				Game.instance.addEntity(circle);
 
+				// reset state
+				TargetingSystem.instance.removeTargetDeathObserver(shootTargetId, notifyAboutDeath);
 				state = Idling;
 				time = 0;
 				crosshair.kill();
 				crosshair = null;
 			} else {
 				// not reached, move crosshair
-				dir.mult(dTime * crosshairA / dirLength);
-				crosshairVel.mult(Math.pow(Constants.mju, dTime * 60));
+				dir.mult(1.0 / dirLength);
+				var mjuFactor = Math.sqrt((dir.dot(crosshairVel) / crosshairVel.length + 1) / 2);
+				var mju = 1 * mjuFactor + (1 - mjuFactor) * 0.6;
+				dir.mult(dTime * crosshairA);
+				crosshairVel.mult(Math.pow(mju, dTime * 60));
 				crosshairVel.add(dir);
 				crosshairPos.add(crosshairVel.scale(dTime));
 
@@ -177,9 +228,20 @@ class HowitzerBehaviour implements Interfaces.UpdateComponent implements Interfa
 		}
 
 		time += dTime;
+
+		// change indicator color multiplier
+		if (state == Idling) {
+			if (time < halfTime) {
+				indicMult.set([time / halfTime, 1.0, 0]);
+			} else {
+				indicMult.set([1.0, (reloadTime - time) / halfTime, 0]);
+			}
+		}
 	}
 
 	public function onDeath() {
+		indicator.kill();
+
 		if (crosshair != null) {
 			crosshair.kill();
 		}

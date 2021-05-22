@@ -68,6 +68,12 @@
 			"params": {
 				"shapeRef": "impactPoint.json"
 			}
+		},
+		{
+			"name": "playsSoundOnDeath",
+			"params": {
+				"soundSrc": "assets/sounds/howitzerExplosion.wav"
+			}
 		}
 	]
 }
