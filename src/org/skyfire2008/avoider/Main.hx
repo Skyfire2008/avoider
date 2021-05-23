@@ -182,7 +182,9 @@ class Main {
 					var storage = new StorageLoader();
 					StorageLoader.setInstance(storage);
 
-					var controller = new Controller(storage.data.keyBindings);
+					var controller = new Controller(storage.data.keyBindings, () -> {
+						running = !running;
+					});
 					controller.register(document);
 					Controller.setInstance(controller);
 

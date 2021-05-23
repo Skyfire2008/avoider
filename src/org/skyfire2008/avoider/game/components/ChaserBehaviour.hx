@@ -220,15 +220,15 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 	public static inline var idleTargetRadius = 40;
 	public static inline var detectionRadius = 640;
 	public static inline var closeAttackRadius = 360;
-	public static inline var farAttackRadius = 400;
+	public static inline var farAttackRadius = 480;
 	public static inline var a = 160;
 	public static inline var idleSpeed = 64;
-	public static inline var chaseSpeed = 128;
-	public static inline var attackSpeed = 1280;
+	public static inline var chaseSpeed = 160;
+	public static inline var attackSpeed = 1360;
 	public static inline var armTime = 1.0;
 	public static inline var attackTime = 0.75;
-	public static inline var rotSpeed = 3; // in radians
-	public static inline var angleThresh = 0.05;
+	public static inline var rotSpeed = 6; // in radians
+	public static inline var angleThresh = 0.04;
 
 	public static var baseShape: Shape;
 	public static var chasingShape: Shape;

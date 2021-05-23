@@ -13,7 +13,7 @@ class SpawnSystem {
 	private var expectedEnemiesOnScreen = 0;
 	private var enemiesOnScreen = 0;
 	private var enemiesTotal = 2;
-	private var wave = 0;
+	private var wave = 1;
 
 	private var warningSpawnFunc: EntityFactoryMethod;
 	private var chaserSpawnFunc: EntityFactoryMethod;
@@ -29,24 +29,24 @@ class SpawnSystem {
 		chaserSpawnFunc = Game.instance.entMap.get("chaser.json");
 		shooterSpawnFunc = Game.instance.entMap.get("shooter.json");
 		howitzerSpawnFunc = Game.instance.entMap.get("howitzer.json");
-		incWave();
 	}
 
 	public function reset() {
-		wave = 0;
+		wave = 1;
 		enemiesOnScreen = 0;
-		incWave();
+		enemiesTotal = 2;
+		expectedEnemiesOnScreen = 2;
 		for (i in 0...2) {
 			spawnEnemy();
 		}
 	}
 
 	private function spawnEnemy() {
-		var shooterProb = 0.5 - 4 / (wave + 4);
+		var shooterProb = 0.6 - 4 / (wave + 4);
 		var spawnFunc: EntityFactoryMethod;
 
 		if (Math.random() < shooterProb) {
-			var howitzerProb = 0.5 - 6 / (wave + 8);
+			var howitzerProb = 0.5 - 6 / (wave + 6);
 			if (Math.random() < howitzerProb) {
 				spawnFunc = howitzerSpawnFunc;
 			} else {
@@ -90,7 +90,8 @@ class SpawnSystem {
 
 	private function incWave() {
 		wave++;
-		enemiesTotal = wave * 2;
+		ScoringSystem.instance.incBaseMult();
+		enemiesTotal = Std.int(wave * 1.5);
 		expectedEnemiesOnScreen = Std.int(wave / 2) + 1;
 	}
 

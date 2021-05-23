@@ -12,6 +12,7 @@ typedef KeyBindings = {
 	var ?right: String;
 	var ?down: String;
 	var ?run: String;
+	var ?pause: String;
 }
 
 typedef StoredData = {
@@ -31,7 +32,8 @@ class StorageLoader {
 			left: "KeyA",
 			down: "KeyS",
 			right: "KeyD",
-			run: "ShiftLeft"
+			run: "ShiftLeft",
+			pause: "KeyP"
 		}
 	};
 

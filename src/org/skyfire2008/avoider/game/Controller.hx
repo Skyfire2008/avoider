@@ -28,7 +28,7 @@ class Controller {
 
 	public static var instance(default, null): Controller;
 
-	public function new(config: KeyBindings) {
+	public function new(config: KeyBindings, pauseAction: DownAction) {
 		downActions = new Map<String, DownAction>();
 		upActions = new Map<String, DownAction>();
 		heldActions = new Map<String, HeldAction>();
@@ -36,6 +36,7 @@ class Controller {
 		heldKeys = new Set<String>();
 		mouseDownActions = new Map<Int, MouseAction>();
 		mouseUpActions = new Map<Int, MouseAction>();
+		this.pauseAction = pauseAction;
 
 		remap(config);
 	}
@@ -80,6 +81,7 @@ class Controller {
 				component.addDir(1, 0);
 			}
 		});
+		downActions.set(config.pause, pauseAction);
 
 		upActions.clear();
 		upActions.set(config.up, () -> {

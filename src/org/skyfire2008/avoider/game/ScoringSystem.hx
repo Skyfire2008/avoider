@@ -9,6 +9,7 @@ class ScoringSystem {
 	private var multBarCallback: (value: Float) -> Void;
 	private var score = 0;
 	private var mult = 1;
+	private var baseMult = 1;
 	private var multTime = 0.0;
 
 	public static function setInstance(instance: ScoringSystem) {
@@ -25,10 +26,18 @@ class ScoringSystem {
 		if (multTime > 0) {
 			multTime = Math.max(0, multTime - time);
 			if (multTime == 0) {
-				mult = 1;
+				mult = baseMult;
 				multCallback(mult);
 			}
 			multBarCallback(multTime / multDecay);
+		}
+	}
+
+	public function incBaseMult() {
+		baseMult++;
+		if (mult < baseMult) {
+			mult = baseMult;
+			multCallback(mult);
 		}
 	}
 
@@ -42,18 +51,16 @@ class ScoringSystem {
 	}
 
 	public function resetMult() {
-		mult = 1;
+		mult = baseMult;
 		multTime = 0;
 		multCallback(mult);
 		multBarCallback(multTime / multDecay);
 	}
 
 	public function reset() {
-		mult = 1;
-		multTime = 0;
+		baseMult = 1;
+		resetMult();
 		score = 0;
-		multCallback(mult);
-		multBarCallback(multTime / multDecay);
 		scoreCallback(score);
 	}
 }
