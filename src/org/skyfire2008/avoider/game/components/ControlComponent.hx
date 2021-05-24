@@ -1,5 +1,7 @@
 package org.skyfire2008.avoider.game.components;
 
+import org.skyfire2008.avoider.graphics.Renderer;
+
 import howler.Howl;
 
 import spork.core.Entity;
@@ -7,6 +9,7 @@ import spork.core.PropertyHolder;
 import spork.core.Wrapper;
 import spork.core.JsonLoader.EntityFactoryMethod;
 
+import org.skyfire2008.avoider.graphics.Shape;
 import org.skyfire2008.avoider.util.Util;
 import org.skyfire2008.avoider.game.Controller;
 import org.skyfire2008.avoider.game.components.Interfaces.InitComponent;
@@ -22,6 +25,8 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	private static inline var ghostDist = 30.0;
 	private static var blinkSound = new Howl({src: ["assets/sounds/teleport.wav"]});
 
+	private var blinkGhost: Shape;
+	private var mousePos: Point;
 	private var ghostMethod: EntityFactoryMethod;
 
 	private var owner: Entity;
@@ -46,6 +51,7 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		this.runSpeed = maxSpeed;
 		this.walkSpeed = maxSpeed / 4;
 		this.brakeMult = brakeMult;
+		mousePos = new Point();
 	}
 
 	public function assignProps(holder: PropertyHolder) {
@@ -73,6 +79,8 @@ class ControlComponent implements KBComponent implements InitComponent implement
 			TargetingSystem.instance.removeTarget(owner.id, side.value);
 			var dir = new Point(x, y);
 			dir.sub(pos);
+			var angle = dir.angle;
+			rotation.value = angle;
 			var dirLength = dir.length;
 			if (dirLength > blinkDist) {
 				dir.mult(blinkDist / dirLength);
@@ -107,12 +115,20 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		Controller.instance.addComponent(this);
 		Game.instance.blinkCallback(blinkTime / blinkRecharge);
 		ghostMethod = Game.instance.entMap.get("playerGhost.json");
+		blinkGhost = Shape.getShape("playerGhost.json");
+	}
+
+	public function onMouseMove(x: Float, y: Float) {
+		mousePos.x = x;
+		mousePos.y = y;
 	}
 
 	public function onUpdate(time: Float) {
+		var spawnBlinkEffect = false;
 		if (blinkTime < blinkRecharge) {
 			blinkTime += time;
 			if (blinkTime > blinkRecharge) {
+				spawnBlinkEffect = true;
 				blinkTime = blinkRecharge;
 			}
 			Game.instance.blinkCallback(blinkTime / blinkRecharge);
@@ -135,6 +151,29 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		}
 
 		rotation.value = vel.angle;
+
+		// draw blink ghost
+		var blinkDir = mousePos.difference(pos);
+		var blinkDirLength = blinkDir.length;
+		if (blinkDirLength > blinkDist) {
+			blinkDir.mult(blinkDist / blinkDirLength);
+		}
+		var blinkAngle = blinkDir.angle;
+		blinkDir.add(pos);
+		var mult = 0.3;
+		if (blinkTime >= blinkRecharge) {
+			mult = 1;
+		}
+		if (spawnBlinkEffect) {
+			Game.instance.addEntity(ghostMethod((holder) -> {
+				holder.colorMult = [1, 1, 1];
+				holder.timeToLive = new Wrapper(0.5);
+				holder.position = blinkDir;
+				holder.rotation.value = blinkAngle;
+			}));
+		}
+
+		Renderer.instance.render(blinkGhost, blinkDir.x, blinkDir.y, blinkAngle, 1.5, [0.01 * mult, 0.5 * mult, 1.0 * mult]);
 	}
 
 	public function onDeath() {

@@ -40,6 +40,7 @@ class Main {
 	private static var timeStore: Float = 0;
 	private static var timeCount: Float = 0;
 
+	private static var mainCanvas: Element;
 	private static var playerHpDisplay: Element;
 	private static var blinkBar: Element;
 	private static var scoreDisplay: Element;
@@ -79,7 +80,8 @@ class Main {
 		document = Browser.document;
 
 		document.addEventListener('contextmenu', e -> e.preventDefault());
-		gl = cast(document.getElementById("mainCanvas"), CanvasElement).getContextWebGL({preserveDrawingBuffer: true});
+		mainCanvas = document.getElementById("mainCanvas");
+		gl = cast(mainCanvas, CanvasElement).getContextWebGL({preserveDrawingBuffer: true});
 		if (gl == null) {
 			Browser.alert("WebGL is not supported!");
 		}
@@ -97,6 +99,7 @@ class Main {
 		restartButton = cast(document.getElementById("restartButton"));
 		restartButton.addEventListener("click", (e) -> {
 			gameOverStuff.style.display = "none";
+			mainCanvas.style.cursor = "none";
 			Game.instance.reset();
 			TargetingSystem.instance.reset();
 			ScoringSystem.instance.reset();
@@ -109,6 +112,7 @@ class Main {
 
 		CausesGameOver.init(() -> {
 			gameOverStuff.style.display = "block";
+			mainCanvas.style.cursor = "default";
 		});
 
 		ScoringSystem.setInstance(new ScoringSystem((score) -> {

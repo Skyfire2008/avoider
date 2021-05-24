@@ -21,6 +21,7 @@ class Controller {
 	private var heldActions: Map<String, HeldAction>;
 	private var mouseDownActions: Map<Int, MouseAction>;
 	private var mouseUpActions: Map<Int, MouseAction>;
+	private var mouseMoveActions: Array<MouseAction>;
 
 	private var components: Array<KBComponent>;
 
@@ -36,6 +37,7 @@ class Controller {
 		heldKeys = new Set<String>();
 		mouseDownActions = new Map<Int, MouseAction>();
 		mouseUpActions = new Map<Int, MouseAction>();
+		mouseMoveActions = [];
 		this.pauseAction = pauseAction;
 
 		remap(config);
@@ -111,16 +113,23 @@ class Controller {
 				component.blink(x, y);
 			}
 		});
-		mouseDownActions.set(2, (X: Float, y: Float) -> {
+		mouseDownActions.set(2, (x: Float, y: Float) -> {
 			for (component in components) {
 				component.setWalk(true);
 			}
 		});
 
 		mouseUpActions.clear();
-		mouseUpActions.set(2, (X: Float, y: Float) -> {
+		mouseUpActions.set(2, (x: Float, y: Float) -> {
 			for (component in components) {
 				component.setWalk(false);
+			}
+		});
+
+		mouseMoveActions = [];
+		mouseMoveActions.push((x: Float, y: Float) -> {
+			for (component in components) {
+				component.onMouseMove(x, y);
 			}
 		});
 	}
@@ -164,6 +173,12 @@ class Controller {
 		}
 	}
 
+	private function onMouseMove(e: MouseEvent) {
+		for (action in mouseMoveActions) {
+			action(e.clientX, e.clientY);
+		}
+	}
+
 	public function update(time: Float) {
 		for (key in heldKeys.iterator()) {
 			var action = heldActions.get(key);
@@ -180,6 +195,7 @@ class Controller {
 		// TODO: add support for mouse buttons to settings
 		target.addEventListener("mousedown", onMouseDown);
 		target.addEventListener("mouseup", onMouseUp);
+		target.addEventListener("mousemove", onMouseMove);
 	}
 
 	public function deregister(target: EventTarget) {

@@ -13,7 +13,7 @@ class SpawnSystem {
 	private var expectedEnemiesOnScreen = 0;
 	private var enemiesOnScreen = 0;
 	private var enemiesTotal = 2;
-	private var wave = 1;
+	public var wave(default, null) = 1;
 
 	private var warningSpawnFunc: EntityFactoryMethod;
 	private var chaserSpawnFunc: EntityFactoryMethod;

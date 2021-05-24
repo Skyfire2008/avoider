@@ -41,12 +41,6 @@
 			}
 		},
 		{
-			"name": "renderComponent",
-			"params": {
-				"shapeRef": "player.json"
-			}
-		},
-		{
 			"name": "controlComponent",
 			"params": {
 				"a": 6400,
@@ -95,6 +89,12 @@
 				"relVelMult": 0.0,
 				"spawnVel": 320,
 				"spreadAngle": 0.63
+			}
+		},
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "player.json"
 			}
 		}
 	]

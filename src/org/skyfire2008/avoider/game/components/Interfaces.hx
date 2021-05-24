@@ -36,6 +36,7 @@ interface KBComponent {
 	function addDir(x: Float, y: Float): Void;
 	function setWalk(value: Bool): Void;
 	function blink(x: Float, y: Float): Void;
+	function onMouseMove(x: Float, y: Float): Void;
 }
 
 interface DamageComponent extends Component {
