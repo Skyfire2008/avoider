@@ -115,7 +115,7 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		Controller.instance.addComponent(this);
 		Game.instance.blinkCallback(blinkTime / blinkRecharge);
 		ghostMethod = Game.instance.entMap.get("playerGhost.json");
-		blinkGhost = Shape.getShape("playerGhost.json");
+		blinkGhost = Shape.getShape("blinkGhost.json");
 	}
 
 	public function onMouseMove(x: Float, y: Float) {
@@ -153,27 +153,21 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		rotation.value = vel.angle;
 
 		// draw blink ghost
-		var blinkDir = mousePos.difference(pos);
-		var blinkDirLength = blinkDir.length;
-		if (blinkDirLength > blinkDist) {
-			blinkDir.mult(blinkDist / blinkDirLength);
-		}
-		var blinkAngle = blinkDir.angle;
-		blinkDir.add(pos);
-		var mult = 0.3;
-		if (blinkTime >= blinkRecharge) {
-			mult = 1;
+		var mult = blinkTime / blinkRecharge;
+		if (mult < 0.8) {
+			mult = 0;
+		} else {
+			mult = (mult - 0.8) / 0.2;
 		}
 		if (spawnBlinkEffect) {
 			Game.instance.addEntity(ghostMethod((holder) -> {
 				holder.colorMult = [1, 1, 1];
 				holder.timeToLive = new Wrapper(0.5);
-				holder.position = blinkDir;
-				holder.rotation.value = blinkAngle;
+				holder.position = pos;
+				holder.rotation = rotation;
 			}));
 		}
-
-		Renderer.instance.render(blinkGhost, blinkDir.x, blinkDir.y, blinkAngle, 1.5, [0.01 * mult, 0.5 * mult, 1.0 * mult]);
+		Renderer.instance.render(blinkGhost, pos.x, pos.y, rotation.value, 1, [0.01 * mult, 1.0 * mult, 0.5 * mult]);
 	}
 
 	public function onDeath() {

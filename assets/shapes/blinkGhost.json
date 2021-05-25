@@ -1,0 +1,20 @@
+{
+	"points": [
+	  {"x": 0, "y": -19, "color": "#ffffff"},
+	  {"x": 14, "y": 12, "color": "#ffffff"},
+	  {"x": 0, "y": 19, "color": "#ffffff"},
+	  {"x": -14, "y": 12, "color": "#ffffff"},
+	  {"x": -5, "y": -11, "color": "#ffffff"},
+	  {"x": -4, "y": -8, "color": "#ffffff"},
+	  {"x": 4, "y": -8, "color": "#ffffff"},
+	  {"x": 5, "y": -11, "color": "#ffffff"}
+	],"lines": [
+	  {"from": 1, "to": 2},
+	  {"from": 2, "to": 3},
+	  {"from": 3, "to": 4},
+	  {"from": 1, "to": 7},
+	  {"from": 6, "to": 7},
+	  {"from": 0, "to": 6},
+	  {"from": 0, "to": 5},
+	  {"from": 4, "to": 5}
+  ]}

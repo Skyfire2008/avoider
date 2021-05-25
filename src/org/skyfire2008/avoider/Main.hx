@@ -99,7 +99,6 @@ class Main {
 		restartButton = cast(document.getElementById("restartButton"));
 		restartButton.addEventListener("click", (e) -> {
 			gameOverStuff.style.display = "none";
-			mainCanvas.style.cursor = "none";
 			Game.instance.reset();
 			TargetingSystem.instance.reset();
 			ScoringSystem.instance.reset();
@@ -112,7 +111,6 @@ class Main {
 
 		CausesGameOver.init(() -> {
 			gameOverStuff.style.display = "block";
-			mainCanvas.style.cursor = "default";
 		});
 
 		ScoringSystem.setInstance(new ScoringSystem((score) -> {

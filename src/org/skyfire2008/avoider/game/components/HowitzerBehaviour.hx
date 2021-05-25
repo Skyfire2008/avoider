@@ -201,7 +201,7 @@ class HowitzerBehaviour implements Interfaces.UpdateComponent implements Interfa
 				// not reached, move crosshair
 				dir.mult(1.0 / dirLength);
 				var mjuFactor = Math.sqrt((dir.dot(crosshairVel) / crosshairVel.length + 1) / 2);
-				var mju = 1 * mjuFactor + (1 - mjuFactor) * 0.6;
+				var mju = 1 * mjuFactor + (1 - mjuFactor) * 0.25;
 				dir.mult(dTime * crosshairA);
 				crosshairVel.mult(Math.pow(mju, dTime * 60));
 				crosshairVel.add(dir);
