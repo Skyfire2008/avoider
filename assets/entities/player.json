@@ -75,7 +75,7 @@
 		{
 			"name": "playsSoundOnDeath",
 			"params": {
-				"soundSrc": "assets/sounds/playerExplosion.wav"
+				"soundSrc": "playerExplosion.wav"
 			}
 		},
 		{

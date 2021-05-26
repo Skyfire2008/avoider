@@ -2,16 +2,16 @@ package org.skyfire2008.avoider.game.components;
 
 import howler.Howl;
 
-class PlaysSoundOnDeath implements Interfaces.DeathComponent {
+class PlaysSoundOnDeath implements Interfaces.DeathComponent implements Interfaces.InitComponent {
 	private var sound: Howl;
 	private var soundSrc: String;
 
-	public static function fromJson(json: Dynamic) {
-		return new PlaysSoundOnDeath(new Howl({src: [json.soundSrc]}));
+	public function new(soundSrc: String) {
+		this.soundSrc = soundSrc;
 	}
 
-	public function new(sound: Howl) {
-		this.sound = sound;
+	public function onInit() {
+		sound = SoundSystem.instance.getSound(soundSrc);
 	}
 
 	public function onDeath() {

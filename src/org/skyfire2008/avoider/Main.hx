@@ -1,5 +1,9 @@
 package org.skyfire2008.avoider;
 
+import org.skyfire2008.avoider.game.SoundSystem;
+
+import howler.Howl;
+
 import org.skyfire2008.avoider.game.TargetingSystem;
 
 import js.html.ButtonElement;
@@ -143,6 +147,25 @@ class Main {
 			var entsDir = contents.find((item) -> {
 				return item.path == "entities";
 			});
+			var soundsDir = contents.find((item) -> {
+				return item.path == "sounds";
+			});
+
+			// load all sounds
+			var sounds: StringMap<Howl> = new StringMap<Howl>();
+			for (kid in soundsDir.kids) {
+				loadPromises.push(new Promise<String>((resolve, reject) -> {
+					var howl = new Howl({
+						src: ["assets/sounds/" + kid.path],
+						onload: () -> {
+							trace("loaded " + kid.path);
+							resolve(null);
+						}
+					});
+					sounds.set(kid.path, howl);
+				}));
+			}
+			SoundSystem.setInstance(new SoundSystem(sounds));
 
 			// load all shapes
 			var shapes: StringMap<Shape> = new StringMap<Shape>();
@@ -191,9 +214,10 @@ class Main {
 					Controller.setInstance(controller);
 
 					// init components
-					org.skyfire2008.avoider.game.components.ChaserBehaviour.initShapes();
+					org.skyfire2008.avoider.game.components.ChaserBehaviour.init();
 					org.skyfire2008.avoider.game.components.ShooterBehaviour.init();
 					org.skyfire2008.avoider.game.components.HowitzerBehaviour.init();
+					org.skyfire2008.avoider.game.components.ControlComponent.init();
 
 					game.addEntity(Game.instance.entMap.get("player.json")((holder) -> {
 						holder.position = new Point(Constants.gameWidth / 2, Constants.gameHeight / 2);

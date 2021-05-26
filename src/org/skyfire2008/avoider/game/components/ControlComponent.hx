@@ -23,7 +23,7 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	private static inline var blinkDist = 320;
 	private static inline var blinkRecharge = 5;
 	private static inline var ghostDist = 30.0;
-	private static var blinkSound = new Howl({src: ["assets/sounds/teleport.wav"]});
+	private static var blinkSound: Howl;
 
 	private var blinkGhost: Shape;
 	private var mousePos: Point;
@@ -43,6 +43,10 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	private var blinkTime: Float = blinkRecharge;
 
 	private var isRunning = false;
+
+	public static function init() {
+		blinkSound = SoundSystem.instance.getSound("teleport.wav");
+	}
 
 	public function new(a: Float, maxSpeed: Float, brakeMult: Float) {
 		dir = new Point();

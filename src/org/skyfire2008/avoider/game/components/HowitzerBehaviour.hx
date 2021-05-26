@@ -59,7 +59,7 @@ class HowitzerBehaviour implements Interfaces.UpdateComponent implements Interfa
 		createImpact = Game.instance.entMap.get("impactPoint.json");
 		createCircle = Game.instance.entMap.get("howitzerCircle.json");
 		createIndicator = Game.instance.entMap.get("howitzerIndicator.json");
-		shootSound = new Howl({src: ["assets/sounds/shooterShoot.wav"]});
+		shootSound = SoundSystem.instance.getSound("shooterShoot.wav");
 	}
 
 	public function new() {

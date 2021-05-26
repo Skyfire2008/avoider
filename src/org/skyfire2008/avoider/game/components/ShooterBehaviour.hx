@@ -59,7 +59,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 		beamFactory = Game.instance.entMap.get("shooterBeam.json");
 		trailFactory = Game.instance.entMap.get("shooterTrail.json");
 		indicatorFactory = Game.instance.entMap.get("shooterIndicator.json");
-		shootSound = new Howl({src: ["assets/sounds/shooterShoot.wav"]});
+		shootSound = SoundSystem.instance.getSound("shooterShoot.wav");
 	}
 
 	public function new() {

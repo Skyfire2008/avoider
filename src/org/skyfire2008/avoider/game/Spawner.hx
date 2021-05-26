@@ -43,9 +43,6 @@ class Spawner {
 		if (config.angleRand == null) {
 			config.angleRand = 0;
 		}
-		if (config.soundSrc != null) {
-			howl = new Howl({src: [config.soundSrc]});
-		}
 		if (config.randomize == true) {
 			this.curTime = Math.random() * config.spawnTime;
 		}
@@ -56,6 +53,9 @@ class Spawner {
 
 	public function init() {
 		spawnFunc = Game.instance.entMap.get(config.entityName);
+		if (config.soundSrc != null) {
+			howl = SoundSystem.instance.getSound(config.soundSrc);
+		}
 	}
 
 	public function clone(): Spawner {

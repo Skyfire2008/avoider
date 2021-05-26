@@ -138,8 +138,6 @@ class ChaserAiming implements ChaserState {
 	private var onTargetDeath: () -> Void;
 	private var delay: Float;
 
-	private static var startSound = new Howl({src: ["assets/sounds/chaserStart.wav"]});
-
 	public function new(targetId: Int, targetPos: Point, parent: ChaserBehaviour, onTargetDeath: () -> Void) {
 		this.targetId = targetId;
 		this.targetPos = targetPos;
@@ -180,7 +178,7 @@ class ChaserAiming implements ChaserState {
 		} else {
 			parent.side.value = Side.Hostile;
 			parent.changeState(new ChaserAttacking(parent));
-			startSound.play();
+			ChaserBehaviour.startSound.play();
 		}
 	}
 
@@ -230,9 +228,10 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 	public static inline var rotSpeed = 6; // in radians
 	public static inline var angleThresh = 0.04;
 
-	public static var baseShape: Shape;
-	public static var chasingShape: Shape;
-	public static var attackingShape: Shape;
+	public static var baseShape(default, null): Shape;
+	public static var chasingShape(default, null): Shape;
+	public static var attackingShape(default, null): Shape;
+	public static var startSound(default, null): Howl;
 
 	private var state: ChaserState;
 
@@ -259,10 +258,11 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 		});
 	}
 
-	public static function initShapes() {
+	public static function init() {
 		baseShape = Shape.getShape("chaser.json");
 		chasingShape = Shape.getShape("chaserChasing.json");
 		attackingShape = Shape.getShape("chaserAttacking.json");
+		startSound = SoundSystem.instance.getSound("chaserStart.wav");
 	}
 
 	public function changeState(state: ChaserState) {

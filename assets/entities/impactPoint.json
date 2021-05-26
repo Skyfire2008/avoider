@@ -72,7 +72,7 @@
 		{
 			"name": "playsSoundOnDeath",
 			"params": {
-				"soundSrc": "assets/sounds/howitzerExplosion.wav"
+				"soundSrc": "howitzerExplosion.wav"
 			}
 		}
 	]
