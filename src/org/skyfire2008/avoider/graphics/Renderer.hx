@@ -21,7 +21,7 @@ class Renderer {
 
 	public static var instance(default, null): Renderer;
 
-	public var trailsEnabled = false;
+	private var trailsEnabled = false;
 
 	public static function setInstance(instance: Renderer) {
 		Renderer.instance = instance;
@@ -43,6 +43,15 @@ class Renderer {
 
 		blackRectangle = new Shape([0, 0, 0, 720, 1280, 0, 1280, 720], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 2, 1, 2, 3]);
 		blackRectangle.init(gl);
+	}
+
+	public function setEnableTrails(value: Bool) {
+		if (!value) {
+			gl.blendFunc(GL.ONE, GL.ONE);
+		} else {
+			gl.blendFunc(GL.ONE, GL.ZERO);
+		}
+		trailsEnabled = value;
 	}
 
 	public inline function start() {

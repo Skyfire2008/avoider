@@ -24,6 +24,7 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	private static inline var blinkRecharge = 5;
 	private static inline var ghostDist = 30.0;
 	private static var blinkSound: Howl;
+	private static var enableTimeStretch: (value: Bool) -> Void;
 
 	private var blinkGhost: Shape;
 	private var mousePos: Point;
@@ -43,8 +44,10 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	private var blinkTime: Float = blinkRecharge;
 
 	private var isRunning = false;
+	private var isTimeStretched = false;
 
-	public static function init() {
+	public static function init(enableTimeStretch: (value: Bool) -> Void) {
+		ControlComponent.enableTimeStretch = enableTimeStretch;
 		blinkSound = SoundSystem.instance.getSound("teleport.wav");
 	}
 
@@ -76,6 +79,11 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		} else {
 			maxSpeed = runSpeed;
 		}
+	}
+
+	public function setTimeStretch(value: Bool): Void {
+		enableTimeStretch(value);
+		isTimeStretched = value;
 	}
 
 	public function blink(x: Float, y: Float): Void {
@@ -129,13 +137,22 @@ class ControlComponent implements KBComponent implements InitComponent implement
 
 	public function onUpdate(time: Float) {
 		var spawnBlinkEffect = false;
-		if (blinkTime < blinkRecharge) {
-			blinkTime += time;
-			if (blinkTime > blinkRecharge) {
-				spawnBlinkEffect = true;
-				blinkTime = blinkRecharge;
+		if (isTimeStretched) {
+			if (blinkTime > 0) {
+				blinkTime -= time / Constants.timeStretchMult;
+				Game.instance.blinkCallback(blinkTime / blinkRecharge);
+			} else {
+				setTimeStretch(false);
 			}
-			Game.instance.blinkCallback(blinkTime / blinkRecharge);
+		} else {
+			if (blinkTime < blinkRecharge) {
+				blinkTime += time;
+				if (blinkTime > blinkRecharge) {
+					spawnBlinkEffect = true;
+					blinkTime = blinkRecharge;
+				}
+				Game.instance.blinkCallback(blinkTime / blinkRecharge);
+			}
 		}
 
 		var friction = Math.pow(brakeMult, time * 60);
@@ -176,5 +193,8 @@ class ControlComponent implements KBComponent implements InitComponent implement
 
 	public function onDeath() {
 		Controller.instance.removeComponent(this);
+		if (isTimeStretched) {
+			setTimeStretch(false);
+		}
 	}
 }

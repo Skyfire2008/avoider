@@ -83,6 +83,11 @@ class Controller {
 				component.addDir(1, 0);
 			}
 		});
+		downActions.set(config.walk, () -> {
+			for (component in components) {
+				component.setWalk(true);
+			}
+		});
 		downActions.set(config.pause, pauseAction);
 
 		upActions.clear();
@@ -106,6 +111,11 @@ class Controller {
 				component.addDir(-1, 0);
 			}
 		});
+		upActions.set(config.walk, () -> {
+			for (component in components) {
+				component.setWalk(false);
+			}
+		});
 
 		mouseDownActions.clear();
 		mouseDownActions.set(0, (x: Float, y: Float) -> {
@@ -115,14 +125,14 @@ class Controller {
 		});
 		mouseDownActions.set(2, (x: Float, y: Float) -> {
 			for (component in components) {
-				component.setWalk(true);
+				component.setTimeStretch(true);
 			}
 		});
 
 		mouseUpActions.clear();
 		mouseUpActions.set(2, (x: Float, y: Float) -> {
 			for (component in components) {
-				component.setWalk(false);
+				component.setTimeStretch(false);
 			}
 		});
 

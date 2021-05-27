@@ -43,6 +43,7 @@ class Main {
 	private static var prevTime: Float = -1;
 	private static var timeStore: Float = 0;
 	private static var timeCount: Float = 0;
+	private static var timeMult = 1.0;
 
 	private static var mainCanvas: Element;
 	private static var playerHpDisplay: Element;
@@ -74,8 +75,8 @@ class Main {
 		prevTime = timestamp;
 
 		if (running) {
-			Controller.instance.update(delta);
-			Game.instance.update(delta);
+			Controller.instance.update(delta * timeMult);
+			Game.instance.update(delta * timeMult);
 		}
 		Browser.window.requestAnimationFrame(onEnterFrame);
 	}
@@ -158,7 +159,6 @@ class Main {
 					var howl = new Howl({
 						src: ["assets/sounds/" + kid.path],
 						onload: () -> {
-							trace("loaded " + kid.path);
 							resolve(null);
 						}
 					});
@@ -217,7 +217,17 @@ class Main {
 					org.skyfire2008.avoider.game.components.ChaserBehaviour.init();
 					org.skyfire2008.avoider.game.components.ShooterBehaviour.init();
 					org.skyfire2008.avoider.game.components.HowitzerBehaviour.init();
-					org.skyfire2008.avoider.game.components.ControlComponent.init();
+					org.skyfire2008.avoider.game.components.ControlComponent.init((value: Bool) -> {
+						if (value) {
+							timeMult = Constants.timeStretchMult;
+							SoundSystem.instance.setRate(Constants.timeStretchMult);
+							Renderer.instance.setEnableTrails(true);
+						} else {
+							timeMult = 1;
+							SoundSystem.instance.setRate(1);
+							Renderer.instance.setEnableTrails(false);
+						}
+					});
 
 					game.addEntity(Game.instance.entMap.get("player.json")((holder) -> {
 						holder.position = new Point(Constants.gameWidth / 2, Constants.gameHeight / 2);
