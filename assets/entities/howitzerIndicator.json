@@ -10,7 +10,8 @@
 		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "howitzerIndicator.json"
+				"shapeRef": "howitzerIndicator.json",
+				"depth": 0.3
 			}
 		}
 	]

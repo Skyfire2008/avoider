@@ -15,7 +15,8 @@
 		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "beam.json"
+				"shapeRef": "beam.json",
+				"depth": 0.4
 			}
 		}
 	]

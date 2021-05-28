@@ -11,13 +11,18 @@
 	},
 	"components": [
 		{
+			"name": "warningBehaviour",
+			"params": {}
+		},
+		{
 			"name": "timed",
 			"params": {}
 		},
 		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "warningSign.json"
+				"shapeRef": "warningSign.json",
+				"depth": 0.2
 			}
 		},
 		{

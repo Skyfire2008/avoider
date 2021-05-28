@@ -17,6 +17,7 @@ class Renderer {
 	private var posLoc: UniformLocation;
 	private var scaleLoc: UniformLocation;
 	private var colorMultLoc: UniformLocation;
+	private var depthLoc: UniformLocation;
 	private var blackRectangle: Shape;
 
 	public static var instance(default, null): Renderer;
@@ -40,6 +41,7 @@ class Renderer {
 		rotationLoc = gl.getUniformLocation(prog, "rotation");
 		scaleLoc = gl.getUniformLocation(prog, "scale");
 		colorMultLoc = gl.getUniformLocation(prog, "colorMult");
+		depthLoc = gl.getUniformLocation(prog, "depth");
 
 		blackRectangle = new Shape([0, 0, 0, 720, 1280, 0, 1280, 720], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 2, 1, 2, 3]);
 		blackRectangle.init(gl);
@@ -48,7 +50,9 @@ class Renderer {
 	public function setEnableTrails(value: Bool) {
 		if (!value) {
 			gl.blendFunc(GL.ONE, GL.ONE);
+			gl.disable(GL.DEPTH_TEST);
 		} else {
+			gl.enable(GL.DEPTH_TEST);
 			gl.blendFunc(GL.ONE, GL.ZERO);
 		}
 		trailsEnabled = value;
@@ -60,28 +64,32 @@ class Renderer {
 
 	public inline function clear() {
 		if (!trailsEnabled) {
-			gl.clear(GL.COLOR_BUFFER_BIT);
+			gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 		} else {
 			gl.blendFunc(GL.ONE, GL.CONSTANT_COLOR);
 
-			render(blackRectangle, 0, 0, 0, 1, [1, 1, 1]);
+			render(blackRectangle, 0, 0, 0, 1, [1, 1, 1], 1.0);
 			gl.uniform2f(scaleLoc, 1, 1);
 			gl.uniform1f(rotationLoc, 0);
 			gl.uniform2f(posLoc, 0, 0);
 			gl.uniform3f(colorMultLoc, 1, 1, 1);
+			gl.uniform1f(depthLoc, 1.0);
 
 			ext.bindVertexArrayOES(blackRectangle.vao);
 
 			gl.drawElements(GL.TRIANGLES, blackRectangle.indexNum, GL.UNSIGNED_INT, 0);
 			gl.blendFunc(GL.ONE, GL.ZERO);
+
+			gl.clear(GL.DEPTH_BUFFER_BIT);
 		}
 	}
 
-	public inline function render(shape: Shape, posX: Float, posY: Float, rotation: Float, scale: Float, colorMult: ColorMult) {
+	public inline function render(shape: Shape, posX: Float, posY: Float, rotation: Float, scale: Float, colorMult: ColorMult, depth: Float) {
 		gl.uniform2f(scaleLoc, scale, scale);
 		gl.uniform1f(rotationLoc, rotation);
 		gl.uniform2f(posLoc, posX, posY);
 		gl.uniform3f(colorMultLoc, colorMult.r, colorMult.g, colorMult.b);
+		gl.uniform1f(depthLoc, depth);
 
 		ext.bindVertexArrayOES(shape.vao);
 

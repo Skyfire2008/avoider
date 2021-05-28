@@ -20,7 +20,8 @@
 		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "redStar.json"
+				"shapeRef": "redStar.json",
+				"depth": 0.4
 			}
 		},
 		{

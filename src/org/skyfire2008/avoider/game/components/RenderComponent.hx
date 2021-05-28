@@ -14,6 +14,7 @@ import org.skyfire2008.avoider.graphics.ColorMult;
 
 class RenderComponent implements UpdateComponent {
 	private var shape: Shape;
+	private var depth: Float;
 	private var pos: Point;
 	private var rotation: Wrapper<Float>;
 	private var owner: Entity;
@@ -31,15 +32,17 @@ class RenderComponent implements UpdateComponent {
 		if (shape == null) {
 			throw 'No shape for ${json.shapeRef} exists';
 		}
-		return new RenderComponent(shape);
+		var depth = json.depth;
+		return new RenderComponent(shape, depth);
 	}
 
-	public function new(shape: Shape) {
+	public function new(shape: Shape, depth: Float) {
 		this.shape = shape;
+		this.depth = depth;
 	}
 
 	public function onUpdate(time: Float): Void {
-		Renderer.instance.render(shape, pos.x, pos.y, rotation.value, scale.value, colorMult);
+		Renderer.instance.render(shape, pos.x, pos.y, rotation.value, scale.value, colorMult, depth);
 	}
 
 	public function assignProps(holder: PropertyHolder) {

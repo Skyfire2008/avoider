@@ -38,7 +38,8 @@
 		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "circle.json"
+				"shapeRef": "circle.json",
+				"depth": 0.2
 			}
 		}
 	]

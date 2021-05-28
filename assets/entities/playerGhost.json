@@ -26,7 +26,8 @@
 		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "playerGhost.json"
+				"shapeRef": "playerGhost.json",
+				"depth": 0.2
 			}
 		},
 		{

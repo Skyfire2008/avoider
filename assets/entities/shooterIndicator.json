@@ -10,7 +10,8 @@
 		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "shooterIndicator.json"
+				"shapeRef": "shooterIndicator.json",
+				"depth": 0.3
 			}
 		}
 	]

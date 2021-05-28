@@ -3,6 +3,7 @@ package org.skyfire2008.avoider.game.components;
 import spork.core.PropertyHolder;
 import spork.core.Wrapper;
 import spork.core.Component;
+import spork.core.JsonLoader.EntityFactoryMethod;
 
 import org.skyfire2008.avoider.game.Spawner;
 import org.skyfire2008.avoider.geom.Point;
@@ -37,5 +38,23 @@ class SpawnsOnDeath implements Interfaces.DeathComponent implements Interfaces.I
 
 	public function onInit() {
 		spawner.init();
+	}
+}
+
+class WarningBehaviour implements Interfaces.DeathComponent {
+	private var func: EntityFactoryMethod;
+	private var pos: Point;
+
+	public function new() {}
+
+	public function assignProps(holder: PropertyHolder) {
+		func = holder.warningFunc;
+		pos = holder.position;
+	}
+
+	public function onDeath() {
+		Game.instance.addEntity(func((holder) -> {
+			holder.position = pos;
+		}));
 	}
 }

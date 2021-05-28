@@ -35,7 +35,8 @@
 		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "triangle.json"
+				"shapeRef": "triangle.json",
+				"depth": 0.4
 			}
 		},
 		{

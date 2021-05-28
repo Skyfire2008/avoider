@@ -22,7 +22,8 @@
 		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "shooterBase.json"
+				"shapeRef": "shooterBase.json",
+				"depth": 0.2
 			}
 		},
 		{

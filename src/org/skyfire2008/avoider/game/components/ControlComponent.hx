@@ -188,7 +188,7 @@ class ControlComponent implements KBComponent implements InitComponent implement
 				holder.rotation = rotation;
 			}));
 		}
-		Renderer.instance.render(blinkGhost, pos.x, pos.y, rotation.value, 1, [0.01 * mult, 1.0 * mult, 0.5 * mult]);
+		Renderer.instance.render(blinkGhost, pos.x, pos.y, rotation.value, 1, [0.01 * mult, 1.0 * mult, 0.5 * mult], 0.1);
 	}
 
 	public function onDeath() {

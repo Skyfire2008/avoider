@@ -91,6 +91,9 @@ class Main {
 			Browser.alert("WebGL is not supported!");
 		}
 		gl.enable(GL.BLEND);
+		gl.enable(GL.DEPTH_TEST);
+		gl.clearDepth(0.0);
+		gl.depthFunc(GL.GEQUAL);
 		gl.blendFunc(GL.ONE, GL.ONE);
 		gl.blendColor(0.95, 0.95, 0.95, 0);
 
@@ -196,7 +199,7 @@ class Main {
 
 				Promise.all(entPromises).then((_) -> {
 					var game = new Game(entFactories, (value) -> {
-						playerHpDisplay.innerText = "Lives: " + value;
+						playerHpDisplay.innerText = "Lives : " + value;
 					}, (value) -> {
 						blinkBar.style.width = Std.int(value * 100) + "%";
 					});

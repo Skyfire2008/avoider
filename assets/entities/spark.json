@@ -20,7 +20,8 @@
 		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "spark2.json"
+				"shapeRef": "spark2.json",
+				"depth": 0.4
 			}
 		},
 		{

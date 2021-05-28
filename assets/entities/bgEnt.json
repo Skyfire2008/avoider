@@ -22,7 +22,8 @@
 		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "bgShape.json"
+				"shapeRef": "bgShape.json",
+				"depth": 0.1
 			}
 		},
 		{

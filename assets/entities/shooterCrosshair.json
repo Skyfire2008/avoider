@@ -17,7 +17,8 @@
 		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "crosshair.json"
+				"shapeRef": "crosshair.json",
+				"depth": 0.4
 			}
 		}
 	]

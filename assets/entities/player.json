@@ -94,7 +94,8 @@
 		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "player.json"
+				"shapeRef": "player.json",
+				"depth": 0.2
 			}
 		}
 	]

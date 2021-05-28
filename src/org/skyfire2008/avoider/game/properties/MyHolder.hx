@@ -4,6 +4,7 @@ import org.skyfire2008.avoider.geom.Point;
 import org.skyfire2008.avoider.game.Side;
 
 import spork.core.Wrapper;
+import spork.core.JsonLoader.EntityFactoryMethod;
 
 import org.skyfire2008.avoider.graphics.ColorMult;
 
@@ -18,4 +19,5 @@ class MyHolder {
 	public var colliderRadius: Wrapper<Float>;
 	public var timeToLive: Wrapper<Float>;
 	public var hp: Wrapper<Int>;
+	public var warningFunc: EntityFactoryMethod;
 }

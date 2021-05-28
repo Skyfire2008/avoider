@@ -38,7 +38,8 @@
 		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "target.json"
+				"shapeRef": "target.json",
+				"depth": 0.2
 			}
 		},
 		{

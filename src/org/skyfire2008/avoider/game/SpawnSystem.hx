@@ -74,18 +74,12 @@ class SpawnSystem {
 		startPos.y = Math.max(border, startPos.y);
 		startPos.y = Math.min(Constants.gameHeight - border, startPos.y);
 
-		var ent = spawnFunc((holder) -> {
-			holder.position = startPos;
-		});
 		var warning = warningSpawnFunc((holder) -> {
 			holder.position = startPos;
+			holder.warningFunc = spawnFunc;
 		});
 		Game.instance.addEntity(warning);
 		incCount();
-
-		Timer.delay(() -> {
-			Game.instance.addEntity(ent);
-		}, 1000); // TODO: timeout should be the same as warning's time to live
 	}
 
 	private function incWave() {

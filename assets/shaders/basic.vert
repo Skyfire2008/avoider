@@ -5,6 +5,7 @@ uniform vec2 pos;
 uniform vec2 scale;
 uniform float rotation;
 uniform vec3 colorMult;
+uniform float depth;
 
 varying vec4 color;
 
@@ -26,6 +27,6 @@ vec2 turn(vec2 a, float angle){
 
 void main(){
 	vec2 temp=turn(vert*scale, rotation)+pos;
-	gl_Position=vec4(toNdc(temp), 0.0, 1.0);
+	gl_Position=vec4(toNdc(temp), depth, 1.0);
 	color=vec4(rgb*colorMult, 1.0);
 }

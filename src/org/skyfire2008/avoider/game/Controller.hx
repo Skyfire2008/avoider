@@ -83,9 +83,9 @@ class Controller {
 				component.addDir(1, 0);
 			}
 		});
-		downActions.set(config.walk, () -> {
+		downActions.set(config.bulletTime, () -> {
 			for (component in components) {
-				component.setWalk(true);
+				component.setTimeStretch(true);
 			}
 		});
 		downActions.set(config.pause, pauseAction);
@@ -111,9 +111,9 @@ class Controller {
 				component.addDir(-1, 0);
 			}
 		});
-		upActions.set(config.walk, () -> {
+		upActions.set(config.bulletTime, () -> {
 			for (component in components) {
-				component.setWalk(false);
+				component.setTimeStretch(false);
 			}
 		});
 
@@ -125,14 +125,14 @@ class Controller {
 		});
 		mouseDownActions.set(2, (x: Float, y: Float) -> {
 			for (component in components) {
-				component.setTimeStretch(true);
+				component.setWalk(true);
 			}
 		});
 
 		mouseUpActions.clear();
 		mouseUpActions.set(2, (x: Float, y: Float) -> {
 			for (component in components) {
-				component.setTimeStretch(false);
+				component.setWalk(false);
 			}
 		});
 

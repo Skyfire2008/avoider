@@ -301,7 +301,7 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 
 	public function onUpdate(time: Float) {
 		state.onUpdate(time);
-		Renderer.instance.render(currentShape, pos.x, pos.y, rotation.value, scale.value, [1.0, 1.0, 1.0]);
+		Renderer.instance.render(currentShape, pos.x, pos.y, rotation.value, scale.value, [1.0, 1.0, 1.0], 0.2);
 	}
 
 	public function onDeath() {
