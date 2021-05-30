@@ -20,4 +20,5 @@ class MyHolder {
 	public var timeToLive: Wrapper<Float>;
 	public var hp: Wrapper<Int>;
 	public var warningFunc: EntityFactoryMethod;
+	public var missileTargetPos: Point;
 }

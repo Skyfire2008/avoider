@@ -1,7 +1,5 @@
 package org.skyfire2008.avoider.game;
 
-import haxe.Timer;
-
 import spork.core.JsonLoader.EntityFactoryMethod;
 
 import org.skyfire2008.avoider.geom.Point;
