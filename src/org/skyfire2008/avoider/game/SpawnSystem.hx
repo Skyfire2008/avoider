@@ -24,7 +24,7 @@ class SpawnSystem {
 
 	public function new() {
 		warningSpawnFunc = Game.instance.entMap.get("warning.json");
-		chaserSpawnFunc = Game.instance.entMap.get("chaser.json");
+		chaserSpawnFunc = Game.instance.entMap.get("launcher.json");
 		shooterSpawnFunc = Game.instance.entMap.get("shooter.json");
 		howitzerSpawnFunc = Game.instance.entMap.get("howitzer.json");
 	}

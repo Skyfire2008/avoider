@@ -6,6 +6,8 @@ import js.html.XMLHttpRequest;
 import js.html.ProgressEvent;
 import js.lib.Promise;
 
+import org.skyfire2008.avoider.game.Constants;
+
 using org.skyfire2008.avoider.geom.Point;
 
 class Util {
@@ -33,6 +35,24 @@ class Util {
 			var newVel = Point.fromPolar(dir.angle, vel.length);
 			vel.x = newVel.x;
 			vel.y = newVel.y;
+		}
+	}
+
+	/**
+	 * Accelerates or decelerates velocity if needed
+	 * @param vel velocity vector
+	 * @param targetSpeed speed that has to be reached
+	 * @param a acceleration
+	 * @param dTime time elapsed in this frame
+	 */
+	public static function accelIfNeeded(vel: Point, targetSpeed: Float, a: Float, dTime: Float) {
+		var velLength = vel.length;
+		if (vel.length > targetSpeed) {
+			var friction = Math.pow(Constants.mju, dTime * 60);
+			vel.mult(friction);
+		} else {
+			var addVel = vel.scale(a * dTime / velLength);
+			vel.add(addVel);
 		}
 	}
 

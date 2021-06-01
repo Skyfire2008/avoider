@@ -2,12 +2,12 @@
 	"properties": {
 		"side": "Enemy",
 		"rotation": 0,
-		"colliderRadius": 25,
+		"colliderRadius": 30,
 		"velocity": {
 			"x": 0,
 			"y": 0
 		},
-		"scale": 1.0,
+		"scale": 1,
 		"colorMult": [
 			1.0,
 			1.0,
@@ -18,6 +18,13 @@
 		{
 			"name": "enemyMoveComponent",
 			"params": {}
+		},
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "launcher.json",
+				"depth": 0.2
+			}
 		},
 		{
 			"name": "targeted",
@@ -32,7 +39,7 @@
 			"params": {}
 		},
 		{
-			"name": "missileBehaviour",
+			"name": "launcherBehaviour",
 			"params": {}
 		},
 		{
@@ -58,6 +65,10 @@
 		},
 		{
 			"name": "addsScore",
+			"params": {}
+		},
+		{
+			"name": "countedOnScreen",
 			"params": {}
 		},
 		{

@@ -20,8 +20,8 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 	private static inline var armTime = 1.0;
 	private static inline var flyTime = 10.0;
 	private static inline var dieTime = 1.0;
-	private static inline var speed = 480.0;
-	private static inline var a = 320.0;
+	private static inline var speed = 400.0;
+	private static inline var a = 200.0;
 	private static inline var angVel = 5.0;
 
 	private static var baseShape: Shape;
@@ -34,6 +34,7 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 	private var vel: Point;
 	private var rotation: Wrapper<Float>;
 	private var side: Wrapper<Side>;
+	private var scale: Wrapper<Float>;
 	private var originalSide: Side;
 	private var trailSpawner: Spawner;
 	private var targetPos: Point;
@@ -56,6 +57,7 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 			angleRand: 1.045
 		});
 		currentShape = baseShape;
+		state = Arming;
 	}
 
 	public function assignProps(holder: PropertyHolder) {
@@ -63,6 +65,7 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 		vel = holder.velocity;
 		rotation = holder.rotation;
 		side = holder.side;
+		scale = holder.scale;
 
 		originalSide = side.value;
 		targetPos = holder.missileTargetPos;
@@ -75,7 +78,7 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 	public function onUpdate(dTime: Float) {
 		switch (state) {
 			case Arming:
-				if (time <= armTime) {
+				if (time > armTime) {
 					time -= armTime;
 					side.value = Side.Hostile;
 					state = Chasing;
@@ -92,7 +95,7 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 					}
 
 					// turn towards target
-					Util.turnTo(pos, vel, angVel, targetPos);
+					Util.turnTo(pos, vel, angVel * dTime, targetPos);
 
 					// spawn particles
 					trailSpawner.update(dTime, pos, rotation.value, vel);
@@ -112,7 +115,7 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 					}
 
 					// turn towards target
-					Util.turnTo(pos, vel, angVel, targetPos);
+					Util.turnTo(pos, vel, angVel * dTime, targetPos);
 
 					// spawn particles
 					trailSpawner.update(dTime, pos, rotation.value, vel);
@@ -124,6 +127,6 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 		time += dTime;
 
 		// render the shape
-		Renderer.instance.render(currentShape, pos.x, pos.y, rotation.value, 1, [1, 1, 1], 0.2);
+		Renderer.instance.render(currentShape, pos.x, pos.y, rotation.value, scale.value, [1, 1, 1], 0.2);
 	}
 }

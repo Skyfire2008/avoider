@@ -220,6 +220,8 @@ class Main {
 					org.skyfire2008.avoider.game.components.ChaserBehaviour.init();
 					org.skyfire2008.avoider.game.components.ShooterBehaviour.init();
 					org.skyfire2008.avoider.game.components.HowitzerBehaviour.init();
+					org.skyfire2008.avoider.game.components.MissileBehaviour.init();
+					org.skyfire2008.avoider.game.components.LauncherBehaviour.init();
 					org.skyfire2008.avoider.game.components.ControlComponent.init((value: Bool) -> {
 						if (value) {
 							timeMult = Constants.timeStretchMult;
