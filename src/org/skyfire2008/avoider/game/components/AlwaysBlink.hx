@@ -1,11 +1,7 @@
 package org.skyfire2008.avoider.game.components;
 
-import spork.core.Wrapper;
 import spork.core.PropertyHolder;
 
-import org.skyfire2008.avoider.game.Side;
-import org.skyfire2008.avoider.geom.Point;
-import org.skyfire2008.avoider.spatial.Collider;
 import org.skyfire2008.avoider.graphics.ColorMult;
 
 class AlwaysBlink implements Interfaces.UpdateComponent {

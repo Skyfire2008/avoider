@@ -5,6 +5,8 @@ import org.skyfire2008.avoider.game.components.Interfaces.InitComponent;
 import org.skyfire2008.avoider.graphics.Shape;
 import org.skyfire2008.avoider.graphics.Renderer;
 
+import howler.Howl;
+
 import spork.core.PropertyHolder;
 import spork.core.Wrapper;
 
@@ -18,14 +20,16 @@ enum MissileState {
 
 class MissileBehaviour implements InitComponent implements Interfaces.UpdateComponent {
 	private static inline var armTime = 1.0;
-	private static inline var flyTime = 10.0;
+	private static inline var flyTime = 5.0;
 	private static inline var dieTime = 1.0;
 	private static inline var speed = 400.0;
-	private static inline var a = 200.0;
+	private static inline var a = 300.0;
 	private static inline var angVel = 6.0;
+	private static inline var blinks = 10.0;
 
 	private static var baseShape: Shape;
-	private static var dyingShape: Shape;
+	private static var redShape: Shape;
+	private static var startSound: Howl;
 
 	private var time = 0.0;
 	private var state: MissileState;
@@ -42,7 +46,8 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 
 	public static function init() {
 		baseShape = Shape.getShape("missile.json");
-		dyingShape = Shape.getShape("missileRed.json");
+		redShape = Shape.getShape("missileRed.json");
+		startSound = SoundSystem.instance.getSound("chaserStart.wav");
 	}
 
 	public function new() {
@@ -83,6 +88,8 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 					side.value = Side.Hostile;
 					state = Chasing;
 					trailSpawner.startSpawn();
+					currentShape = redShape;
+					startSound.play();
 				}
 			case Chasing:
 				if (time <= flyTime) {
@@ -96,24 +103,23 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 					trailSpawner.update(dTime, pos, rotation.value, vel);
 				} else {
 					time -= flyTime;
-					currentShape = dyingShape;
 					state = Dying;
 				}
 			case Dying:
 				if (time < dieTime) {
 					// accelerate if needed
-					var velLength = vel.length;
-					if (velLength < speed) {
-						vel.add(vel.scale(1 / velLength * a));
-					} else if (velLength > speed) {
-						vel.mult(speed / velLength);
-					}
-
+					Util.accelIfNeeded(vel, speed, a, dTime);
 					// turn towards target
 					Util.turnTo(pos, vel, angVel * dTime, targetPos);
-
 					// spawn particles
 					trailSpawner.update(dTime, pos, rotation.value, vel);
+					// blink
+					var num = Std.int(time * blinks / dieTime) % 2;
+					if (num == 0) {
+						currentShape = redShape;
+					} else {
+						currentShape = baseShape;
+					}
 				} else {
 					this.owner.kill();
 				}

@@ -2,7 +2,7 @@
 	"properties": {
 		"side": "Enemy",
 		"rotation": 0,
-		"colliderRadius": 30,
+		"colliderRadius": 25,
 		"velocity": {
 			"x": 0,
 			"y": 0
