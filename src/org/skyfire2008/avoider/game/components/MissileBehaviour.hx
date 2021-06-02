@@ -22,7 +22,7 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 	private static inline var dieTime = 1.0;
 	private static inline var speed = 400.0;
 	private static inline var a = 200.0;
-	private static inline var angVel = 5.0;
+	private static inline var angVel = 6.0;
 
 	private static var baseShape: Shape;
 	private static var dyingShape: Shape;
@@ -87,12 +87,7 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 			case Chasing:
 				if (time <= flyTime) {
 					// accelerate if needed
-					var velLength = vel.length;
-					if (velLength < speed) {
-						vel.add(vel.scale(1 / velLength * a));
-					} else if (velLength > speed) {
-						vel.mult(speed / velLength);
-					}
+					Util.accelIfNeeded(vel, speed, a, dTime);
 
 					// turn towards target
 					Util.turnTo(pos, vel, angVel * dTime, targetPos);

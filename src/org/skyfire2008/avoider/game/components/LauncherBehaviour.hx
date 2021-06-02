@@ -18,11 +18,12 @@ enum LauncherState {
 class LauncherBehaviour implements Interfaces.UpdateComponent implements Interfaces.DeathComponent {
 	private static inline var idleSpeed = 32.0;
 	private static inline var chaseSpeed = 160.0;
-	private static inline var a = 40.0;
+	private static inline var a = 160.0;
 	private static inline var rotSpeed = 3.0;
 	private static inline var reloadTime = 5.0;
+	private static inline var runAwayTime = 1.0;
 	private static inline var idleTargetRadius = 40;
-	private static inline var chaseTargetRadius = 240.0;
+	private static inline var chaseTargetRadius = 160.0;
 
 	private static var createMissileProp: EntityFactoryMethod;
 	private static var createMissile: EntityFactoryMethod;
@@ -37,11 +38,12 @@ class LauncherBehaviour implements Interfaces.UpdateComponent implements Interfa
 	private var shootTargetPos: Point;
 	private var shootTargetId: Int;
 	private var observingTargets: Bool;
+	private var runDir: Point;
 
-	private var missileProp: Entity;
+	private var missileProp: Entity = null;
 
 	public static function init() {
-		// createMissileProp = Game.instance.entMap.get("missileProp.json");
+		createMissileProp = Game.instance.entMap.get("missileProp.json");
 		createMissile = Game.instance.entMap.get("missile.json");
 	}
 
@@ -78,6 +80,11 @@ class LauncherBehaviour implements Interfaces.UpdateComponent implements Interfa
 		shootTargetPos = closest.pos;
 		shootTargetId = closest.id;
 		observingTargets = false;
+		missileProp = createMissileProp((holder) -> {
+			holder.position = pos;
+			holder.rotation = rotation;
+		});
+		Game.instance.addEntity(missileProp);
 
 		TargetingSystem.instance.addTargetDeathObserver(shootTargetId, notifyAboutDeath);
 	}
@@ -119,10 +126,13 @@ class LauncherBehaviour implements Interfaces.UpdateComponent implements Interfa
 						holder.side = new Wrapper(side.value);
 						holder.missileTargetPos = shootTargetPos;
 					});
+					missileProp.kill();
+					missileProp = null;
 					Game.instance.addEntity(missile);
 
 					time = 0;
-					state = Idling;
+					state = Firing;
+					runDir = vel.scale(-1);
 				}
 
 				// turn toward target
@@ -131,10 +141,24 @@ class LauncherBehaviour implements Interfaces.UpdateComponent implements Interfa
 				// accelerate/decelerate
 				Util.accelIfNeeded(vel, chaseSpeed, a, dTime);
 			case Firing:
+				if (time < runAwayTime) {
+					// turn toward target
+					Util.turnTo(pos, vel, rotSpeed * dTime, pos.translate(runDir));
+
+					// accelerate/decelerate
+					Util.accelIfNeeded(vel, chaseSpeed, a, dTime);
+				} else {
+					state = Idling;
+					time = 0;
+				}
 		}
 
 		time += dTime;
 	}
 
-	public function onDeath() {}
+	public function onDeath() {
+		if (missileProp != null) {
+			missileProp.kill();
+		}
+	}
 }

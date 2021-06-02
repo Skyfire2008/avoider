@@ -2,7 +2,7 @@
 	"properties": {
 		"side": "Enemy",
 		"rotation": 0,
-		"colliderRadius": 25,
+		"colliderRadius": 24,
 		"velocity": {
 			"x": 0,
 			"y": 0
@@ -55,10 +55,6 @@
 				"spawnVel": 160,
 				"spreadAngle": 1.25
 			}
-		},
-		{
-			"name": "addsScore",
-			"params": {}
 		},
 		{
 			"name": "playsSoundOnDeath",

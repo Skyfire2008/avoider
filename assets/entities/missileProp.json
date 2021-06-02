@@ -1,0 +1,23 @@
+{
+	"properties": {
+		"scale": 1.0,
+		"colorMult": [
+			1,
+			1,
+			1
+		]
+	},
+	"components": [
+		{
+			"name": "alwaysAlive",
+			"params": {}
+		},
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "missile.json",
+				"depth": 0.3
+			}
+		}
+	]
+}
