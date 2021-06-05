@@ -78,23 +78,23 @@ class Scripts {
 		};
 
 		// border
-		shape.points.push({x: 0, y: 0, color: color2});
-		shape.points.push({x: Constants.gameWidth, y: 0, color: color2});
-		shape.points.push({x: 0, y: Constants.gameHeight, color: color2});
-		shape.points.push({x: Constants.gameWidth, y: Constants.gameHeight, color: color2});
+		/*shape.points.push({x: 0, y: 0, color: color2});
+			shape.points.push({x: Constants.gameWidth, y: 0, color: color2});
+			shape.points.push({x: 0, y: Constants.gameHeight, color: color2});
+			shape.points.push({x: Constants.gameWidth, y: Constants.gameHeight, color: color2});
 
-		shape.lines.push({from: 0, to: 1});
-		shape.lines.push({from: 1, to: 3});
-		shape.lines.push({from: 3, to: 2});
-		shape.lines.push({from: 2, to: 0});
+			shape.lines.push({from: 0, to: 1});
+			shape.lines.push({from: 1, to: 3});
+			shape.lines.push({from: 3, to: 2});
+			shape.lines.push({from: 2, to: 0}); */
 
 		// grid
-		var pointNum = 4;
+		var pointNum = 0;
 		var endNum: Int = Std.int(Constants.gameWidth / step);
 		for (i in 1...endNum) {
-			shape.points.push({x: i * step + 0.5, y: 0, color: color2});
+			shape.points.push({x: i * step + 0.5, y: 0 - step, color: color2});
 			shape.points.push({x: i * step + 0.5, y: Constants.gameHeight * 0.5, color: color1});
-			shape.points.push({x: i * step + 0.5, y: Constants.gameHeight, color: color2});
+			shape.points.push({x: i * step + 0.5, y: Constants.gameHeight + step, color: color2});
 
 			shape.lines.push({from: pointNum, to: pointNum + 1});
 			shape.lines.push({from: pointNum + 1, to: pointNum + 2});
@@ -103,9 +103,9 @@ class Scripts {
 
 		endNum = Std.int(Constants.gameHeight / step);
 		for (i in 1...endNum) {
-			shape.points.push({y: i * step + 0.5, x: 0, color: color2});
+			shape.points.push({y: i * step + 0.5, x: 0 - step, color: color2});
 			shape.points.push({y: i * step + 0.5, x: Constants.gameWidth * 0.5, color: color1});
-			shape.points.push({y: i * step + 0.5, x: Constants.gameWidth, color: color2});
+			shape.points.push({y: i * step + 0.5, x: Constants.gameWidth + step, color: color2});
 
 			shape.lines.push({from: pointNum, to: pointNum + 1});
 			shape.lines.push({from: pointNum + 1, to: pointNum + 2});

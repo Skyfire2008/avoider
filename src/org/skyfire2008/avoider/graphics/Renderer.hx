@@ -1,5 +1,7 @@
 package org.skyfire2008.avoider.graphics;
 
+import org.skyfire2008.avoider.geom.Point;
+
 import js.html.webgl.Program;
 import js.html.webgl.RenderingContext;
 import js.html.webgl.GL;
@@ -9,10 +11,15 @@ import js.html.webgl.UniformLocation;
 
 // adapted from TDS
 class Renderer {
+	private static inline var screenShakeTime = 0.5;
+	private static inline var shakeNum = 16;
+	private static inline var shakeDist = 25.0;
+
 	public var gl(default, null): RenderingContext;
 	private var ext: OESVertexArrayObject;
 	private var prog: Program;
 
+	private var camPos: Point;
 	private var rotationLoc: UniformLocation;
 	private var posLoc: UniformLocation;
 	private var scaleLoc: UniformLocation;
@@ -23,6 +30,8 @@ class Renderer {
 	public static var instance(default, null): Renderer;
 
 	private var trailsEnabled = false;
+	private var time = screenShakeTime;
+	private var shakeTrajectory: Array<Point>;
 
 	public static function setInstance(instance: Renderer) {
 		Renderer.instance = instance;
@@ -45,6 +54,8 @@ class Renderer {
 
 		blackRectangle = new Shape([0, 0, 0, 720, 1280, 0, 1280, 720], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 2, 1, 2, 3]);
 		blackRectangle.init(gl);
+
+		camPos = new Point();
 	}
 
 	public function setEnableTrails(value: Bool) {
@@ -60,6 +71,32 @@ class Renderer {
 
 	public inline function start() {
 		gl.useProgram(prog);
+	}
+
+	public function startScreenShake() {
+		time = 0;
+		shakeTrajectory = [];
+		for (i in 0...shakeNum + 1) {
+			shakeTrajectory.push(Point.fromPolar(2 * Math.PI * Math.random(), shakeDist * (shakeNum - i) / shakeNum));
+		}
+	}
+
+	public function update(dTime: Float) {
+		if (time < screenShakeTime) {
+			var i = time / screenShakeTime * shakeNum;
+			var start = Math.floor(i);
+			var end = Math.ceil(i);
+			var startPos = shakeTrajectory[start];
+			var endPos = shakeTrajectory[end];
+
+			camPos.x = startPos.x * (end - i) + endPos.x * (i - start);
+			camPos.y = startPos.y * (end - i) + endPos.y * (i - start);
+			time += dTime;
+			if (time >= screenShakeTime) {
+				camPos.x = 0;
+				camPos.y = 0;
+			}
+		}
 	}
 
 	public inline function clear() {
@@ -87,7 +124,7 @@ class Renderer {
 	public inline function render(shape: Shape, posX: Float, posY: Float, rotation: Float, scale: Float, colorMult: ColorMult, depth: Float) {
 		gl.uniform2f(scaleLoc, scale, scale);
 		gl.uniform1f(rotationLoc, rotation);
-		gl.uniform2f(posLoc, posX, posY);
+		gl.uniform2f(posLoc, posX + camPos.x, posY + camPos.y);
 		gl.uniform3f(colorMultLoc, colorMult.r, colorMult.g, colorMult.b);
 		gl.uniform1f(depthLoc, depth);
 

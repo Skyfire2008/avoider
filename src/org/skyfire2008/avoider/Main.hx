@@ -77,6 +77,7 @@ class Main {
 		if (running) {
 			Controller.instance.update(delta * timeMult);
 			Game.instance.update(delta * timeMult);
+			Renderer.instance.update(delta * timeMult);
 		}
 		Browser.window.requestAnimationFrame(onEnterFrame);
 	}

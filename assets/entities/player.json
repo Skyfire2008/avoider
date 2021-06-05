@@ -73,6 +73,10 @@
 			"params": {}
 		},
 		{
+			"name": "shakesScreenOnDamage",
+			"params": {}
+		},
+		{
 			"name": "playsSoundOnDeath",
 			"params": {
 				"soundSrc": "playerExplosion.wav"
