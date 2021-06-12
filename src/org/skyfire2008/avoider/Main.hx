@@ -1,5 +1,7 @@
 package org.skyfire2008.avoider;
 
+import js.Lib;
+
 import org.skyfire2008.avoider.game.SoundSystem;
 
 import howler.Howl;
@@ -53,6 +55,8 @@ class Main {
 	private static var multBar: Element;
 	private static var gameOverStuff: Element;
 	private static var restartButton: ButtonElement;
+	private static var content: Element;
+	private static var preloader: Element;
 
 	public static function main() {
 		Browser.window.addEventListener("load", init);
@@ -82,6 +86,23 @@ class Main {
 		Browser.window.requestAnimationFrame(onEnterFrame);
 	}
 
+	private static function createPreloaderMessage(text: String) {
+		var elem = document.createElement("div");
+		elem.id = text;
+		elem.innerText = 'Loading $text ...';
+		elem.classList.add("loading");
+		preloader.appendChild(elem);
+	}
+
+	private static function removePreloaderMessage(text: String) {
+		var elem = document.getElementById(text);
+		elem.innerText = '$text loaded.';
+		elem.classList.replace("loading", "loaded");
+		Browser.window.setTimeout(() -> {
+			preloader.removeChild(elem);
+		}, 1000);
+	}
+
 	private static function init() {
 		document = Browser.document;
 
@@ -105,6 +126,8 @@ class Main {
 		multDisplay = document.getElementById("multDisplay");
 		multBar = document.getElementById("multBar");
 		gameOverStuff = document.getElementById("gameOverStuff");
+		content = document.getElementById("content");
+		preloader = document.getElementById("preloader");
 		restartButton = cast(document.getElementById("restartButton"));
 		restartButton.addEventListener("click", (e) -> {
 			gameOverStuff.style.display = "none";
@@ -133,8 +156,8 @@ class Main {
 
 		// load shaders
 		var rendererPromises = [
-			Util.fetchFile("assets/shaders/basic.vert"),
-			Util.fetchFile("assets/shaders/basic.frag")
+			Util.fetchFile("assets/shaders/basic.vert", createPreloaderMessage, removePreloaderMessage),
+			Util.fetchFile("assets/shaders/basic.frag", createPreloaderMessage, removePreloaderMessage)
 		];
 
 		// when shaders are loaded, init renderer
@@ -143,7 +166,7 @@ class Main {
 		});
 
 		var loadPromises: Array<Promise<Dynamic>> = [];
-		Util.fetchFile("assets/contents.json").then((text) -> {
+		Util.fetchFile("assets/contents.json", createPreloaderMessage, removePreloaderMessage).then((text) -> {
 			// get contents
 			var contents: Array<DirContent> = Json.parse(text);
 			var shapesDir = contents.find((item) -> {
@@ -160,9 +183,11 @@ class Main {
 			var sounds: StringMap<Howl> = new StringMap<Howl>();
 			for (kid in soundsDir.kids) {
 				loadPromises.push(new Promise<String>((resolve, reject) -> {
+					createPreloaderMessage("assets/sounds/" + kid.path);
 					var howl = new Howl({
 						src: ["assets/sounds/" + kid.path],
 						onload: () -> {
+							removePreloaderMessage("assets/sounds/" + kid.path);
 							resolve(null);
 						}
 					});
@@ -174,7 +199,7 @@ class Main {
 			// load all shapes
 			var shapes: StringMap<Shape> = new StringMap<Shape>();
 			for (kid in shapesDir.kids) {
-				loadPromises.push(Util.fetchFile('assets/shapes/${kid.path}').then((file) -> {
+				loadPromises.push(Util.fetchFile('assets/shapes/${kid.path}', createPreloaderMessage, removePreloaderMessage).then((file) -> {
 					var shape = Shape.fromJson(Json.parse(file));
 					shape.init(gl);
 					shapes.set(kid.path, shape);
@@ -192,13 +217,17 @@ class Main {
 				var entFactories = new StringMap<EntityFactoryMethod>();
 				var entPromises: Array<Promise<Void>> = [];
 				for (kid in entsDir.kids) {
-					entPromises.push(Util.fetchFile('assets/entities/${kid.path}').then((file) -> {
+					entPromises.push(Util.fetchFile('assets/entities/${kid.path}', createPreloaderMessage, removePreloaderMessage).then((file) -> {
 						entFactories.set(kid.path, JsonLoader.makeLoader(Json.parse(file)));
 						return;
 					}));
 				}
 
 				Promise.all(entPromises).then((_) -> {
+					// hide preloader and show content
+					preloader.style.display = "none";
+					content.style.display = "inline";
+
 					var game = new Game(entFactories, (value) -> {
 						playerHpDisplay.innerText = "Lives : " + value;
 					}, (value) -> {

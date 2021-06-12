@@ -12,7 +12,7 @@ import js.html.webgl.UniformLocation;
 // adapted from TDS
 class Renderer {
 	private static inline var screenShakeTime = 0.5;
-	private static inline var shakeNum = 16;
+	private static inline var shakeNum = 20;
 	private static inline var shakeDist = 25.0;
 
 	public var gl(default, null): RenderingContext;

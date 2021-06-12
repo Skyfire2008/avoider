@@ -18,6 +18,25 @@
 		opacity: 0.8
 	}
 
+	.loading {
+		color: yellow;
+		font-family: monospace;
+		font-size: 20px;
+		font-weight: bold;
+		text-shadow: 0px 0px 4px;
+	}
+
+	.loaded {
+		color: lime;
+		font-family: monospace;
+		font-size: 20px;
+		font-weight: bold;
+		text-shadow: 0px 0px 4px;
+		animation-name: loaded;
+		animation-duration: 1s;
+		animation-iteration-count: 1;
+	}
+
 	.bar {
 		height: 100%;
 		background-color: white;
@@ -47,12 +66,24 @@
 		background-color: lightcyan;
 		transition-duration: 0.0s;
 	}
+
+	@keyframes loaded {
+		0% {
+			opacity: 1;
+		}
+
+		100% {
+			opacity: 0;
+		}
+	}
 </style>
 
 <body style="background-color: black;">
 	<script src="howler.core.js"></script>
 	<script src="avoider.js"></script>
-	<div id="content">
+	<div id="preloader">
+	</div>
+	<div id="content" style="display: none;">
 		<canvas id="mainCanvas" width="1280" height="720" style="position: absolute; left: 0px; top: 0px;"></canvas>
 		<div class="display" id="playerHpDisplay" style="left: 10px; top: 10px;">Lives : </div>
 		<div class="display" style="left: 10px; top: 35px">Energy: </div>

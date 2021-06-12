@@ -76,10 +76,13 @@ class Util {
 		return val * (Math.random() - 0.5);
 	}
 
-	public static inline function fetchFile(path: String): Promise<String> {
+	public static inline function fetchFile(path: String, startCb: (text: String) -> Void, finishCb: (text: String) -> Void): Promise<String> {
+		startCb(path);
+
 		return new Promise<String>((resolve, reject) -> {
 			var xhr = new XMLHttpRequest();
 			xhr.addEventListener("load", (e: ProgressEvent) -> {
+				finishCb(path);
 				resolve(xhr.responseText);
 			});
 			xhr.addEventListener("error", () -> {
