@@ -3,6 +3,7 @@ package org.skyfire2008.avoider.game.properties;
 import org.skyfire2008.avoider.geom.Point;
 import org.skyfire2008.avoider.game.Side;
 
+import spork.core.Entity;
 import spork.core.Wrapper;
 import spork.core.JsonLoader.EntityFactoryMethod;
 
@@ -21,4 +22,5 @@ class MyHolder {
 	public var hp: Wrapper<Int>;
 	public var warningFunc: EntityFactoryMethod;
 	public var missileTargetPos: Point;
+	public var lastCollidedWith: Wrapper<Entity>;
 }

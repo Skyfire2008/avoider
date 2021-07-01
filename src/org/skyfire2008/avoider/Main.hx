@@ -198,14 +198,22 @@ class Main {
 
 			// load all shapes
 			var shapes: StringMap<Shape> = new StringMap<Shape>();
-			for (kid in shapesDir.kids) {
-				loadPromises.push(Util.fetchFile('assets/shapes/${kid.path}', createPreloaderMessage, removePreloaderMessage).then((file) -> {
-					var shape = Shape.fromJson(Json.parse(file));
-					shape.init(gl);
-					shapes.set(kid.path, shape);
-					return;
-				}));
-			}
+			var loadShapes: (dir: DirContent, path: String, prefix: String) -> Void = null;
+			loadShapes = (dir: DirContent, path: String, prefix: String) -> {
+				for (kid in dir.kids) {
+					if (kid.kids != null) {
+						loadShapes(kid, '$path/${kid.path}', prefix != "" ? '$prefix/${kid.path}' : '${kid.path}');
+					} else {
+						loadPromises.push(Util.fetchFile('${path}/${kid.path}', createPreloaderMessage, removePreloaderMessage).then((file) -> {
+							var shape = Shape.fromJson(Json.parse(file));
+							shape.init(gl);
+							shapes.set(prefix != "" ? '$prefix/${kid.path}' : ${kid.path}, shape);
+							return;
+						}));
+					}
+				}
+			};
+			loadShapes(shapesDir, "assets/shapes", "");
 
 			// when shapes are loaded...
 			Promise.all(loadPromises).then((_) -> {
@@ -218,7 +226,7 @@ class Main {
 				var entPromises: Array<Promise<Void>> = [];
 				for (kid in entsDir.kids) {
 					entPromises.push(Util.fetchFile('assets/entities/${kid.path}', createPreloaderMessage, removePreloaderMessage).then((file) -> {
-						entFactories.set(kid.path, JsonLoader.makeLoader(Json.parse(file)));
+						entFactories.set(kid.path, JsonLoader.makeLoader(Json.parse(file), kid.path));
 						return;
 					}));
 				}
