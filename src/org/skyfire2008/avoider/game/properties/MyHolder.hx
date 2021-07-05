@@ -23,4 +23,5 @@ class MyHolder {
 	public var warningFunc: EntityFactoryMethod;
 	public var missileTargetPos: Point;
 	public var lastCollidedWith: Wrapper<Entity>;
+	public var message: Wrapper<String>;
 }

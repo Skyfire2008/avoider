@@ -18,7 +18,8 @@
 			1.0,
 			1.0
 		],
-		"hp": 10
+		"hp": 10,
+		"lastCollidedWith": null
 	},
 	"components": [
 		{

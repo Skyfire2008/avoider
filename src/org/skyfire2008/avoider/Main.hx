@@ -1,5 +1,7 @@
 package org.skyfire2008.avoider;
 
+import org.skyfire2008.avoider.game.MessageSystem;
+
 import js.Lib;
 
 import org.skyfire2008.avoider.game.SoundSystem;
@@ -243,6 +245,7 @@ class Main {
 					});
 					Game.setInstance(game);
 
+					MessageSystem.setInstance(new MessageSystem());
 					SpawnSystem.setInstance(new SpawnSystem());
 
 					var storage = new StorageLoader();
@@ -278,6 +281,8 @@ class Main {
 					game.addEntity(entFactories.get("bgEnt.json")(), true);
 
 					SpawnSystem.instance.reset();
+
+					MessageSystem.instance.createMessage("hello\nthere", new Point(640, 360), 5, 10, 1);
 
 					/*for (i in 0...50) {
 						game.addEntity(entFactories.get("shooter.json")((holder) -> {
