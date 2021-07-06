@@ -1,9 +1,11 @@
 package org.skyfire2008.avoider.game.components;
 
+import org.skyfire2008.avoider.game.components.Interfaces.CollisionComponent;
 import org.skyfire2008.avoider.util.Util;
 import org.skyfire2008.avoider.game.components.Interfaces.InitComponent;
 import org.skyfire2008.avoider.graphics.Shape;
 import org.skyfire2008.avoider.graphics.Renderer;
+import org.skyfire2008.avoider.spatial.Collider;
 
 import howler.Howl;
 
@@ -18,7 +20,7 @@ enum MissileState {
 	Dying;
 }
 
-class MissileBehaviour implements InitComponent implements Interfaces.UpdateComponent {
+class MissileBehaviour implements InitComponent implements Interfaces.UpdateComponent implements CollisionComponent {
 	private static inline var armTime = 1.0;
 	private static inline var flyTime = 5.0;
 	private static inline var dieTime = 1.0;
@@ -36,6 +38,7 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 
 	private var pos: Point;
 	private var vel: Point;
+	private var launcherId: Int;
 	private var rotation: Wrapper<Float>;
 	private var side: Wrapper<Side>;
 	private var scale: Wrapper<Float>;
@@ -66,6 +69,7 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 	}
 
 	public function assignProps(holder: PropertyHolder) {
+		launcherId = holder.missileLauncherId.value;
 		pos = holder.position;
 		vel = holder.velocity;
 		rotation = holder.rotation;
@@ -78,6 +82,13 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 
 	public function onInit() {
 		trailSpawner.init();
+	}
+
+	public function onCollide(other: Collider) {
+		if (side.value == Side.Hostile && other.owner.id == launcherId) {
+			MessageSystem.instance.createMessage("with his\nown petard", pos, 4, 1, 2);
+			ScoringSystem.instance.addScore();
+		}
 	}
 
 	public function onUpdate(dTime: Float) {

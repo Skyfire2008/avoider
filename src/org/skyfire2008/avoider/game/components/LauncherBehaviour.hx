@@ -155,6 +155,7 @@ class LauncherBehaviour implements Interfaces.InitComponent implements Interface
 						holder.position = pos.copy();
 						holder.velocity = vel.copy();
 						holder.side = new Wrapper(side.value);
+						holder.missileLauncherId = new Wrapper(this.owner.id);
 						holder.missileTargetPos = shootTargetPos;
 					});
 					shootTargetId = -1;

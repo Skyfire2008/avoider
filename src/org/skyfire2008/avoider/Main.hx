@@ -282,7 +282,7 @@ class Main {
 
 					SpawnSystem.instance.reset();
 
-					MessageSystem.instance.createMessage("hello\nthere", new Point(640, 360), 5, 10, 1);
+					// MessageSystem.instance.createMessage("a quick\nbrown fox\njumps over\nthe lazy dog", new Point(640, 360), 4, 10, 2);
 
 					/*for (i in 0...50) {
 						game.addEntity(entFactories.get("shooter.json")((holder) -> {

@@ -22,6 +22,7 @@ class MyHolder {
 	public var hp: Wrapper<Int>;
 	public var warningFunc: EntityFactoryMethod;
 	public var missileTargetPos: Point;
+	public var missileLauncherId: Wrapper<Int>;
 	public var lastCollidedWith: Wrapper<Entity>;
 	public var message: Wrapper<String>;
 }

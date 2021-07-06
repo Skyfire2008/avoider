@@ -89,7 +89,7 @@ class SpawnSystem {
 
 	private function incWave() {
 		wave++;
-		ScoringSystem.instance.incBaseMult();
+		ScoringSystem.instance.notifyOfWaveInc();
 		enemiesTotal = Std.int(wave * 1.5);
 		expectedEnemiesOnScreen = Std.int(wave / 2) + 1;
 	}

@@ -4,7 +4,7 @@ import org.skyfire2008.avoider.util.Util;
 
 class ScoringSystem {
 	public static var instance(default, null): ScoringSystem;
-	private static inline var multDecay = 4;
+	private static inline var multDecay = 6;
 
 	private var scoreCallback: (value: Int) -> Void;
 	private var multCallback: (value: Int) -> Void;
@@ -28,7 +28,7 @@ class ScoringSystem {
 		if (multTime > 0) {
 			multTime -= time;
 			if (multTime <= 0) {
-				mult = Util.max(mult - 1, baseMult);
+				mult = baseMult;
 				multCallback(mult);
 				if (mult > baseMult) {
 					multTime += multDecay;
@@ -40,8 +40,10 @@ class ScoringSystem {
 		}
 	}
 
-	public function incBaseMult() {
-		baseMult++;
+	public function notifyOfWaveInc() {
+		var x = SpawnSystem.instance.wave / 3;
+		x = Math.max(x * Math.sqrt(x), 1);
+		baseMult = Std.int((x));
 		if (mult < baseMult) {
 			mult = baseMult;
 			multCallback(mult);
@@ -50,7 +52,7 @@ class ScoringSystem {
 
 	public function addScore() {
 		score += mult;
-		mult += Std.int(Math.sqrt(SpawnSystem.instance.wave));
+		mult += baseMult;
 		multTime = multDecay;
 		scoreCallback(score);
 		multCallback(mult);

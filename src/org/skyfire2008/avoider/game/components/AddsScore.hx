@@ -1,9 +1,40 @@
 package org.skyfire2008.avoider.game.components;
 
-class AddsScore implements Interfaces.DeathComponent {
+import spork.core.PropertyHolder;
+import spork.core.Entity;
+import spork.core.Wrapper;
+
+import org.skyfire2008.avoider.geom.Point;
+
+class AddsScore implements Interfaces.DeathComponent implements Interfaces.UpdateComponent {
+	private static inline var bonusTime = 1.5;
+	private var time = 0.0;
+	private var pos: Point;
+	private var lastCollidedWith: Wrapper<Entity>;
+
 	public function new() {}
 
+	public function assignProps(holder: PropertyHolder) {
+		pos = holder.position;
+		lastCollidedWith = holder.lastCollidedWith;
+	}
+
+	public function onUpdate(dTime: Float) {
+		time += dTime;
+	}
+
 	public function onDeath() {
-		ScoringSystem.instance.addScore();
+		if (lastCollidedWith.value.templateName != "player.json") {
+			ScoringSystem.instance.addScore();
+			if (lastCollidedWith.value.templateName == "shooterBeam.json") {
+				MessageSystem.instance.createMessage("direct\nhit", pos, 4, 1, 2);
+				ScoringSystem.instance.addScore();
+			}
+		}
+		if (time <= bonusTime) {
+			MessageSystem.instance.createMessage("spawn\nkill", pos, 4, 1, 2);
+			ScoringSystem.instance.addScore();
+			ScoringSystem.instance.addScore();
+		}
 	}
 }
