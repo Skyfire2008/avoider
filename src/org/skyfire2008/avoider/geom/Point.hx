@@ -1,5 +1,7 @@
 package org.skyfire2008.avoider.geom;
 
+import js.html.PointerEvent;
+
 import spork.core.SharedProperty;
 
 class Point implements SharedProperty {
@@ -40,6 +42,12 @@ class Point implements SharedProperty {
 
 	public static function dot(a: Point, b: Point): Float {
 		return a.x * b.x + a.y * b.y;
+	}
+
+	public static function lerp(a: Point, b: Point, mult: Float): Point {
+		var x = b.x * mult + a.x * (1.0 - mult);
+		var y = b.y * mult + a.y * (1.0 - mult);
+		return new Point(x, y);
 	}
 
 	public function new(x: Float = 0, y: Float = 0) {

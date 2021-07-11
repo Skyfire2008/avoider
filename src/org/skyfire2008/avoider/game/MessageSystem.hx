@@ -1,28 +1,50 @@
 package org.skyfire2008.avoider.game;
 
-import org.skyfire2008.avoider.game.components.Timed;
-import org.skyfire2008.avoider.game.components.ChangesColorMult;
-import org.skyfire2008.avoider.game.components.RenderComponent;
+import org.skyfire2008.avoider.game.components.CharBehaviour;
 
 import haxe.ds.StringMap;
+
+import js.lib.Object;
 
 import spork.core.Entity;
 import spork.core.PropertyHolder;
 import spork.core.Wrapper;
 import spork.core.Component;
 
+import org.skyfire2008.avoider.game.components.Timed;
+import org.skyfire2008.avoider.game.components.RenderComponent;
 import org.skyfire2008.avoider.graphics.Shape;
 import org.skyfire2008.avoider.geom.Point;
+import org.skyfire2008.avoider.graphics.ColorMult;
 
 typedef CharData = {
 	var pos: Point;
 	var shape: Shape;
 };
 
+typedef MessageParams = {
+	?scale: Float,
+	?spacing: Float,
+	?appearTime: Float,
+	?hangTime: Float,
+	?fadeTime: Float,
+	?color: ColorMult,
+	?spread: Float
+}
+
 class MessageSystem {
 	public static var instance(default, null): MessageSystem;
 	private static inline var chars = "abcdefghijklmnopqrstuvwxyz";
 	private static var charSize = new Point(4, 5);
+	private static var defaultParams: MessageParams = {
+		scale: 4,
+		spacing: 2,
+		appearTime: 0.25,
+		hangTime: 1.0,
+		fadeTime: 0.5,
+		color: [1.0, 1.0, 1.0],
+		spread: 0.1
+	};
 
 	private var charSet: StringMap<Shape>;
 
@@ -42,10 +64,11 @@ class MessageSystem {
 		}
 	}
 
-	public function createMessage(message: String, pos: Point, scale: Float, timeToLive: Float, spacing: Float) {
+	public function createMessage(message: String, pos: Point, params: MessageParams) {
+		params = Object.assign({}, defaultParams, params);
 		message = message.toLowerCase();
-		var dx = charSize.x + spacing;
-		var dy = charSize.y + spacing;
+		var dx = charSize.x + params.spacing;
+		var dy = charSize.y + params.spacing;
 
 		var currentRow: Array<CharData> = [];
 		var chars: Array<CharData> = [];
@@ -85,16 +108,16 @@ class MessageSystem {
 		for (data in chars) {
 			var holder = new PropertyHolder();
 			holder.rotation = new Wrapper(0.0);
-			holder.scale = new Wrapper(scale);
-			holder.position = Point.scale(data.pos, scale);
+			holder.scale = new Wrapper(params.scale);
+			holder.position = Point.scale(data.pos, params.scale);
 			holder.position.add(pos);
-			holder.colorMult = [1, 1, 1];
-			holder.timeToLive = new Wrapper(timeToLive);
+			holder.colorMult = [params.color.r, params.color.g, params.color.b];
+			holder.timeToLive = new Wrapper(params.appearTime + params.fadeTime + params.hangTime);
 
 			var ent = new Entity("character");
 			var compos: Array<Component> = [];
+			compos.push(new CharBehaviour(pos, params));
 			compos.push(new RenderComponent(data.shape, 0.5));
-			compos.push(new ChangesColorMult([1, 1, 1], [0, 0, 0]));
 			compos.push(new Timed());
 
 			for (compo in compos) {

@@ -281,8 +281,10 @@ class Main {
 					game.addEntity(entFactories.get("bgEnt.json")(), true);
 
 					SpawnSystem.instance.reset();
-
-					// MessageSystem.instance.createMessage("a quick\nbrown fox\njumps over\nthe lazy dog", new Point(640, 360), 4, 10, 2);
+					// play bg music
+					var music = SoundSystem.instance.getSound("bitBreaker-compressed.mp3");
+					music.loop(true);
+					music.play();
 
 					/*for (i in 0...50) {
 						game.addEntity(entFactories.get("shooter.json")((holder) -> {
