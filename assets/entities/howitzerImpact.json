@@ -10,7 +10,7 @@
 			"params": {}
 		},
 		{
-			"name": "hasCollider",
+			"name": "specialHasCollider",
 			"params": {}
 		}
 	]

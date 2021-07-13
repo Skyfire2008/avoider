@@ -36,17 +36,8 @@
 			}
 		},
 		{
-			"name": "spawnsOnDeath",
-			"params": {
-				"entityName": "howitzerImpact.json",
-				"spawnTime": 1,
-				"angleRand": 0,
-				"velRand": 0,
-				"spawnNum": 1,
-				"relVelMult": 0.0,
-				"spawnVel": 0,
-				"spreadAngle": 0
-			}
+			"name": "impactPointBehaviour",
+			"params": {}
 		},
 		{
 			"name": "changesColorMult",

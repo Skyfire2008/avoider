@@ -20,7 +20,7 @@ enum MissileState {
 	Dying;
 }
 
-class MissileBehaviour implements InitComponent implements Interfaces.UpdateComponent implements CollisionComponent {
+class MissileBehaviour implements InitComponent implements Interfaces.UpdateComponent {
 	private static inline var armTime = 1.0;
 	private static inline var flyTime = 5.0;
 	private static inline var dieTime = 1.0;
@@ -82,13 +82,6 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 
 	public function onInit() {
 		trailSpawner.init();
-	}
-
-	public function onCollide(other: Collider) {
-		if (side.value == Side.Hostile && other.owner.id == launcherId) {
-			MessageSystem.instance.createMessage("with his\nown petard", pos, {scale: 4, spacing: 2, color: [1.0, 0.8, 1.0]});
-			ScoringSystem.instance.addScore();
-		}
 	}
 
 	public function onUpdate(dTime: Float) {

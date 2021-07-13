@@ -181,6 +181,7 @@ class HowitzerBehaviour implements Interfaces.UpdateComponent implements Interfa
 				var impact = createImpact((holder) -> {
 					holder.position = entPos;
 					holder.timeToLive = new Wrapper(entTtl);
+					holder.missileLauncherId = new Wrapper(owner.id);
 				});
 				Game.instance.addEntity(impact);
 

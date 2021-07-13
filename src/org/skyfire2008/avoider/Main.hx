@@ -263,6 +263,7 @@ class Main {
 					org.skyfire2008.avoider.game.components.HowitzerBehaviour.init();
 					org.skyfire2008.avoider.game.components.MissileBehaviour.init();
 					org.skyfire2008.avoider.game.components.LauncherBehaviour.init();
+					org.skyfire2008.avoider.game.components.ImpactPointBehaviour.init();
 					org.skyfire2008.avoider.game.components.ControlComponent.init((value: Bool) -> {
 						if (value) {
 							timeMult = Constants.timeStretchMult;
@@ -285,6 +286,9 @@ class Main {
 					var music = SoundSystem.instance.getSound("bitBreaker-compressed.mp3");
 					music.loop(true);
 					music.play();
+					// TODO: add sound for chaser activation
+					// TODO: consider making chasers aim longer
+					// TODO: add short lived explosion entity for enemy collision
 
 					/*for (i in 0...50) {
 						game.addEntity(entFactories.get("shooter.json")((holder) -> {
