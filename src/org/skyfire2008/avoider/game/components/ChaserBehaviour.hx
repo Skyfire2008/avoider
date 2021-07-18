@@ -176,6 +176,7 @@ class ChaserAiming implements ChaserState {
 			}
 			delay += time;
 		} else {
+			parent.startPos = parent.pos.copy();
 			parent.side.value = Side.Hostile;
 			parent.changeState(new ChaserAttacking(parent));
 			ChaserBehaviour.startSound.play();
@@ -202,6 +203,7 @@ class ChaserAttacking implements ChaserState {
 
 	public function onUpdate(time: Float) {
 		if (delay >= ChaserBehaviour.attackTime) {
+			parent.startPos = null;
 			parent.side.value = parent.baseSide;
 			parent.changeState(new ChaserIdling(parent));
 			parent.trailSpawner.stopSpawn();
@@ -235,6 +237,7 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 
 	private var state: ChaserState;
 
+	public var startPos: Point;
 	public var pos: Point;
 	public var vel: Point;
 	public var rotation: Wrapper<Float>;
@@ -305,6 +308,12 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 	}
 
 	public function onDeath() {
+		if (startPos != null && Point.distance(startPos, pos) >= Constants.gameHeight) {
+			MessageSystem.instance.createMessage("long shot", pos, {color: [0.7, 0.7, 1.0]});
+			ScoringSystem.instance.addScore();
+			ScoringSystem.instance.addScore();
+			ScoringSystem.instance.addScore();
+		}
 		state.onDeath();
 	}
 }

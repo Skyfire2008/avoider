@@ -65,6 +65,10 @@
 			}
 		},
 		{
+			"name": "spawnsPhantomOnDeath",
+			"params": {}
+		},
+		{
 			"name": "addsScore",
 			"params": {}
 		},

@@ -58,6 +58,10 @@
 			}
 		},
 		{
+			"name": "spawnsPhantomOnDeath",
+			"params": {}
+		},
+		{
 			"name": "playsSoundOnDeath",
 			"params": {
 				"soundSrc": "enemyExplosion.wav"
