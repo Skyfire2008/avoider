@@ -1,5 +1,6 @@
 package org.skyfire2008.avoider;
 
+import org.skyfire2008.avoider.game.HowitzerSystem;
 import org.skyfire2008.avoider.game.MessageSystem;
 
 import js.Lib;
@@ -247,6 +248,7 @@ class Main {
 
 					MessageSystem.setInstance(new MessageSystem());
 					SpawnSystem.setInstance(new SpawnSystem());
+					HowitzerSystem.setInstance(new HowitzerSystem());
 
 					var storage = new StorageLoader();
 					StorageLoader.setInstance(storage);

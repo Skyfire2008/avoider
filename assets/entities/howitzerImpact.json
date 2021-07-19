@@ -1,7 +1,7 @@
 {
 	"properties": {
 		"colliderRadius": 150.0,
-		"timeToLive": 0,
+		"timeToLive": 0.017,
 		"side": "Hostile"
 	},
 	"components": [
@@ -11,6 +11,10 @@
 		},
 		{
 			"name": "specialHasCollider",
+			"params": {}
+		},
+		{
+			"name": "howitzerImpactBehaviour",
 			"params": {}
 		}
 	]
