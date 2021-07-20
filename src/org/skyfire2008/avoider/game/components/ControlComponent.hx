@@ -125,6 +125,7 @@ class ControlComponent implements KBComponent implements InitComponent implement
 
 	public function onInit() {
 		Controller.instance.addComponent(this);
+		ScoringSystem.instance.setPlayerPos(pos);
 		Game.instance.blinkCallback(blinkTime / blinkRecharge);
 		ghostMethod = Game.instance.entMap.get("playerGhost.json");
 		blinkGhost = Shape.getShape("blinkGhost.json");

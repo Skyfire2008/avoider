@@ -1,6 +1,6 @@
 package org.skyfire2008.avoider.game;
 
-import org.skyfire2008.avoider.util.Util;
+import org.skyfire2008.avoider.geom.Point;
 
 class ScoringSystem {
 	public static var instance(default, null): ScoringSystem;
@@ -9,6 +9,10 @@ class ScoringSystem {
 	private var scoreCallback: (value: Int) -> Void;
 	private var multCallback: (value: Int) -> Void;
 	private var multBarCallback: (value: Float) -> Void;
+	private var lastScore = 0;
+	private var lastScoreTime = 0.0;
+	private var lastScoreCount = 0;
+	private var playerPos: Point;
 	private var score = 0;
 	private var mult = 1;
 	private var baseMult = 1;
@@ -22,6 +26,10 @@ class ScoringSystem {
 		this.scoreCallback = scoreCallback;
 		this.multCallback = multCallback;
 		this.multBarCallback = multBarCallback;
+	}
+
+	public function setPlayerPos(pos: Point) {
+		playerPos = pos;
 	}
 
 	public function update(time: Float) {
@@ -38,6 +46,31 @@ class ScoringSystem {
 			}
 			multBarCallback(multTime / multDecay);
 		}
+
+		lastScoreTime += time;
+		if (lastScoreTime >= 0.06) {
+			if (lastScore > 0) {
+				var color = [0.5, 0.5, 0.5];
+				if (lastScoreCount <= 2) {
+					color = [1, 1, 1];
+				} else if (lastScoreCount <= 4) {
+					color = [0.5, 1, 0.5];
+				} else if (lastScoreCount <= 6) {
+					color = [0.5, 0.5, 1];
+				} else {
+					color = [1.0, 0.8, 0.4];
+				}
+				MessageSystem.instance.createMessage("+" + lastScore, playerPos, {
+					appearTime: 0,
+					hangTime: 1.5,
+					fadeTime: 0,
+					color: color
+				});
+			}
+			lastScoreTime = 0;
+			lastScore = 0;
+			lastScoreCount = 0;
+		}
 	}
 
 	public function notifyOfWaveInc() {
@@ -51,6 +84,8 @@ class ScoringSystem {
 	}
 
 	public function addScore() {
+		lastScore += mult;
+		lastScoreCount++;
 		score += mult;
 		mult += baseMult;
 		multTime = multDecay;

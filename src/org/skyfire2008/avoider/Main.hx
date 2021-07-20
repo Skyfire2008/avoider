@@ -288,9 +288,9 @@ class Main {
 					var music = SoundSystem.instance.getSound("bitBreaker-compressed.mp3");
 					music.loop(true);
 					music.play();
+
 					// TODO: add sound for chaser activation
 					// TODO: consider making chasers aim longer
-					// TODO: add short lived explosion entity for enemy collision
 
 					/*for (i in 0...50) {
 						game.addEntity(entFactories.get("shooter.json")((holder) -> {

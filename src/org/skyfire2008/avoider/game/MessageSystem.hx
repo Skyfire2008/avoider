@@ -17,6 +17,11 @@ import org.skyfire2008.avoider.graphics.Shape;
 import org.skyfire2008.avoider.geom.Point;
 import org.skyfire2008.avoider.graphics.ColorMult;
 
+enum Style {
+	Score;
+	Message;
+}
+
 typedef CharData = {
 	var pos: Point;
 	var shape: Shape;
@@ -29,12 +34,13 @@ typedef MessageParams = {
 	?hangTime: Float,
 	?fadeTime: Float,
 	?color: ColorMult,
-	?spread: Float
+	?spread: Float,
+	?style: Style
 }
 
 class MessageSystem {
 	public static var instance(default, null): MessageSystem;
-	private static inline var chars = "abcdefghijklmnopqrstuvwxyz";
+	private static inline var chars = "abcdefghijklmnopqrstuvwxyz0123456789+";
 	private static var charSize = new Point(4, 5);
 	private static var defaultParams: MessageParams = {
 		scale: 4,
@@ -43,7 +49,8 @@ class MessageSystem {
 		hangTime: 1.0,
 		fadeTime: 0.5,
 		color: [1.0, 1.0, 1.0],
-		spread: 0.1
+		spread: 0.1,
+		style: Style.Message
 	};
 
 	private var charSet: StringMap<Shape>;
@@ -88,8 +95,8 @@ class MessageSystem {
 					currentRow = [];
 					x = 0;
 				default:
-					x += dx;
 					currentRow.push({pos: new Point(x, y), shape: charSet.get(char)});
+					x += dx;
 			}
 		}
 
@@ -104,12 +111,15 @@ class MessageSystem {
 			data.pos.y -= y / 2;
 		}
 
+		trace(x, y);
+
 		// create entities
 		for (data in chars) {
 			var holder = new PropertyHolder();
 			holder.rotation = new Wrapper(0.0);
 			holder.scale = new Wrapper(params.scale);
 			holder.position = Point.scale(data.pos, params.scale);
+			trace(holder.position);
 			holder.position.add(pos);
 			holder.colorMult = [params.color.r, params.color.g, params.color.b];
 			holder.timeToLive = new Wrapper(params.appearTime + params.fadeTime + params.hangTime);
