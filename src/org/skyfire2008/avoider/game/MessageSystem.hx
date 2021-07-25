@@ -111,22 +111,23 @@ class MessageSystem {
 			data.pos.y -= y / 2;
 		}
 
-		trace(x, y);
-
 		// create entities
 		for (data in chars) {
 			var holder = new PropertyHolder();
 			holder.rotation = new Wrapper(0.0);
 			holder.scale = new Wrapper(params.scale);
 			holder.position = Point.scale(data.pos, params.scale);
-			trace(holder.position);
 			holder.position.add(pos);
 			holder.colorMult = [params.color.r, params.color.g, params.color.b];
 			holder.timeToLive = new Wrapper(params.appearTime + params.fadeTime + params.hangTime);
 
 			var ent = new Entity("character");
 			var compos: Array<Component> = [];
-			compos.push(new CharBehaviour(pos, params));
+			if (params.style == Message) {
+				compos.push(new CharBehaviour(pos, params));
+			} else {
+				compos.push(new CharBehaviour2(pos, params));
+			}
 			compos.push(new RenderComponent(data.shape, 0.5));
 			compos.push(new Timed());
 

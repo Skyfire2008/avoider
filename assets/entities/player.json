@@ -1,7 +1,7 @@
 {
 	"properties": {
 		"side": "Player",
-		"colliderRadius": 15,
+		"colliderRadius": 12.5,
 		"position": {
 			"x": 0,
 			"y": 0

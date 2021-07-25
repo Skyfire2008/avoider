@@ -48,23 +48,32 @@ class ScoringSystem {
 		}
 
 		lastScoreTime += time;
-		if (lastScoreTime >= 0.06) {
+		if (lastScoreTime >= 0.1) {
 			if (lastScore > 0) {
-				var color = [0.5, 0.5, 0.5];
+				var color: Array<Float>;
+				var hangTime = 1.0;
 				if (lastScoreCount <= 2) {
+					color = [0.5, 0.5, 0.5];
+				} else if (lastScoreCount <= 3) {
 					color = [1, 1, 1];
-				} else if (lastScoreCount <= 4) {
+				} else if (lastScoreCount <= 5) {
 					color = [0.5, 1, 0.5];
-				} else if (lastScoreCount <= 6) {
+					hangTime = 2.0;
+				} else if (lastScoreCount <= 8) {
 					color = [0.5, 0.5, 1];
+					hangTime = 3.0;
 				} else {
-					color = [1.0, 0.8, 0.4];
+					color = [1, 0.5, 1];
+					hangTime = 4.0;
 				}
+
 				MessageSystem.instance.createMessage("+" + lastScore, playerPos, {
 					appearTime: 0,
-					hangTime: 1.5,
-					fadeTime: 0,
-					color: color
+					hangTime: hangTime,
+					fadeTime: 1.0,
+					scale: 3,
+					color: color,
+					style: Score
 				});
 			}
 			lastScoreTime = 0;
