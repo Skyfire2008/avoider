@@ -193,7 +193,8 @@ class LauncherBehaviour implements Interfaces.InitComponent implements Interface
 
 	public function onDeath() {
 		if (state == Chasing) {
-			MessageSystem.instance.createMessage("hazardous\ncargo", pos, {color: [1, 1, 0.8]});
+			MessageSystem.instance.createMessage("dangerous\ncargo", pos, {color: [1, 1, 0.8]});
+			ScoringSystem.instance.addScore();
 			ScoringSystem.instance.addScore();
 		}
 

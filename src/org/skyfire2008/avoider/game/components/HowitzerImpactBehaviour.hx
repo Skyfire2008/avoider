@@ -28,7 +28,7 @@ class HowitzerImpactBehaviour implements Interfaces.InitComponent implements Int
 		var targets = HowitzerSystem.instance.removeImpactCountTargets(this.owner.id);
 		if (targets > 2) {
 			MessageSystem.instance.createMessage("rain on\ntheir parade", pos, {color: [1.0, 0.7, 0.7]});
-			for (i in 0...targets) {
+			for (i in 0...targets * 2) {
 				ScoringSystem.instance.addScore();
 			}
 		}

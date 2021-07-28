@@ -52,6 +52,7 @@ class SpecialHasCollider implements Interfaces.InitComponent implements Interfac
 		if (other.owner.id == launcherId && side.value == Side.Hostile) {
 			MessageSystem.instance.createMessage("with his\nown petard", other.pos, {scale: 4, spacing: 2, color: [1.0, 0.8, 1.0]});
 			ScoringSystem.instance.addScore();
+			ScoringSystem.instance.addScore();
 		}
 	}
 }

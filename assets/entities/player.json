@@ -1,7 +1,7 @@
 {
 	"properties": {
 		"side": "Player",
-		"colliderRadius": 12.5,
+		"colliderRadius": 12,
 		"position": {
 			"x": 0,
 			"y": 0
@@ -44,9 +44,9 @@
 		{
 			"name": "controlComponent",
 			"params": {
-				"a": 6400,
+				"a": 14400,
 				"maxSpeed": 720,
-				"brakeMult": 0.6
+				"brakeMult": 0.5
 			}
 		},
 		{
