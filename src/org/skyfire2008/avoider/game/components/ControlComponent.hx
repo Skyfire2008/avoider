@@ -21,7 +21,8 @@ using org.skyfire2008.avoider.geom.Point;
 
 class ControlComponent implements KBComponent implements InitComponent implements UpdateComponent implements DeathComponent {
 	private static inline var blinkDist = 320;
-	private static inline var blinkRecharge = 5;
+	private static inline var blinkCost = 2.5;
+	private static inline var totalEnergy = 5;
 	private static inline var ghostDist = 30.0;
 	private static var blinkSound: Howl;
 	private static var enableTimeStretch: (value: Bool) -> Void;
@@ -41,7 +42,7 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	private var side: Wrapper<Side>;
 	private var vel: Point;
 	private var rotation: Wrapper<Float>;
-	private var blinkTime: Float = blinkRecharge;
+	private var energy: Float = totalEnergy;
 
 	private var isRunning = false;
 	private var isTimeStretched = false;
@@ -87,7 +88,7 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	}
 
 	public function blink(x: Float, y: Float): Void {
-		if (blinkTime >= blinkRecharge) {
+		if (energy >= blinkCost) {
 			TargetingSystem.instance.removeTarget(owner.id, side.value);
 			var dir = new Point(x, y);
 			dir.sub(pos);
@@ -116,8 +117,8 @@ class ControlComponent implements KBComponent implements InitComponent implement
 			pos.x += dir.x;
 			pos.y += dir.y;
 			TargetingSystem.instance.addTarget(owner.id, pos, side.value);
-			blinkTime = 0;
-			Game.instance.blinkCallback(blinkTime / blinkRecharge);
+			energy -= blinkCost;
+			Game.instance.blinkCallback(energy / totalEnergy);
 
 			blinkSound.play();
 		}
@@ -126,7 +127,7 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	public function onInit() {
 		Controller.instance.addComponent(this);
 		ScoringSystem.instance.setPlayerPos(pos);
-		Game.instance.blinkCallback(blinkTime / blinkRecharge);
+		Game.instance.blinkCallback(energy / totalEnergy);
 		ghostMethod = Game.instance.entMap.get("playerGhost.json");
 		blinkGhost = Shape.getShape("blinkGhost.json");
 	}
@@ -139,20 +140,22 @@ class ControlComponent implements KBComponent implements InitComponent implement
 	public function onUpdate(time: Float) {
 		var spawnBlinkEffect = false;
 		if (isTimeStretched) {
-			if (blinkTime > 0) {
-				blinkTime -= time / Constants.timeStretchMult;
-				Game.instance.blinkCallback(blinkTime / blinkRecharge);
+			if (energy > 0) {
+				energy -= 2 * time / Constants.timeStretchMult;
+				Game.instance.blinkCallback(energy / totalEnergy);
 			} else {
 				setTimeStretch(false);
 			}
 		} else {
-			if (blinkTime < blinkRecharge) {
-				blinkTime += time;
-				if (blinkTime > blinkRecharge) {
+			if (energy < totalEnergy) {
+				energy += time;
+				if (energy >= blinkCost && energy - time < blinkCost) {
 					spawnBlinkEffect = true;
-					blinkTime = blinkRecharge;
 				}
-				Game.instance.blinkCallback(blinkTime / blinkRecharge);
+				if (energy > totalEnergy) {
+					energy = totalEnergy;
+				}
+				Game.instance.blinkCallback(energy / totalEnergy);
 			}
 		}
 
@@ -175,11 +178,11 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		rotation.value = vel.angle;
 
 		// draw blink ghost
-		var mult = blinkTime / blinkRecharge;
-		if (mult < 0.8) {
+		var mult = energy / blinkCost;
+		if (mult < 0.7) {
 			mult = 0;
 		} else {
-			mult = (mult - 0.8) / 0.2;
+			mult = Math.min((mult - 0.7) / 0.2, 1.0);
 		}
 		if (spawnBlinkEffect) {
 			Game.instance.addEntity(ghostMethod((holder) -> {
