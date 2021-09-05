@@ -36,13 +36,7 @@ class ScoringSystem {
 		if (multTime > 0) {
 			multTime -= time;
 			if (multTime <= 0) {
-				mult = baseMult;
-				multCallback(mult);
-				if (mult > baseMult) {
-					multTime += multDecay;
-				} else {
-					multTime = 0;
-				}
+				resetMult();
 			}
 			multBarCallback(multTime / multDecay);
 		}
@@ -52,7 +46,7 @@ class ScoringSystem {
 			if (lastScore > 0) {
 				var color: Array<Float>;
 				var hangTime = 1.0;
-				if (lastScoreCount <= 2) {
+				if (lastScoreCount <= 1) {
 					color = [0.5, 0.5, 0.5];
 				} else if (lastScoreCount <= 3) {
 					color = [1, 1, 1];
@@ -110,6 +104,16 @@ class ScoringSystem {
 		multBarCallback(multTime / multDecay);
 	}*/
 	public function resetMult() {
+		if (mult > baseMult && playerPos != null) {
+			MessageSystem.instance.createMessage("multiplier\nreset", playerPos, {
+				appearTime: 0,
+				hangTime: 1.0,
+				fadeTime: 1.0,
+				scale: 4,
+				color: [0.8, 0.5, 0.5],
+				style: Score
+			});
+		}
 		mult = baseMult;
 		multTime = 0;
 		multCallback(mult);

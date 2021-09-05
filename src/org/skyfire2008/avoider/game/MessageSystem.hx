@@ -17,6 +17,8 @@ import org.skyfire2008.avoider.graphics.Shape;
 import org.skyfire2008.avoider.geom.Point;
 import org.skyfire2008.avoider.graphics.ColorMult;
 
+using Lambda;
+
 enum Style {
 	Score;
 	Message;
@@ -74,41 +76,53 @@ class MessageSystem {
 	public function createMessage(message: String, pos: Point, params: MessageParams) {
 		params = Object.assign({}, defaultParams, params);
 		message = message.toLowerCase();
-		var dx = charSize.x + params.spacing;
-		var dy = charSize.y + params.spacing;
+		var lines = message.split('\n');
 
-		var currentRow: Array<CharData> = [];
-		var chars: Array<CharData> = [];
-		var x = 0.0;
-		var y = 0.0;
-		for (i in 0...message.length) {
-			var char = message.charAt(i);
-			switch (char) {
-				case " ":
-					x += dx;
-				case "\n":
-					y += dy;
-					for (data in currentRow) {
-						data.pos.x -= x / 2;
-					}
-					chars = chars.concat(currentRow);
-					currentRow = [];
-					x = 0;
-				default:
-					currentRow.push({pos: new Point(x, y), shape: charSet.get(char)});
-					x += dx;
+		// calculate the size of message
+		var longest = 0.0;
+		for (line in lines) {
+			var length = line.length * charSize.x + (line.length - 1) * params.spacing;
+			if (length > longest) {
+				longest = length;
 			}
 		}
 
-		y += dy;
-		for (data in currentRow) {
-			data.pos.x -= x / 2;
-		}
-		chars = chars.concat(currentRow);
+		var msgDim = new Point(longest, lines.length * charSize.y + (lines.length) * params.spacing);
+		msgDim.mult(params.scale);
 
-		// normalize by height
-		for (data in chars) {
-			data.pos.y -= y / 2;
+		// fit the message into the screen
+		var startPos = pos.copy();
+		if (startPos.x - msgDim.x / 2 < 0) {
+			startPos.x -= startPos.x - msgDim.x / 2;
+		} else if (startPos.x + msgDim.x / 2 > Constants.gameWidth) {
+			startPos.x -= Constants.gameWidth - (startPos.x - msgDim.x / 2);
+		}
+		if (startPos.y - msgDim.y / 2 < 0) {
+			startPos.y -= startPos.y - msgDim.y / 2;
+		} else if (startPos.y + msgDim.y / 2 > Constants.gameHeight) {
+			startPos.y -= Constants.gameHeight - (startPos.y - msgDim.y / 2);
+		}
+
+		// get top left position
+		msgDim.mult(0.5);
+		startPos.sub(msgDim);
+
+		// generate char data
+		var chars: Array<CharData> = [];
+		for (j in 0...lines.length) {
+			var line = lines[j];
+			for (i in 0...line.length) {
+				var char = line.charAt(i);
+				if (char != " ") {
+					var position = new Point(i * (charSize.x + params.spacing), j * (charSize.x + params.spacing));
+					position.mult(params.scale);
+					position.add(startPos);
+					chars.push({
+						pos: position,
+						shape: charSet.get(char)
+					});
+				}
+			}
 		}
 
 		// create entities
@@ -116,8 +130,7 @@ class MessageSystem {
 			var holder = new PropertyHolder();
 			holder.rotation = new Wrapper(0.0);
 			holder.scale = new Wrapper(params.scale);
-			holder.position = Point.scale(data.pos, params.scale);
-			holder.position.add(pos);
+			holder.position = data.pos;
 			holder.colorMult = [params.color.r, params.color.g, params.color.b];
 			holder.timeToLive = new Wrapper(params.appearTime + params.fadeTime + params.hangTime);
 
