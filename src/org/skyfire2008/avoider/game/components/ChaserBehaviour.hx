@@ -179,7 +179,7 @@ class ChaserAiming implements ChaserState {
 			parent.startPos = parent.pos.copy();
 			parent.side.value = Side.Hostile;
 			parent.changeState(new ChaserAttacking(parent));
-			ChaserBehaviour.startSound.play();
+			SoundSystem.instance.playSound(ChaserBehaviour.startSound, parent.pos.x, true);
 		}
 	}
 

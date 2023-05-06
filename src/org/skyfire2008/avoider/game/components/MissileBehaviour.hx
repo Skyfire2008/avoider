@@ -93,7 +93,7 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 					state = Chasing;
 					trailSpawner.startSpawn();
 					currentShape = redShape;
-					startSound.play();
+					SoundSystem.instance.playSound(startSound, pos.x, true);
 				}
 			case Chasing:
 				if (time <= flyTime) {

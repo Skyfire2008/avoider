@@ -162,7 +162,7 @@ class LauncherBehaviour implements Interfaces.InitComponent implements Interface
 					missileProp.kill();
 					missileProp = null;
 					Game.instance.addEntity(missile);
-					shootSound.play();
+					SoundSystem.instance.playSound(shootSound, pos.x, true);
 
 					time = 0;
 					state = Firing;

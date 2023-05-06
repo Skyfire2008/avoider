@@ -69,9 +69,12 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		side = holder.side;
 	}
 
-	public function addDir(x: Float, y: Float) {
-		dir.x += x;
-		dir.y += y;
+	public function setDirX(x: Float) {
+		dir.x = x;
+	}
+
+	public function setDirY(y: Float) {
+		dir.y = y;
 	}
 
 	public function setWalk(value: Bool): Void {
@@ -120,7 +123,7 @@ class ControlComponent implements KBComponent implements InitComponent implement
 			energy -= blinkCost;
 			Game.instance.blinkCallback(energy / totalEnergy);
 
-			blinkSound.play();
+			SoundSystem.instance.playSound(blinkSound, pos.x, true);
 		}
 	}
 
@@ -169,6 +172,8 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		}
 
 		vel.add(Point.scale(dir, a * time));
+		dir.x = 0;
+		dir.y = 0;
 
 		var velLength = vel.length;
 		if (velLength > maxSpeed) {

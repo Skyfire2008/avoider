@@ -135,7 +135,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 		} else {
 			// if firing, delay and shoot
 			if (this.time >= Constants.reactionTime) {
-				shootSound.play();
+				SoundSystem.instance.playSound(shootSound, pos.x, true);
 				var myCol = new Collider(new Entity("shooterBeam.json"), pos, 0, new Wrapper(Side.Hostile));
 
 				// find the end point(where beam intersects the reactagnle containing the game)

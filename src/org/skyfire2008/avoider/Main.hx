@@ -44,7 +44,6 @@ class Main {
 	private static var document: Document;
 	private static var gl: GL;
 
-	private static var running: Bool = true;
 	private static var prevTime: Float = -1;
 	private static var timeStore: Float = 0;
 	private static var timeCount: Float = 0;
@@ -81,25 +80,21 @@ class Main {
 		}
 		prevTime = timestamp;
 
-		if (running) {
-			Controller.instance.update(delta * timeMult);
-			Game.instance.update(delta * timeMult);
-			Renderer.instance.update(delta * timeMult);
-		}
+		Game.instance.update(delta * timeMult);
 		Browser.window.requestAnimationFrame(onEnterFrame);
 	}
 
 	private static function createPreloaderMessage(text: String) {
 		var elem = document.createElement("div");
 		elem.id = text;
-		elem.innerText = 'Loading $text ...';
+		elem.textContent = 'Loading $text ...';
 		elem.classList.add("loading");
 		preloader.appendChild(elem);
 	}
 
 	private static function removePreloaderMessage(text: String) {
 		var elem = document.getElementById(text);
-		elem.innerText = '$text loaded.';
+		elem.textContent = 'Loaded ​ $text';
 		elem.classList.replace("loading", "loaded");
 		Browser.window.setTimeout(() -> {
 			preloader.removeChild(elem);
@@ -253,9 +248,7 @@ class Main {
 					var storage = new StorageLoader();
 					StorageLoader.setInstance(storage);
 
-					var controller = new Controller(storage.data.keyBindings, () -> {
-						running = !running;
-					});
+					var controller = new Controller(storage.data.keyBindings);
 					controller.register(document);
 					Controller.setInstance(controller);
 
@@ -288,15 +281,6 @@ class Main {
 					var music = SoundSystem.instance.getSound("bitBreaker-compressed.mp3");
 					music.loop(true);
 					music.play();
-
-					// TODO: add sound for chaser activation
-					// TODO: consider making chasers aim longer
-
-					/*for (i in 0...50) {
-						game.addEntity(entFactories.get("shooter.json")((holder) -> {
-							holder.position = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
-						}));
-					}*/
 
 					Browser.window.requestAnimationFrame(onEnterFrameFirst);
 				});

@@ -25,11 +25,9 @@ class Controller {
 
 	private var components: Array<KBComponent>;
 
-	public var pauseAction: DownAction;
-
 	public static var instance(default, null): Controller;
 
-	public function new(config: KeyBindings, pauseAction: DownAction) {
+	public function new(config: KeyBindings) {
 		downActions = new Map<String, DownAction>();
 		upActions = new Map<String, DownAction>();
 		heldActions = new Map<String, HeldAction>();
@@ -38,7 +36,6 @@ class Controller {
 		mouseDownActions = new Map<Int, MouseAction>();
 		mouseUpActions = new Map<Int, MouseAction>();
 		mouseMoveActions = [];
-		this.pauseAction = pauseAction;
 
 		remap(config);
 	}
@@ -61,56 +58,36 @@ class Controller {
 
 	public function remap(config: KeyBindings) {
 		heldActions.clear();
+		heldActions.clear();
+		heldActions.set(config.up, (time) -> {
+			for (component in components) {
+				component.setDirY(-1);
+			}
+		});
+		heldActions.set(config.left, (time) -> {
+			for (component in components) {
+				component.setDirX(-1);
+			}
+		});
+		heldActions.set(config.down, (time) -> {
+			for (component in components) {
+				component.setDirY(1);
+			}
+		});
+		heldActions.set(config.right, (time) -> {
+			for (component in components) {
+				component.setDirX(1);
+			}
+		});
 
-		downActions.clear();
-		downActions.set(config.up, () -> {
-			for (component in components) {
-				component.addDir(0, -1);
-			}
-		});
-		downActions.set(config.left, () -> {
-			for (component in components) {
-				component.addDir(-1, 0);
-			}
-		});
-		downActions.set(config.down, () -> {
-			for (component in components) {
-				component.addDir(0, 1);
-			}
-		});
-		downActions.set(config.right, () -> {
-			for (component in components) {
-				component.addDir(1, 0);
-			}
-		});
 		downActions.set(config.bulletTime, () -> {
 			for (component in components) {
 				component.setTimeStretch(true);
 			}
 		});
-		downActions.set(config.pause, pauseAction);
+		downActions.set(config.pause, Game.instance.togglePause);
 
 		upActions.clear();
-		upActions.set(config.up, () -> {
-			for (component in components) {
-				component.addDir(0, 1);
-			}
-		});
-		upActions.set(config.left, () -> {
-			for (component in components) {
-				component.addDir(1, 0);
-			}
-		});
-		upActions.set(config.down, () -> {
-			for (component in components) {
-				component.addDir(0, -1);
-			}
-		});
-		upActions.set(config.right, () -> {
-			for (component in components) {
-				component.addDir(-1, 0);
-			}
-		});
 		upActions.set(config.bulletTime, () -> {
 			for (component in components) {
 				component.setTimeStretch(false);

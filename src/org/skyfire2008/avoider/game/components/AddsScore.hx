@@ -9,15 +9,12 @@ import org.skyfire2008.avoider.geom.Point;
 class AddsScore implements Interfaces.DeathComponent implements Interfaces.UpdateComponent {
 	private static inline var bonusTime = 1.5;
 	private var time = 0.0;
+	@prop("position")
 	private var pos: Point;
+	@prop
 	private var lastCollidedWith: Wrapper<Entity>;
 
 	public function new() {}
-
-	public function assignProps(holder: PropertyHolder) {
-		pos = holder.position;
-		lastCollidedWith = holder.lastCollidedWith;
-	}
 
 	public function onUpdate(dTime: Float) {
 		time += dTime;

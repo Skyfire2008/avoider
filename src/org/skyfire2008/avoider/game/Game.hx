@@ -16,6 +16,7 @@ class Game {
 	public var entMap(default, null): StringMap<EntityFactoryMethod>;
 	public var livesCallback(default, null): (value: Int) -> Void;
 	public var blinkCallback(default, null): (value: Float) -> Void;
+	public var isRunning(default, null): Bool;
 
 	private var entities: Array<Entity>;
 	private var grid: UniformGrid;
@@ -33,8 +34,13 @@ class Game {
 		this.blinkCallback = blinkCallback;
 		grid = new UniformGrid(20, 20, Std.int(Constants.gameWidth / 20), Std.int(Constants.gameHeight / 20));
 		colliders = [];
+		isRunning = false;
 
 		collidersToRemove = [];
+	}
+
+	public function togglePause() {
+		isRunning = !isRunning;
 	}
 
 	public function reset() {
@@ -66,53 +72,57 @@ class Game {
 	}
 
 	public function update(time: Float) {
-		Renderer.instance.clear();
+		if (isRunning) {
+			Controller.instance.update(time);
+			Renderer.instance.clear();
 
-		// update entities
-		for (ent in entities) {
-			ent.onUpdate(time);
-		}
+			// update entities
+			for (ent in entities) {
+				ent.onUpdate(time);
+			}
 
-		// detect collisions
-		grid.reset();
-		for (col in colliders) {
-			var query = grid.queryRect(col.rect());
-			for (other in query) {
-				if (col.intersects(other)) {
-					// only call onCollide if collides with physical object
-					if (!other.ephemeral) {
-						col.owner.onCollide(other);
-					}
-					if (!col.ephemeral) {
-						other.owner.onCollide(col);
+			// detect collisions
+			grid.reset();
+			for (col in colliders) {
+				var query = grid.queryRect(col.rect());
+				for (other in query) {
+					if (col.intersects(other)) {
+						// only call onCollide if collides with physical object
+						if (!other.ephemeral) {
+							col.owner.onCollide(other);
+						}
+						if (!col.ephemeral) {
+							other.owner.onCollide(col);
+						}
 					}
 				}
+
+				grid.add(col);
 			}
 
-			grid.add(col);
-		}
-
-		// remove dead colliders
-		var newColliders: Array<Collider> = [];
-		for (col in colliders) {
-			if (col.owner.isAlive() && !collidersToRemove.contains(col.owner.id)) {
-				newColliders.push(col);
+			// remove dead colliders
+			var newColliders: Array<Collider> = [];
+			for (col in colliders) {
+				if (col.owner.isAlive() && !collidersToRemove.contains(col.owner.id)) {
+					newColliders.push(col);
+				}
 			}
-		}
-		colliders = newColliders;
-		collidersToRemove = [];
+			colliders = newColliders;
+			collidersToRemove = [];
 
-		// remove dead entities
-		var newEntities: Array<Entity> = [];
-		for (entity in entities) {
-			if (entity.isAlive()) {
-				newEntities.push(entity);
-			} else {
-				entity.onDeath();
+			// remove dead entities
+			var newEntities: Array<Entity> = [];
+			for (entity in entities) {
+				if (entity.isAlive()) {
+					newEntities.push(entity);
+				} else {
+					entity.onDeath();
+				}
 			}
-		}
-		entities = newEntities;
+			entities = newEntities;
 
-		ScoringSystem.instance.update(time);
+			ScoringSystem.instance.update(time);
+			Renderer.instance.update(time);
+		}
 	}
 }

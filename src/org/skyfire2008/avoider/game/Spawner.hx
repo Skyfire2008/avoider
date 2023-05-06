@@ -125,8 +125,8 @@ class Spawner {
 			Game.instance.addEntity(ent);
 		}
 
-		if (howl != null && !howl.playing()) {
-			howl.play();
+		if (howl != null) {
+			SoundSystem.instance.playSound(howl, pos.x);
 		}
 	}
 
@@ -165,8 +165,8 @@ class Spawner {
 			Game.instance.addEntity(ent);
 		}
 
-		if (howl != null && !howl.playing()) {
-			howl.play();
+		if (howl != null) {
+			SoundSystem.instance.playSound(howl, pos.x);
 		}
 	}
 

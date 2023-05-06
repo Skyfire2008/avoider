@@ -164,7 +164,7 @@ class HowitzerBehaviour implements Interfaces.UpdateComponent implements Interfa
 			if (dirLength <= Math.max(crosshairVel.length * dTime, crosshairTol)) {
 				// reached the target, fire
 
-				shootSound.play();
+				SoundSystem.instance.playSound(shootSound, pos.x, true);
 
 				// spawn muzzle flash
 				muzzleFlashSpawner.spawnWithProcessing(pos.translate(Point.fromPolar(rotation.value, 36)), rotation.value, vel, (holder, i) -> {

@@ -33,7 +33,8 @@ interface CollisionComponent extends Component {
 }
 
 interface KBComponent {
-	function addDir(x: Float, y: Float): Void;
+	function setDirX(x: Float): Void;
+	function setDirY(y: Float): Void;
 	function setWalk(value: Bool): Void;
 	function setTimeStretch(value: Bool): Void;
 	function blink(x: Float, y: Float): Void;
