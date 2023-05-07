@@ -90,10 +90,13 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		isTimeStretched = value;
 	}
 
-	public function blink(x: Float, y: Float): Void {
+	public function blink(): Void {
+		if (Game.instance.state != Running) {
+			return;
+		}
 		if (energy >= blinkCost) {
 			TargetingSystem.instance.removeTarget(owner.id, side.value);
-			var dir = new Point(x, y);
+			var dir = new Point(mousePos.x, mousePos.y);
 			dir.sub(pos);
 			var angle = dir.angle;
 			rotation.value = angle;
@@ -133,6 +136,11 @@ class ControlComponent implements KBComponent implements InitComponent implement
 		Game.instance.blinkCallback(energy / totalEnergy);
 		ghostMethod = Game.instance.entMap.get("playerGhost.json");
 		blinkGhost = Shape.getShape("blinkGhost.json");
+	}
+
+	public function onBlur() {
+		setTimeStretch(false);
+		setWalk(false);
 	}
 
 	public function onMouseMove(x: Float, y: Float) {

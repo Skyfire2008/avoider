@@ -1,5 +1,6 @@
 package org.skyfire2008.avoider.game;
 
+import js.html.FocusEvent;
 import js.html.MouseEvent;
 import js.html.EventTarget;
 import js.html.KeyboardEvent;
@@ -85,6 +86,16 @@ class Controller {
 				component.setTimeStretch(true);
 			}
 		});
+		downActions.set(config.blink, () -> {
+			for (component in components) {
+				component.blink();
+			}
+		});
+		downActions.set(config.slowdown, () -> {
+			for (component in components) {
+				component.setWalk(true);
+			}
+		});
 		downActions.set(config.pause, Game.instance.togglePause);
 
 		upActions.clear();
@@ -93,11 +104,16 @@ class Controller {
 				component.setTimeStretch(false);
 			}
 		});
+		upActions.set(config.slowdown, () -> {
+			for (component in components) {
+				component.setWalk(false);
+			}
+		});
 
 		mouseDownActions.clear();
 		mouseDownActions.set(0, (x: Float, y: Float) -> {
 			for (component in components) {
-				component.blink(x, y);
+				component.blink();
 			}
 		});
 		mouseDownActions.set(2, (x: Float, y: Float) -> {
@@ -166,6 +182,12 @@ class Controller {
 		}
 	}
 
+	private function onBlur(e: FocusEvent) {
+		Game.instance.setState(Paused);
+
+		heldKeys.clear();
+	}
+
 	public function update(time: Float) {
 		for (key in heldKeys.iterator()) {
 			var action = heldActions.get(key);
@@ -175,7 +197,7 @@ class Controller {
 		}
 	}
 
-	public function register(target: EventTarget) {
+	public function register(target: EventTarget, blurEventTarget: EventTarget) {
 		target.addEventListener("keydown", onKeyDown);
 		target.addEventListener("keyup", onKeyUp);
 
@@ -183,6 +205,8 @@ class Controller {
 		target.addEventListener("mousedown", onMouseDown);
 		target.addEventListener("mouseup", onMouseUp);
 		target.addEventListener("mousemove", onMouseMove);
+
+		blurEventTarget.addEventListener("blur", onBlur);
 	}
 
 	public function deregister(target: EventTarget) {

@@ -1,5 +1,6 @@
 package org.skyfire2008.avoider;
 
+import org.skyfire2008.avoider.ui.GameOverUI;
 import org.skyfire2008.avoider.ui.SettingsUI;
 import org.skyfire2008.avoider.ui.PauseUI;
 
@@ -61,8 +62,6 @@ class Main {
 	private static var scoreDisplay: Element;
 	private static var multDisplay: Element;
 	private static var multBar: Element;
-	private static var gameOverStuff: Element;
-	private static var restartButton: ButtonElement;
 	private static var content: Element;
 	private static var preloader: Element;
 
@@ -129,25 +128,8 @@ class Main {
 		scoreDisplay = document.getElementById("scoreDisplay");
 		multDisplay = document.getElementById("multDisplay");
 		multBar = document.getElementById("multBar");
-		gameOverStuff = document.getElementById("gameOverStuff");
 		content = document.getElementById("content");
 		preloader = document.getElementById("preloader");
-		restartButton = cast(document.getElementById("restartButton"));
-		restartButton.addEventListener("click", (e) -> {
-			gameOverStuff.style.display = "none";
-			Game.instance.reset();
-			TargetingSystem.instance.reset();
-			ScoringSystem.instance.reset();
-			SpawnSystem.instance.reset();
-			Game.instance.addEntity(Game.instance.entMap.get("player.json")((holder) -> {
-				holder.position = new Point(Constants.gameWidth / 2, Constants.gameHeight / 2);
-			}));
-			Game.instance.addEntity(Game.instance.entMap.get("bgEnt.json")(), true);
-		});
-
-		CausesGameOver.init(() -> {
-			gameOverStuff.style.display = "block";
-		});
 
 		ScoringSystem.setInstance(new ScoringSystem((score) -> {
 			scoreDisplay.innerText = "Score: " + score;
@@ -261,7 +243,7 @@ class Main {
 					StorageLoader.setInstance(storage);
 
 					var controller = new Controller(storage.data.keyBindings);
-					controller.register(document);
+					controller.register(document, Browser.window);
 					Controller.setInstance(controller);
 
 					// init components
@@ -299,6 +281,8 @@ class Main {
 					PauseUI.setInstance(new PauseUI());
 					SettingsUI.register();
 					SettingsUI.setInstance(new SettingsUI(false));
+					GameOverUI.setInstance(new GameOverUI());
+					GameOverUI.register();
 					Knockout.applyBindings(null, document.body);
 
 					Browser.window.requestAnimationFrame(onEnterFrameFirst);

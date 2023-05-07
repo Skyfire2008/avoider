@@ -312,7 +312,7 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 
 	public function onDeath() {
 		if (startPos != null && Point.distance(startPos, pos) >= Constants.gameHeight) {
-			MessageSystem.instance.createMessage("long shot", pos, {color: [0.7, 0.7, 1.0]});
+			MessageSystem.instance.createMessage("eagle eye", pos, {color: [0.7, 0.7, 1.0]});
 			ScoringSystem.instance.addScore();
 			ScoringSystem.instance.addScore();
 			ScoringSystem.instance.addScore();

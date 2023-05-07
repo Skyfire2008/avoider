@@ -13,12 +13,18 @@ import org.skyfire2008.avoider.spatial.UniformGrid;
 import org.skyfire2008.avoider.spatial.UniformGrid.SegQueryRes;
 import org.skyfire2008.avoider.spatial.Collider;
 
+enum GameState {
+	Running;
+	Paused;
+	Over;
+}
+
 class Game {
 	public static var instance(default, null): Game;
 	public var entMap(default, null): StringMap<EntityFactoryMethod>;
 	public var livesCallback(default, null): (value: Int) -> Void;
 	public var blinkCallback(default, null): (value: Float) -> Void;
-	public var isRunning(default, null): Bool;
+	public var state(default, null): GameState;
 
 	private var entities: Array<Entity>;
 	private var grid: UniformGrid;
@@ -36,17 +42,25 @@ class Game {
 		this.blinkCallback = blinkCallback;
 		grid = new UniformGrid(20, 20, Std.int(Constants.gameWidth / 20), Std.int(Constants.gameHeight / 20));
 		colliders = [];
-		isRunning = false;
+		state = Running;
 
 		collidersToRemove = [];
 	}
 
-	public function togglePause() {
-		isRunning = !isRunning;
-		if (isRunning) {
+	public function setState(state: GameState) {
+		this.state = state;
+		if (state == Running) {
 			PauseUI.instance.isDisplayed.set(false);
-		} else {
+		} else if (state == Paused) {
 			PauseUI.instance.isDisplayed.set(true);
+		}
+	}
+
+	public function togglePause() {
+		if (state == Running) {
+			setState(Paused);
+		} else if (state == Paused) {
+			setState(Running);
 		}
 	}
 
@@ -79,7 +93,7 @@ class Game {
 	}
 
 	public function update(time: Float) {
-		if (isRunning) {
+		if (state == Running) {
 			Controller.instance.update(time);
 			Renderer.instance.clear();
 

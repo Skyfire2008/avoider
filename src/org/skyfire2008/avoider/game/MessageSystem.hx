@@ -73,15 +73,17 @@ class MessageSystem {
 		}
 	}
 
-	public function createMessage(message: String, pos: Point, params: MessageParams) {
+	public function createMessage(message: String, pos: Point, params: MessageParams): Array<Entity> {
 		params = Object.assign({}, defaultParams, params);
 		message = message.toLowerCase();
 		var lines = message.split('\n');
+		var lineLengths: Array<Float> = [];
 
 		// calculate the size of message
 		var longest = 0.0;
 		for (line in lines) {
 			var length = line.length * charSize.x + (line.length - 1) * params.spacing;
+			lineLengths.push(length);
 			if (length > longest) {
 				longest = length;
 			}
@@ -111,10 +113,11 @@ class MessageSystem {
 		var chars: Array<CharData> = [];
 		for (j in 0...lines.length) {
 			var line = lines[j];
+			var lineMargin = (longest - lineLengths[j]) / 2;
 			for (i in 0...line.length) {
 				var char = line.charAt(i);
 				if (char != " ") {
-					var position = new Point(i * (charSize.x + params.spacing), j * (charSize.x + params.spacing));
+					var position = new Point(i * (charSize.x + params.spacing) + lineMargin, j * (charSize.x + params.spacing));
 					position.mult(params.scale);
 					position.add(startPos);
 					chars.push({
@@ -126,6 +129,7 @@ class MessageSystem {
 		}
 
 		// create entities
+		var result: Array<Entity> = [];
 		for (data in chars) {
 			var holder = new PropertyHolder();
 			holder.rotation = new Wrapper(0.0);
@@ -138,11 +142,12 @@ class MessageSystem {
 			var compos: Array<Component> = [];
 			if (params.style == Message) {
 				compos.push(new CharBehaviour(pos, params));
-			} else {
+			} else if (params.style == Score) {
 				compos.push(new CharBehaviour2(pos, params));
 			}
-			compos.push(new RenderComponent(data.shape, 0.5));
+
 			compos.push(new Timed());
+			compos.push(new RenderComponent(data.shape, 0.5));
 
 			for (compo in compos) {
 				compo.createProps(holder);
@@ -153,6 +158,9 @@ class MessageSystem {
 			}
 
 			Game.instance.addEntity(ent);
+			result.push(ent);
 		}
+
+		return result;
 	}
 }

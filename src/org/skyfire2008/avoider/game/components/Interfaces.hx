@@ -37,8 +37,9 @@ interface KBComponent {
 	function setDirY(y: Float): Void;
 	function setWalk(value: Bool): Void;
 	function setTimeStretch(value: Bool): Void;
-	function blink(x: Float, y: Float): Void;
+	function blink(): Void;
 	function onMouseMove(x: Float, y: Float): Void;
+	function onBlur(): Void;
 }
 
 interface DamageComponent extends Component {
