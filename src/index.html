@@ -4,83 +4,15 @@
 <head>
 	<meta charset="utf-8" />
 	<title>Avoider</title>
+	<link href="main.css" rel="stylesheet" />
+	<link href="pause.css" rel="stylesheet" />
+	<link href="settings.css" rel="stylesheet" />
 </head>
-
-<style>
-	.display {
-		color: white;
-		position: absolute;
-		pointer-events: none;
-		font-family: monospace;
-		font-size: 20px;
-		font-weight: bold;
-		text-shadow: 0px 0px 4px;
-		opacity: 0.6
-	}
-
-	.loading {
-		color: yellow;
-		font-family: monospace;
-		font-size: 20px;
-		font-weight: bold;
-		text-shadow: 0px 0px 4px;
-	}
-
-	.loaded {
-		color: lime;
-		font-family: monospace;
-		font-size: 20px;
-		font-weight: bold;
-		text-shadow: 0px 0px 4px;
-		animation-name: loaded;
-		animation-duration: 1s;
-		animation-iteration-count: 1;
-	}
-
-	.bar {
-		height: 100%;
-		background-color: white;
-	}
-
-	.barRect {
-		border-color: white;
-		border-style: solid;
-	}
-
-	button {
-		font-family: monospace;
-		font-size: 20px;
-		font-weight: bold;
-		position: absolute;
-		border-radius: 12px;
-		border: 2px solid steelblue;
-		background-color: steelblue;
-		transition-duration: 0.5s;
-	}
-
-	button:hover {
-		background-color: lightblue;
-	}
-
-	button:active {
-		background-color: lightcyan;
-		transition-duration: 0.0s;
-	}
-
-	@keyframes loaded {
-		0% {
-			opacity: 1;
-		}
-
-		100% {
-			opacity: 0;
-		}
-	}
-</style>
 
 <body style="background-color: black;">
 	<script src="howler.js"></script>
 	<script src="avoider.js"></script>
+	<script src="knockout-3.2.0.js"></script>
 	<div id="preloader">
 	</div>
 	<div id="content" style="display: none;">
@@ -96,7 +28,8 @@
 			<div id="multBar" class="bar" style="width: 50%;"></div>
 		</div>
 	</div>
-	<avoider-menu></avoider-menu>
+	<pauseui></pauseui>
+	<!--<avoider-menu></avoider-menu>-->
 	<div id="gameOverStuff" style="display: none">
 		<div class="display" style="color: red; font-size: 72px; left: 461px; top: 100px">
 			Game Over</div>

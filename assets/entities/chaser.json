@@ -70,8 +70,11 @@
 			"params": {}
 		},
 		{
-			"name": "playsSoundOnDeath",
+			"name": "playsSoundOn",
 			"params": {
+				"on": [
+					"death"
+				],
 				"soundSrc": "enemyExplosion.wav"
 			}
 		}

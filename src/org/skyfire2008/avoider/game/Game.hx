@@ -1,5 +1,7 @@
 package org.skyfire2008.avoider.game;
 
+import org.skyfire2008.avoider.ui.PauseUI;
+
 import haxe.ds.StringMap;
 
 import spork.core.Entity;
@@ -41,6 +43,11 @@ class Game {
 
 	public function togglePause() {
 		isRunning = !isRunning;
+		if (isRunning) {
+			PauseUI.instance.isDisplayed.set(false);
+		} else {
+			PauseUI.instance.isDisplayed.set(true);
+		}
 	}
 
 	public function reset() {

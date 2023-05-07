@@ -171,6 +171,7 @@ class ChaserAiming implements ChaserState {
 		} else if (delay < ChaserBehaviour.armTime + Constants.reactionTime) {
 			// change shape and stop rotating
 			if (parent.currentShape != ChaserBehaviour.attackingShape) {
+				SoundSystem.instance.playSound(ChaserBehaviour.beepSound, parent.pos.x);
 				TargetingSystem.instance.removeTargetDeathObserver(targetId, onTargetDeath);
 				parent.currentShape = ChaserBehaviour.attackingShape;
 			}
@@ -234,6 +235,7 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 	public static var chasingShape(default, null): Shape;
 	public static var attackingShape(default, null): Shape;
 	public static var startSound(default, null): Howl;
+	public static var beepSound(default, null): Howl;
 
 	private var state: ChaserState;
 
@@ -266,6 +268,7 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 		chasingShape = Shape.getShape("chaserChasing.json");
 		attackingShape = Shape.getShape("chaserAttacking.json");
 		startSound = SoundSystem.instance.getSound("chaserStart.wav");
+		beepSound = SoundSystem.instance.getSound("beepNEW.mp3");
 	}
 
 	public function changeState(state: ChaserState) {

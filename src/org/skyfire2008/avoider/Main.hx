@@ -1,5 +1,11 @@
 package org.skyfire2008.avoider;
 
+import org.skyfire2008.avoider.ui.SettingsUI;
+import org.skyfire2008.avoider.ui.PauseUI;
+
+import knockout.Knockout;
+
+import org.skyfire2008.avoider.ui.Menu;
 import org.skyfire2008.avoider.game.HowitzerSystem;
 import org.skyfire2008.avoider.game.MessageSystem;
 
@@ -246,6 +252,12 @@ class Main {
 					HowitzerSystem.setInstance(new HowitzerSystem());
 
 					var storage = new StorageLoader();
+					SoundSystem.instance.setMusicVolume(storage.data.musicVolume);
+					SoundSystem.instance.setVolume(storage.data.masterVolume);
+					storage.subscribe((storedData) -> {
+						SoundSystem.instance.setMusicVolume(storedData.musicVolume);
+						SoundSystem.instance.setVolume(storedData.masterVolume);
+					});
 					StorageLoader.setInstance(storage);
 
 					var controller = new Controller(storage.data.keyBindings);
@@ -278,9 +290,16 @@ class Main {
 
 					SpawnSystem.instance.reset();
 					// play bg music
-					var music = SoundSystem.instance.getSound("bitBreaker-compressed.mp3");
-					music.loop(true);
-					music.play();
+					SoundSystem.instance.startMusic();
+
+					// setup the UI
+					Menu.register();
+					Menu.setInstance(new Menu());
+					PauseUI.register();
+					PauseUI.setInstance(new PauseUI());
+					SettingsUI.register();
+					SettingsUI.setInstance(new SettingsUI(false));
+					Knockout.applyBindings(null, document.body);
 
 					Browser.window.requestAnimationFrame(onEnterFrameFirst);
 				});

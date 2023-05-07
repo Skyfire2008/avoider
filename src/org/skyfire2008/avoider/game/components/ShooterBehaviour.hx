@@ -32,6 +32,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 	private static inline var trailLength = 10.0;
 
 	private static var shootSound: Howl;
+	private static var chargeSound: Howl;
 	private static var beamFactory: EntityFactoryMethod;
 	private static var trailFactory: EntityFactoryMethod;
 	private static var indicatorFactory: EntityFactoryMethod;
@@ -60,6 +61,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 		trailFactory = Game.instance.entMap.get("shooterTrail.json");
 		indicatorFactory = Game.instance.entMap.get("shooterIndicator.json");
 		shootSound = SoundSystem.instance.getSound("shooterShoot.wav");
+		chargeSound = SoundSystem.instance.getSound("shooterCharge.mp3");
 	}
 
 	public function new() {
@@ -247,6 +249,7 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 		shootTargetId = closest.id;
 		observingTargets = false;
 		state = Aiming;
+		SoundSystem.instance.playSound(chargeSound, pos.x, true);
 		beam = beamFactory((holder) -> {
 			holder.position = pos;
 			holder.rotation = beamAngle;

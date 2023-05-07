@@ -6,6 +6,7 @@
 -dce full
 
 --macro org.skyfire2008.avoider.util.Scripts.makeBgShape("assets/shapes/bgShape.json", 40, "#000000", "#305090")
+--macro org.skyfire2008.avoider.util.Scripts.copyDir("src", "bin", ".+\\.css")
 --macro sys.io.File.copy("src/index.html", "bin/index.html")
 --macro org.skyfire2008.avoider.util.Scripts.createContentsJson("assets")
 --macro org.skyfire2008.avoider.util.Scripts.copyDir("assets", "bin/assets")

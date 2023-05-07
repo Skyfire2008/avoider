@@ -1,0 +1,17 @@
+.pauseWrapper {
+	align-items: center;
+	height: inherit;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	user-select: none;
+}
+
+.pauseMessage{
+	color: red;
+	font-size: 72px;
+}
+
+.pauseWrapper > *{
+	margin: 10px 0px 0px 0px;
+}

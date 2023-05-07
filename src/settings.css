@@ -1,0 +1,70 @@
+.settingsWrapper {
+	align-items: center;
+	height: inherit;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	user-select: none;
+}
+
+.settingsHeader {
+	margin: 5px auto;
+	width: fit-content;
+	font-size: 24px;
+}
+
+.settings {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border: 1px solid dimgrey;
+	border-radius: 6px;
+	padding: 5px 10px;
+	justify-content: center;
+}
+
+.settingsBlocks {
+	display: flex;
+	flex-direction: row;
+	margin: 10px 0px 10px 0px;
+}
+
+input[type="checkbox"] {
+	margin: 0px 10px 0px 0px;
+	cursor: pointer;
+}
+
+.volumeSlider {
+	display: flex;
+	justify-content: space-between;
+}
+
+.keyBindings {
+	border: 1px solid silver;
+	border-radius: 6px;
+	padding: 5px 5px;
+	margin: 0px 10px 0px 0px;
+	display: flex;
+	flex-direction: column;
+}
+
+key-binding {
+	display: flex;
+	margin: 2px 2px;
+}
+
+.bindingLabel {
+	min-width: 120px;
+	color: lightgray
+}
+
+.keyInput {
+	background: #ffffff20;
+	border: 1px solid darkgrey;
+	color: white;
+	font-family: monospace;
+	font-weight: bold;
+	text-shadow: 0px 0px 4px;
+	font-size: 20px;
+	cursor: pointer;
+}

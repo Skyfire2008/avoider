@@ -19,17 +19,27 @@ typedef DirContent = {
 #if macro
 class Scripts {
 	// I use initialization macros instead of writing scripts
-	public static function copyDir(src: String, dst: String): Void {
+	public static function copyDir(src: String, dst: String, ?filter: String): Void {
+		var reg: EReg = null;
+		if (filter != null) {
+			reg = new EReg(filter, "i");
+		}
+
 		if (!FileSystem.exists(dst)) {
 			FileSystem.createDirectory(dst);
 		}
 
 		for (file in FileSystem.readDirectory(src)) {
+			// skip if filter defined and filename doesn't match it
+			if (reg != null && !reg.match(file)) {
+				continue;
+			}
+
 			var curSrcPath = Path.join([src, file]);
 			var curDstPath = Path.join([dst, file]);
 
 			if (FileSystem.isDirectory(curSrcPath)) {
-				copyDir(curSrcPath, curDstPath);
+				copyDir(curSrcPath, curDstPath, filter);
 			} else {
 				File.copy(curSrcPath, curDstPath);
 			}

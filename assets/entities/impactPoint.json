@@ -62,8 +62,11 @@
 			}
 		},
 		{
-			"name": "playsSoundOnDeath",
+			"name": "playsSoundOn",
 			"params": {
+				"on": [
+					"death"
+				],
 				"soundSrc": "howitzerExplosion.wav"
 			}
 		}
