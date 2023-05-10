@@ -1,0 +1,10 @@
+{
+	"points": [
+	  {"y": -5, "x": 0, "color": "#ffffff"},
+	  {"y": 3, "x": 4, "color": "#ffffff"},
+	  {"y": 3, "x": -4, "color": "#ffffff"}
+	],"lines": [
+	  {"from": 0, "to": 1},
+	  {"from": 1, "to": 2},
+	  {"from": 2, "to": 0}
+  ]}

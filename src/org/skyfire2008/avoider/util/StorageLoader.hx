@@ -22,6 +22,9 @@ typedef StoredData = {
 	var ?keyBindings: KeyBindings;
 	var ?musicVolume: Float;
 	var ?masterVolume: Float;
+	var ?safeColor: Array<Float>;
+	var ?warnColor: Array<Float>;
+	var ?dangerColor: Array<Float>;
 }
 
 private typedef Callback = (data: StoredData) -> Void;
@@ -50,7 +53,10 @@ class StorageLoader {
 			pause: "KeyP"
 		},
 		musicVolume: 0.5,
-		masterVolume: 1.0
+		masterVolume: 1.0,
+		safeColor: [0, 1, 0],
+		warnColor: [1, 1, 0],
+		dangerColor: [1, 0, 0]
 	};
 
 	public static function setInstance(instance: StorageLoader) {

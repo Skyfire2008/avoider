@@ -1,7 +1,5 @@
 package org.skyfire2008.avoider.game.components;
 
-import haxe.ds.StringMap;
-
 import spork.core.Wrapper;
 import spork.core.Entity;
 import spork.core.PropertyHolder;

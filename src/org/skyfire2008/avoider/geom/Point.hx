@@ -90,6 +90,11 @@ class Point implements SharedProperty {
 		x = newX;
 	}
 
+	public inline function set(x: Float, y: Float) {
+		this.x = x;
+		this.y = y;
+	}
+
 	public function toString(): String {
 		return "(" + x + "; " + y + ")";
 	}

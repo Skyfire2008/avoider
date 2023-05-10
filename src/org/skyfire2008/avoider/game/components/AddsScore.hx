@@ -21,13 +21,16 @@ class AddsScore implements Interfaces.DeathComponent implements Interfaces.Updat
 	}
 
 	public function onDeath() {
-		if (lastCollidedWith.value.templateName != "player.json") {
+		if (lastCollidedWith.value == null) {
+			ScoringSystem.instance.addScore();
+		} else if (lastCollidedWith.value.templateName != "player.json") {
 			ScoringSystem.instance.addScore();
 			if (lastCollidedWith.value.templateName == "shooterBeam.json") {
 				MessageSystem.instance.createMessage("direct\nhit", pos, {scale: 4, spacing: 2, color: [0.8, 1.0, 0.8]});
 				ScoringSystem.instance.addScore();
 			}
 		}
+
 		if (time <= bonusTime) {
 			MessageSystem.instance.createMessage("spawn\nkill", pos, {scale: 4, spacing: 2, color: [1.0, 0.9, 0.8]});
 			ScoringSystem.instance.addScore();

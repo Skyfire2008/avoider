@@ -253,6 +253,7 @@ class Main {
 					org.skyfire2008.avoider.game.components.MissileBehaviour.init();
 					org.skyfire2008.avoider.game.components.LauncherBehaviour.init();
 					org.skyfire2008.avoider.game.components.ImpactPointBehaviour.init();
+					org.skyfire2008.avoider.game.components.BombBehaviour.init();
 					org.skyfire2008.avoider.game.components.ControlComponent.init((value: Bool) -> {
 						if (value) {
 							timeMult = Constants.timeStretchMult;

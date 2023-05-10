@@ -1,0 +1,48 @@
+{
+	"properties": {
+		"side": "Hostile",
+		"rotation": 0,
+		"angVel": 0,
+		"colliderRadius": 5,
+		"velocity": {
+			"x": 0,
+			"y": 0
+		},
+		"scale": 1,
+		"colorMult": [
+			1.0,
+			1.0,
+			1.0
+		],
+		"lastCollidedWith": null
+	},
+	"components": [
+		{
+			"name": "enemyMoveComponent",
+			"params": {}
+		},
+		{
+			"name": "hasCollider",
+			"params": {}
+		},
+		{
+			"name": "diesOnCollision",
+			"params": {}
+		},
+		{
+			"name": "diesOnWallHit",
+			"params": {}
+		},
+		{
+			"name": "alwaysAlive",
+			"params": {}
+		},
+		{
+			"name": "renderComponent",
+			"params": {
+				"shapeRef": "spike.json",
+				"depth": 0.2
+			}
+		}
+	]
+}
