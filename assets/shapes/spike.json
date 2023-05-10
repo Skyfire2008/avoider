@@ -1,8 +1,8 @@
 {
 	"points": [
-	  {"y": -5, "x": 0, "color": "#ffffff"},
-	  {"y": 3, "x": 4, "color": "#ffffff"},
-	  {"y": 3, "x": -4, "color": "#ffffff"}
+	  {"y": -1, "x": 0, "color": "#ffffff"},
+	  {"y": 0.6, "x": 0.8, "color": "#ffffff"},
+	  {"y": 0.6, "x": -0.8, "color": "#ffffff"}
 	],"lines": [
 	  {"from": 0, "to": 1},
 	  {"from": 1, "to": 2},

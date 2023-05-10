@@ -2,6 +2,7 @@
 	"properties": {
 		"side": "Enemy",
 		"rotation": 0,
+		"angVel": 0,
 		"colliderRadius": 24,
 		"velocity": {
 			"x": 0,
@@ -17,7 +18,7 @@
 	},
 	"components": [
 		{
-			"name": "enemyMoveComponent",
+			"name": "moveComponent",
 			"params": {}
 		},
 		{
@@ -81,9 +82,21 @@
 			}
 		},
 		{
-			"name": "renderComponent",
+			"name": "animComponent",
 			"params": {
-				"shapeRef": "happyBomb.json",
+				"timings": [
+					0,
+					0.2,
+					0.25,
+					0.45
+				],
+				"shapes": [
+					"bomb/bomb0.json",
+					"bomb/bomb1.json",
+					"bomb/bomb2.json",
+					"bomb/bomb1.json"
+				],
+				"totalTime": 0.5,
 				"depth": 0.2
 			}
 		}

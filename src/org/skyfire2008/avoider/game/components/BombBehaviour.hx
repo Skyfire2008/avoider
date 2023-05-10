@@ -14,12 +14,12 @@ private enum State {
 }
 
 class BombBehaviour implements Interfaces.InitComponent implements Interfaces.UpdateComponent implements Interfaces.DeathComponent {
-	private static inline var detectRadius = 360.0;
-	private static inline var angerTime = 1.0;
-	private static inline var explodeTime = 0.5;
-	private static inline var fragmentSpeed = 480.0;
-	private static inline var fragmentRadius = 5.0;
+	private static inline var detectRadius = 240.0;
+	private static inline var angerTime = 2.0;
+	private static inline var fragmentSpeed = 360.0;
+	private static inline var fragmentRadius = 8.0;
 	private static inline var shakeAmount = 10;
+	private inline static var speed = 80.0;
 	private static var makeFragment: EntityFactoryMethod;
 
 	private var time: Float;
@@ -66,12 +66,17 @@ class BombBehaviour implements Interfaces.InitComponent implements Interfaces.Up
 	private function notifyAboutDeath() {
 		targetPos = null;
 		targetId = -1;
-		state = Idling;
+		if (state == Angry) {
+			state = Idling;
+		}
 	}
 
 	public function new() {}
 
-	public function onInit() {}
+	public function onInit() {
+		var newVel = Point.fromPolar(Math.random() * Math.PI * 2, speed);
+		vel.set(newVel.x, newVel.y);
+	}
 
 	public function onUpdate(dTime: Float) {
 		switch (state) {
@@ -106,10 +111,10 @@ class BombBehaviour implements Interfaces.InitComponent implements Interfaces.Up
 				}
 				time += dTime;
 			case Exploding:
-				if (time >= explodeTime) {
+				if (time >= Constants.reactionTime) {
 					owner.kill();
 				} else {
-					var foo = time / explodeTime * (shakePositions.length - 1);
+					var foo = time / Constants.reactionTime * (shakePositions.length - 1);
 					var index = Std.int(foo);
 					var mult = foo - index;
 					var newPos = Point.lerp(shakePositions[index], shakePositions[index + 1], mult);
@@ -128,7 +133,8 @@ class BombBehaviour implements Interfaces.InitComponent implements Interfaces.Up
 				holder.position.add(pos);
 				holder.velocity = Point.fromPolar(angle, fragmentSpeed);
 				holder.rotation = new Wrapper(angle);
-				holder.scale = new Wrapper(1.0);
+				holder.colliderRadius = new Wrapper(fragmentRadius);
+				holder.scale = new Wrapper(fragmentRadius);
 				holder.colorMult = [1, 0, 0];
 			});
 			Game.instance.addEntity(fragment);
