@@ -1,13 +1,13 @@
 package org.skyfire2008.avoider.game.properties;
 
-import org.skyfire2008.avoider.geom.Point;
-import org.skyfire2008.avoider.game.Side;
-
 import spork.core.Entity;
 import spork.core.Wrapper;
 import spork.core.JsonLoader.EntityFactoryMethod;
 
 import org.skyfire2008.avoider.graphics.ColorMult;
+import org.skyfire2008.avoider.geom.Point;
+import org.skyfire2008.avoider.game.Side;
+import org.skyfire2008.avoider.graphics.Shape;
 
 class MyHolder {
 	public var colorMult: ColorMult;
@@ -25,4 +25,7 @@ class MyHolder {
 	public var missileLauncherId: Wrapper<Int>;
 	public var lastCollidedWith: Wrapper<Entity>;
 	public var message: Wrapper<String>;
+
+	public var indicatorShape: Wrapper<Shape>;
+	public var indicatorColorMult: ColorMult;
 }

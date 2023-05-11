@@ -5,6 +5,7 @@ import spork.core.Wrapper;
 
 import org.skyfire2008.avoider.graphics.ColorMult;
 import org.skyfire2008.avoider.geom.Point;
+import org.skyfire2008.avoider.graphics.Shape;
 import org.skyfire2008.avoider.util.StorageLoader;
 
 private enum State {
@@ -18,9 +19,13 @@ class BombBehaviour implements Interfaces.InitComponent implements Interfaces.Up
 	private static inline var angerTime = 2.0;
 	private static inline var fragmentSpeed = 360.0;
 	private static inline var fragmentRadius = 8.0;
-	private static inline var shakeAmount = 10;
+	private static inline var shakeAmount = 12;
 	private inline static var speed = 80.0;
+
 	private static var makeFragment: EntityFactoryMethod;
+	private static var happyFace: Shape;
+	private static var angryFaces: Array<Shape>;
+	private static var explodeFace: Shape;
 
 	private var time: Float;
 	private var state = Idling;
@@ -39,9 +44,25 @@ class BombBehaviour implements Interfaces.InitComponent implements Interfaces.Up
 	private var colorMult: ColorMult;
 	@prop
 	private var colliderRadius: Wrapper<Float>;
+	@prop
+	private var indicatorColorMult: ColorMult;
+	@prop
+	private var indicatorShape: Wrapper<Shape>;
 
 	public static function init() {
 		makeFragment = Game.instance.entMap.get("bombFragment.json");
+		happyFace = Shape.getShape("bomb/happyFace.json");
+		explodeFace = Shape.getShape("bomb/explodeFace.json");
+		angryFaces = [
+			Shape.getShape("bomb/angryFaceRight.json"),
+			Shape.getShape("bomb/angryFaceRightUp.json"),
+			Shape.getShape("bomb/angryFaceUp.json"),
+			Shape.getShape("bomb/angryFaceLeftUp.json"),
+			Shape.getShape("bomb/angryFaceLeft.json"),
+			Shape.getShape("bomb/angryFaceDownLeft.json"),
+			Shape.getShape("bomb/angryFaceDown.json"),
+			Shape.getShape("bomb/angryFaceDownRight.json")
+		];
 	}
 
 	private function notifyAboutTargets(targets: Array<{id: Int, pos: Point}>) {
@@ -76,6 +97,8 @@ class BombBehaviour implements Interfaces.InitComponent implements Interfaces.Up
 	public function onInit() {
 		var newVel = Point.fromPolar(Math.random() * Math.PI * 2, speed);
 		vel.set(newVel.x, newVel.y);
+
+		indicatorShape.value = happyFace;
 	}
 
 	public function onUpdate(dTime: Float) {
@@ -89,15 +112,23 @@ class BombBehaviour implements Interfaces.InitComponent implements Interfaces.Up
 					// if target found, check radius, switch to next state if needed
 					if (Point.distance(pos, targetPos) <= detectRadius) {
 						this.state = Angry;
+						vel.mult(0.5);
 						this.time = 0;
 					}
 				}
+				// TODO: sub to storage loader to change color, potentially use a new component interface
+				indicatorColorMult.set(StorageLoader.instance.data.safeColor);
 			case Angry:
 				// if radius too far, switch to prev state
-				if (Point.distance(pos, targetPos) > detectRadius) {
+				var diff = Point.translate(targetPos, Point.scale(pos, -1));
+				if (diff.length2 > detectRadius * detectRadius) {
 					this.state = Idling;
-				} else if (time >= angerTime) { // otherwise, wait until
+					indicatorShape.value = happyFace;
+					vel.mult(2);
+				} else if (time >= angerTime) {
+					// otherwise, wait until time runs out and switch to exploding state
 					this.state = Exploding;
+					indicatorShape.value = explodeFace;
 					shakePositions = [];
 					shakePositions.push(pos.copy());
 					for (i in 0...shakeAmount) {
@@ -108,7 +139,17 @@ class BombBehaviour implements Interfaces.InitComponent implements Interfaces.Up
 					shakePositions.push(pos.copy());
 					vel.set(0, 0);
 					this.time = 0;
+				} else {
+					// otherwise just change faces
+					var angle = Math.atan2(-diff.y, diff.x) + 2 * Math.PI;
+					var index = Std.int((angle * 4 / Math.PI) + 0.5);
+					index = index % 8;
+					indicatorShape.value = angryFaces[index];
+
+					// change face color
+					indicatorColorMult.setInterpolation(StorageLoader.instance.data.safeColor, StorageLoader.instance.data.warnColor, time / angerTime);
 				}
+
 				time += dTime;
 			case Exploding:
 				if (time >= Constants.reactionTime) {
@@ -120,6 +161,7 @@ class BombBehaviour implements Interfaces.InitComponent implements Interfaces.Up
 					var newPos = Point.lerp(shakePositions[index], shakePositions[index + 1], mult);
 					pos.set(newPos.x, newPos.y);
 				}
+				indicatorColorMult.set(StorageLoader.instance.data.dangerColor);
 				time += dTime;
 		}
 	}

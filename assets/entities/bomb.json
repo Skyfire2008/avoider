@@ -14,7 +14,13 @@
 			1.0,
 			1.0
 		],
-		"lastCollidedWith": null
+		"lastCollidedWith": null,
+		"indicatorColorMult": [
+			1.0,
+			1.0,
+			1.0
+		],
+		"indicatorShape": null
 	},
 	"components": [
 		{
@@ -79,6 +85,12 @@
 					"death"
 				],
 				"soundSrc": "enemyExplosion.wav"
+			}
+		},
+		{
+			"name": "hasIndicator",
+			"params": {
+				"depth": 0.3
 			}
 		},
 		{
