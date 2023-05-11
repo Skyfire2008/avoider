@@ -28,3 +28,30 @@ class DiesOnCollision implements Interfaces.CollisionComponent {
 		}
 	}
 }
+
+// special case for bomb fragments so that they don't collide with phantoms and other fragments
+class DiesOnCollisionFragment implements Interfaces.CollisionComponent {
+	private var side: Wrapper<Side>;
+	private var lastCollidedWith: Wrapper<Entity>;
+
+	public function new() {}
+
+	public function assignProps(holder: PropertyHolder) {
+		side = holder.side;
+		lastCollidedWith = holder.lastCollidedWith;
+	}
+
+	public function onCollide(other: Collider) {
+		if (other.owner.templateName == "phantom" || other.owner.templateName == "bombFragment.json") {
+			return;
+		}
+
+		if (this.side.value == Side.Hostile) {
+			owner.kill();
+			lastCollidedWith.value = other.owner;
+		} else if (this.side.value != other.side.value) {
+			owner.kill();
+			lastCollidedWith.value = other.owner;
+		}
+	}
+}

@@ -1,5 +1,7 @@
 package org.skyfire2008.avoider.game.components;
 
+import howler.Howl;
+
 import spork.core.JsonLoader.EntityFactoryMethod;
 import spork.core.Wrapper;
 
@@ -26,6 +28,8 @@ class BombBehaviour implements Interfaces.InitComponent implements Interfaces.Up
 	private static var happyFace: Shape;
 	private static var angryFaces: Array<Shape>;
 	private static var explodeFace: Shape;
+	private static var angerSound: Howl;
+	private static var explodeSound: Howl;
 
 	private var time: Float;
 	private var state = Idling;
@@ -63,6 +67,9 @@ class BombBehaviour implements Interfaces.InitComponent implements Interfaces.Up
 			Shape.getShape("bomb/angryFaceDown.json"),
 			Shape.getShape("bomb/angryFaceDownRight.json")
 		];
+
+		angerSound = SoundSystem.instance.getSound("steamedHams.mp3");
+		explodeSound = SoundSystem.instance.getSound("bombScream.mp3");
 	}
 
 	private function notifyAboutTargets(targets: Array<{id: Int, pos: Point}>) {
@@ -89,6 +96,7 @@ class BombBehaviour implements Interfaces.InitComponent implements Interfaces.Up
 		targetId = -1;
 		if (state == Angry) {
 			state = Idling;
+			indicatorShape.value = happyFace;
 		}
 	}
 
@@ -112,6 +120,7 @@ class BombBehaviour implements Interfaces.InitComponent implements Interfaces.Up
 					// if target found, check radius, switch to next state if needed
 					if (Point.distance(pos, targetPos) <= detectRadius) {
 						this.state = Angry;
+						SoundSystem.instance.playSound(angerSound, pos.x, true);
 						vel.mult(0.5);
 						this.time = 0;
 					}
@@ -128,6 +137,7 @@ class BombBehaviour implements Interfaces.InitComponent implements Interfaces.Up
 				} else if (time >= angerTime) {
 					// otherwise, wait until time runs out and switch to exploding state
 					this.state = Exploding;
+					SoundSystem.instance.playSound(explodeSound, pos.x, true);
 					indicatorShape.value = explodeFace;
 					shakePositions = [];
 					shakePositions.push(pos.copy());
