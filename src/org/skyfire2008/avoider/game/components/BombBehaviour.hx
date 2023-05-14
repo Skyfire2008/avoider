@@ -187,7 +187,7 @@ class BombBehaviour implements Interfaces.InitComponent implements Interfaces.Up
 				holder.rotation = new Wrapper(angle);
 				holder.colliderRadius = new Wrapper(fragmentRadius);
 				holder.scale = new Wrapper(fragmentRadius);
-				holder.colorMult = [1, 0, 0];
+				holder.colorMult = StorageLoader.instance.data.dangerColor;
 			});
 			Game.instance.addEntity(fragment);
 		}

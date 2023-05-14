@@ -21,19 +21,8 @@
 			}
 		},
 		{
-			"name": "changesColorMult",
-			"params": {
-				"mult1": [
-					1,
-					1,
-					0
-				],
-				"mult2": [
-					1,
-					0,
-					0
-				]
-			}
+			"name": "changesColorMultFromWarnToDanger",
+			"params": {}
 		},
 		{
 			"name": "renderComponent",

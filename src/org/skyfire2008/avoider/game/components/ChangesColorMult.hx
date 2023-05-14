@@ -1,5 +1,7 @@
 package org.skyfire2008.avoider.game.components;
 
+import org.skyfire2008.avoider.util.StorageLoader;
+
 import spork.core.PropertyHolder;
 import spork.core.Wrapper;
 
@@ -26,6 +28,31 @@ class ChangesColorMult implements Interfaces.UpdateComponent {
 	}
 
 	public function onUpdate(time: Float) {
+		for (i in 0...3) {
+			mult[i] = (mult2[i] * (totalTime - timeToLive.value) + mult1[i] * timeToLive.value) / totalTime;
+			mult[i] *= originalMult[i];
+		}
+	}
+}
+
+class ChangesColorMultFromWarnToDanger implements Interfaces.UpdateComponent {
+	private var totalTime: Float;
+	private var timeToLive: Wrapper<Float>;
+	private var mult: ColorMult;
+	private var originalMult: ColorMult;
+
+	public function new() {}
+
+	public function assignProps(holder: PropertyHolder) {
+		timeToLive = holder.timeToLive;
+		totalTime = timeToLive.value;
+		mult = holder.colorMult;
+		originalMult = new ColorMult(mult.r, mult.g, mult.b);
+	}
+
+	public function onUpdate(time: Float) {
+		var mult1 = StorageLoader.instance.data.warnColor;
+		var mult2 = StorageLoader.instance.data.dangerColor;
 		for (i in 0...3) {
 			mult[i] = (mult2[i] * (totalTime - timeToLive.value) + mult1[i] * timeToLive.value) / totalTime;
 			mult[i] *= originalMult[i];

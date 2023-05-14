@@ -26,6 +26,11 @@ class MyHolder {
 	public var lastCollidedWith: Wrapper<Entity>;
 	public var message: Wrapper<String>;
 
+	@fromJson("org.skyfire2008.avoider.game.properties.MyHolder.makeIndicatorShape")
 	public var indicatorShape: Wrapper<Shape>;
 	public var indicatorColorMult: ColorMult;
+
+	public static function makeIndicatorShape(shapeRef: String) {
+		return new Wrapper(Shape.getShape(shapeRef));
+	}
 }

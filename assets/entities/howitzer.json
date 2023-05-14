@@ -13,6 +13,12 @@
 			1.0,
 			1.0
 		],
+		"indicatorColorMult": [
+			1.0,
+			1.0,
+			1.0
+		],
+		"indicatorShape": "howitzerIndicator.json",
 		"lastCollidedWith": null
 	},
 	"components": [
@@ -76,6 +82,12 @@
 					"death"
 				],
 				"soundSrc": "enemyExplosion.wav"
+			}
+		},
+		{
+			"name": "hasIndicator",
+			"params": {
+				"depth": 0.3
 			}
 		},
 		{

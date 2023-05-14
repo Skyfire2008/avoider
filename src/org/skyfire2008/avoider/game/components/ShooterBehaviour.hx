@@ -1,5 +1,7 @@
 package org.skyfire2008.avoider.game.components;
 
+import org.skyfire2008.avoider.util.StorageLoader;
+
 import howler.Howl;
 
 import org.skyfire2008.avoider.spatial.Collider;
@@ -35,13 +37,8 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 	private static var chargeSound: Howl;
 	private static var beamFactory: EntityFactoryMethod;
 	private static var trailFactory: EntityFactoryMethod;
-	private static var indicatorFactory: EntityFactoryMethod;
 
 	private var state: ShooterState;
-	private var pos: Point;
-	private var rotation: Wrapper<Float>;
-	private var side: Wrapper<Side>;
-	private var vel: Point;
 	private var time: Float;
 	private var moveTargetPos: Point;
 	private var shootTargetPos: Point;
@@ -53,13 +50,20 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 	private var beamAngle: Wrapper<Float>;
 	private var beamMult: ColorMult;
 
-	private var indicator: Entity;
+	@prop("indicatorColorMult")
 	private var indicMult: ColorMult;
+	@prop("position")
+	private var pos: Point;
+	@prop
+	private var rotation: Wrapper<Float>;
+	@prop
+	private var side: Wrapper<Side>;
+	@prop("velocity")
+	private var vel: Point;
 
 	public static function init() {
 		beamFactory = Game.instance.entMap.get("shooterBeam.json");
 		trailFactory = Game.instance.entMap.get("shooterTrail.json");
-		indicatorFactory = Game.instance.entMap.get("shooterIndicator.json");
 		shootSound = SoundSystem.instance.getSound("shooterShoot.wav");
 		chargeSound = SoundSystem.instance.getSound("shooterCharge.mp3");
 	}
@@ -74,22 +78,13 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 		moveTargetPos = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 	}
 
-	public function assignProps(holder: PropertyHolder) {
-		pos = holder.position;
-		rotation = holder.rotation;
-		vel = holder.velocity;
-		vel.x = idleSpeed;
-		side = holder.side;
-	}
-
 	public function onInit() {
-		indicMult = [1.0, 0, 0];
-		indicator = indicatorFactory((holder) -> {
-			holder.position = pos;
-			holder.rotation = rotation;
-			holder.colorMult = indicMult;
-		});
-		Game.instance.addEntity(indicator);
+		indicMult.set(StorageLoader.instance.data.safeColor);
+		var diff = new Point(Constants.gameWidth / 2, Constants.gameHeight / 2);
+		diff.sub(pos);
+		diff.normalize();
+		diff.mult(idleSpeed);
+		vel.set(diff.x, diff.y);
 	}
 
 	public function onUpdate(deltaTime: Float) {
@@ -118,13 +113,13 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 				// set beam props
 				var dir = crosshairPos.difference(pos);
 				beamAngle.value = Math.atan2(dir.y, dir.x);
-				beamMult.setAll(0.5 * this.time / aimTime);
-				beamMult.b = 0;
+				var mult = this.time / aimTime;
+				beamMult.setInterpolation([0.0, 0.0, 0.0], StorageLoader.instance.data.warnColor, mult * mult);
 			} else {
 				TargetingSystem.instance.removeTargetDeathObserver(shootTargetId, notifyAboutDeath);
 				state = Firing;
 				this.time = 0;
-				beamMult.set([1.0, 0.0, 0.0]);
+				beamMult.set(StorageLoader.instance.data.dangerColor);
 				crosshairPos.x = shootTargetPos.x;
 				crosshairPos.y = shootTargetPos.y;
 			}
@@ -209,17 +204,16 @@ class ShooterBehaviour implements Interfaces.UpdateComponent implements Interfac
 
 		// change indicator color multiplier
 		if (state == Idling) {
+			var data = StorageLoader.instance.data;
 			if (time < halfTime) {
-				indicMult.set([time / halfTime, 1.0, 0]);
+				indicMult.setInterpolation(data.safeColor, data.warnColor, time / halfTime);
 			} else {
-				indicMult.set([1.0, (reloadTime - time) / halfTime, 0]);
+				indicMult.setInterpolation(data.warnColor, data.dangerColor, (time - halfTime) / halfTime);
 			}
 		}
 	}
 
 	public function onDeath() {
-		indicator.kill();
-
 		if (beam != null) {
 			beam.kill();
 			beam = null;

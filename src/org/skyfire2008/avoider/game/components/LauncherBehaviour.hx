@@ -1,7 +1,5 @@
 package org.skyfire2008.avoider.game.components;
 
-import org.skyfire2008.avoider.graphics.ColorMult;
-
 import howler.Howl;
 
 import spork.core.Entity;
@@ -9,7 +7,9 @@ import spork.core.PropertyHolder;
 import spork.core.Wrapper;
 import spork.core.JsonLoader.EntityFactoryMethod;
 
+import org.skyfire2008.avoider.graphics.ColorMult;
 import org.skyfire2008.avoider.util.Util;
+import org.skyfire2008.avoider.util.StorageLoader;
 
 using org.skyfire2008.avoider.geom.Point;
 
@@ -32,29 +32,31 @@ class LauncherBehaviour implements Interfaces.InitComponent implements Interface
 
 	private static var createMissileProp: EntityFactoryMethod;
 	private static var createMissile: EntityFactoryMethod;
-	private static var createIndicator: EntityFactoryMethod;
 	private static var shootSound: Howl;
 
 	private var state: LauncherState;
-	private var pos: Point;
-	private var rotation: Wrapper<Float>;
-	private var side: Wrapper<Side>;
-	private var vel: Point;
 	private var time: Float;
 	private var moveTargetPos: Point;
 	private var shootTargetPos: Point;
 	private var shootTargetId: Int = -1;
 	private var observingTargets: Bool;
 	private var runDir: Point;
-	private var indicMult: ColorMult;
-
-	private var indicator: Entity;
 	private var missileProp: Entity = null;
+
+	@prop("position")
+	private var pos: Point;
+	@prop
+	private var rotation: Wrapper<Float>;
+	@prop
+	private var side: Wrapper<Side>;
+	@prop("velocity")
+	private var vel: Point;
+	@prop("indicatorColorMult")
+	private var indicMult: ColorMult;
 
 	public static function init() {
 		createMissileProp = Game.instance.entMap.get("missileProp.json");
 		createMissile = Game.instance.entMap.get("missile.json");
-		createIndicator = Game.instance.entMap.get("launcherIndicator.json");
 		shootSound = SoundSystem.instance.getSound("launcherShoot.wav");
 	}
 
@@ -63,14 +65,6 @@ class LauncherBehaviour implements Interfaces.InitComponent implements Interface
 		time = -Math.random() * reloadTime;
 		observingTargets = false;
 		moveTargetPos = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
-	}
-
-	public function assignProps(holder: PropertyHolder) {
-		pos = holder.position;
-		rotation = holder.rotation;
-		vel = holder.velocity;
-		vel.x = idleSpeed;
-		side = holder.side;
 	}
 
 	public function notifyAboutTargets(targets: Array<{id: Int, pos: Point}>) {
@@ -88,7 +82,7 @@ class LauncherBehaviour implements Interfaces.InitComponent implements Interface
 
 		time = 0;
 		state = Chasing;
-		indicMult.set([1, 0, 0]);
+		indicMult.set(StorageLoader.instance.data.dangerColor);
 		shootTargetPos = closest.pos;
 		shootTargetId = closest.id;
 		observingTargets = false;
@@ -111,23 +105,23 @@ class LauncherBehaviour implements Interfaces.InitComponent implements Interface
 	}
 
 	public function onInit() {
-		indicMult = [0, 1.0, 0];
-		indicator = createIndicator((holder) -> {
-			holder.position = pos;
-			holder.rotation = rotation;
-			holder.colorMult = indicMult;
-		});
-		Game.instance.addEntity(indicator);
+		indicMult.set(StorageLoader.instance.data.safeColor);
+		var diff = new Point(Constants.gameWidth / 2, Constants.gameHeight / 2);
+		diff.sub(pos);
+		diff.normalize();
+		diff.mult(idleSpeed);
+		vel.set(diff.x, diff.y);
 	}
 
 	public function onUpdate(dTime: Float) {
 		switch (state) {
 			case Idling:
 				// set indicator color mult
+				var data = StorageLoader.instance.data;
 				if (time < halfTime) {
-					indicMult.set([time / halfTime, 1.0, 0]);
+					indicMult.setInterpolation(data.safeColor, data.warnColor, time / halfTime);
 				} else {
-					indicMult.set([1.0, (reloadTime - time) / halfTime, 0]);
+					indicMult.setInterpolation(data.warnColor, data.dangerColor, (time - halfTime) / halfTime);
 				}
 
 				// if reached target, select new one
@@ -167,7 +161,7 @@ class LauncherBehaviour implements Interfaces.InitComponent implements Interface
 					time = 0;
 					state = Firing;
 					runDir = vel.scale(-1);
-					indicMult.set([0, 1.0, 0]);
+					indicMult.set(StorageLoader.instance.data.safeColor);
 				}
 
 				// turn toward target
@@ -197,8 +191,6 @@ class LauncherBehaviour implements Interfaces.InitComponent implements Interface
 			ScoringSystem.instance.addScore();
 			ScoringSystem.instance.addScore();
 		}
-
-		indicator.kill();
 
 		if (shootTargetId != -1) {
 			TargetingSystem.instance.removeTargetDeathObserver(shootTargetId, notifyAboutDeath);
