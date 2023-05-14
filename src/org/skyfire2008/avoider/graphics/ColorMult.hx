@@ -5,6 +5,21 @@ abstract ColorMult(Array<Float>) from Array<Float> to Array<Float> {
 		return new ColorMult(json[0], json[1], json[2]);
 	}
 
+	public static function toHexCode(mult: ColorMult): String {
+		var r = Std.int(mult.r * 255);
+		var g = Std.int(mult.g * 255);
+		var b = Std.int(mult.b * 255);
+		return '#${StringTools.hex(r, 2)}${StringTools.hex(g, 2)}${StringTools.hex(b, 2)}';
+	}
+
+	public static function fromHexCode(code: String): ColorMult {
+		var value = Std.parseInt('0x${code.substring(1)}');
+		var r = (value >> 16) & 0xff;
+		var g = (value >> 8) & 0xff;
+		var b = value & 0xff;
+		return [r / 255.0, g / 255.0, b / 255.0];
+	}
+
 	public var r(get, set): Float;
 	public var g(get, set): Float;
 	public var b(get, set): Float;

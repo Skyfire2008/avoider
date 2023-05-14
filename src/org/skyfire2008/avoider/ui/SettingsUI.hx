@@ -6,6 +6,7 @@ import js.html.HtmlElement;
 
 import org.skyfire2008.avoider.game.Controller;
 import org.skyfire2008.avoider.util.StorageLoader;
+import org.skyfire2008.avoider.graphics.ColorMult;
 
 import knockout.Knockout;
 import knockout.Observable;
@@ -89,6 +90,9 @@ class SettingsUI {
 	private var isDisplayed: Observable<Bool>;
 	private var masterVolume: Observable<String>;
 	private var musicVolume: Observable<String>;
+	private var safeColor: Observable<String>;
+	private var warnColor: Observable<String>;
+	private var dangerColor: Observable<String>;
 	private var isMain: Bool;
 
 	public static function setInstance(instance: SettingsUI) {
@@ -97,10 +101,10 @@ class SettingsUI {
 
 	public function new(main: Bool) {
 		keyBindings = [];
-		var data = StorageLoader.instance.data.keyBindings;
-		var props = Object.getOwnPropertyNames(data);
+		var storeData = StorageLoader.instance.data;
+		var props = Object.getOwnPropertyNames(storeData.keyBindings);
 		for (action in props) {
-			var key: String = untyped data[action];
+			var key: String = untyped storeData.keyBindings[action];
 			keyBindings.push({action: action, key: Knockout.observable(key)});
 		}
 
@@ -113,21 +117,47 @@ class SettingsUI {
 
 			masterVolume.set("" + data.masterVolume);
 			musicVolume.set("" + data.musicVolume);
+
+			safeColor.set(ColorMult.toHexCode(data.safeColor));
+			warnColor.set(ColorMult.toHexCode(data.warnColor));
+			dangerColor.set(ColorMult.toHexCode(data.dangerColor));
 		});
 
-		masterVolume = Knockout.observable("" + StorageLoader.instance.data.masterVolume);
+		masterVolume = Knockout.observable("" + storeData.masterVolume);
 		masterVolume.subscribe((rawValue) -> {
 			var value = Std.parseFloat(rawValue);
-			if (StorageLoader.instance.data.masterVolume != value) {
-				StorageLoader.instance.data.masterVolume = value;
+			if (storeData.masterVolume != value) {
+				storeData.masterVolume = value;
 				StorageLoader.instance.save();
 			}
 		});
-		musicVolume = Knockout.observable("" + StorageLoader.instance.data.musicVolume);
+		musicVolume = Knockout.observable("" + storeData.musicVolume);
 		musicVolume.subscribe((rawValue) -> {
 			var value = Std.parseFloat(rawValue);
-			if (StorageLoader.instance.data.musicVolume != value) {
-				StorageLoader.instance.data.musicVolume = value;
+			if (storeData.musicVolume != value) {
+				storeData.musicVolume = value;
+				StorageLoader.instance.save();
+			}
+		});
+
+		safeColor = Knockout.observable(ColorMult.toHexCode(storeData.safeColor));
+		safeColor.subscribe((value) -> {
+			if (value != ColorMult.toHexCode(storeData.safeColor)) {
+				storeData.safeColor = ColorMult.fromHexCode(value);
+				StorageLoader.instance.save();
+			}
+		});
+		warnColor = Knockout.observable(ColorMult.toHexCode(storeData.warnColor));
+		warnColor.subscribe((value) -> {
+			if (value != ColorMult.toHexCode(storeData.warnColor)) {
+				storeData.warnColor = ColorMult.fromHexCode(value);
+				StorageLoader.instance.save();
+			}
+		});
+		dangerColor = Knockout.observable(ColorMult.toHexCode(storeData.dangerColor));
+		dangerColor.subscribe((value) -> {
+			if (value != ColorMult.toHexCode(storeData.dangerColor)) {
+				storeData.dangerColor = ColorMult.fromHexCode(value);
 				StorageLoader.instance.save();
 			}
 		});
@@ -183,6 +213,19 @@ class SettingsUI {
 									<div class='volumeSlider'>
 										<label>Music volume</label>
 										<input type='range' min='0' max='1' step='0.01' data-bind='value: musicVolume'></input>
+									</div>
+									<div class='settingsHeader' style='color: #ffff40'>Colors:</div>
+									<div class='volumeSlider'>
+										<label>Safe:</label>
+										<input type='color' data-bind='value: safeColor'></input>
+									</div>
+									<div class='volumeSlider'>
+										<label>Warning:</label>
+										<input type='color' data-bind='value: warnColor'></input>
+									</div>
+									<div class='volumeSlider'>
+										<label>Danger:</label>
+										<input type='color' data-bind='value: dangerColor'></input>
 									</div>
 								</div>
 							</div>
