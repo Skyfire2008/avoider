@@ -1,16 +1,14 @@
 package org.skyfire2008.avoider.game.components;
 
-import org.skyfire2008.avoider.game.components.Interfaces.CollisionComponent;
-import org.skyfire2008.avoider.util.Util;
-import org.skyfire2008.avoider.game.components.Interfaces.InitComponent;
-import org.skyfire2008.avoider.graphics.Shape;
-import org.skyfire2008.avoider.graphics.Renderer;
-import org.skyfire2008.avoider.spatial.Collider;
-
 import howler.Howl;
 
 import spork.core.PropertyHolder;
 import spork.core.Wrapper;
+
+import org.skyfire2008.avoider.util.StorageLoader;
+import org.skyfire2008.avoider.util.Util;
+import org.skyfire2008.avoider.game.components.Interfaces.InitComponent;
+import org.skyfire2008.avoider.graphics.ColorMult;
 
 using org.skyfire2008.avoider.geom.Point;
 
@@ -29,27 +27,29 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 	private static inline var angVel = 6.0;
 	private static inline var blinks = 10.0;
 
-	private static var baseShape: Shape;
-	private static var redShape: Shape;
 	private static var startSound: Howl;
 
 	private var time = 0.0;
 	private var state: MissileState;
-
-	private var pos: Point;
-	private var vel: Point;
-	private var launcherId: Int;
-	private var rotation: Wrapper<Float>;
-	private var side: Wrapper<Side>;
-	private var scale: Wrapper<Float>;
 	private var originalSide: Side;
 	private var trailSpawner: Spawner;
+
+	@prop("missileTargetPos")
 	private var targetPos: Point;
-	public var currentShape: Shape;
+	@prop("position")
+	private var pos: Point;
+	@prop("velocity")
+	private var vel: Point;
+	@prop("missileLauncherId")
+	private var launcherId: Wrapper<Int>;
+	@prop
+	private var rotation: Wrapper<Float>;
+	@prop
+	private var side: Wrapper<Side>;
+	@prop("indicatorColorMult")
+	private var indicMult: ColorMult;
 
 	public static function init() {
-		baseShape = Shape.getShape("missile.json");
-		redShape = Shape.getShape("missileRed.json");
 		startSound = SoundSystem.instance.getSound("chaserStart.wav");
 	}
 
@@ -64,24 +64,12 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 			spreadAngle: 2.09,
 			angleRand: 1.045
 		});
-		currentShape = baseShape;
 		state = Arming;
-	}
-
-	public function assignProps(holder: PropertyHolder) {
-		launcherId = holder.missileLauncherId.value;
-		pos = holder.position;
-		vel = holder.velocity;
-		rotation = holder.rotation;
-		side = holder.side;
-		scale = holder.scale;
-
-		originalSide = side.value;
-		targetPos = holder.missileTargetPos;
 	}
 
 	public function onInit() {
 		trailSpawner.init();
+		originalSide = side.value;
 	}
 
 	public function onUpdate(dTime: Float) {
@@ -92,7 +80,7 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 					side.value = Side.Hostile;
 					state = Chasing;
 					trailSpawner.startSpawn();
-					currentShape = redShape;
+					indicMult.set(StorageLoader.instance.data.dangerColor);
 					SoundSystem.instance.playSound(startSound, pos.x, true);
 				}
 			case Chasing:
@@ -120,9 +108,9 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 					// blink
 					var num = Std.int(time * blinks / dieTime) % 2;
 					if (num == 0) {
-						currentShape = redShape;
+						indicMult.set(StorageLoader.instance.data.dangerColor);
 					} else {
-						currentShape = baseShape;
+						indicMult.set(StorageLoader.instance.data.warnColor);
 					}
 				} else {
 					this.owner.kill();
@@ -130,8 +118,5 @@ class MissileBehaviour implements InitComponent implements Interfaces.UpdateComp
 		}
 
 		time += dTime;
-
-		// render the shape
-		Renderer.instance.render(currentShape, pos.x, pos.y, rotation.value, scale.value, [1, 1, 1], 0.2);
 	}
 }

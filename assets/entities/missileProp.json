@@ -5,7 +5,13 @@
 			1,
 			1,
 			1
-		]
+		],
+		"indicatorColorMult": [
+			1,
+			1,
+			1
+		],
+		"indicatorShape": "missileHead.json"
 	},
 	"components": [
 		{
@@ -13,9 +19,15 @@
 			"params": {}
 		},
 		{
+			"name": "hasIndicator",
+			"params": {
+				"depth": 0.3
+			}
+		},
+		{
 			"name": "renderComponent",
 			"params": {
-				"shapeRef": "missile.json",
+				"shapeRef": "missileBody.json",
 				"depth": 0.3
 			}
 		}

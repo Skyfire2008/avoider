@@ -1,5 +1,8 @@
 package org.skyfire2008.avoider.game.components;
 
+import org.skyfire2008.avoider.util.StorageLoader;
+import org.skyfire2008.avoider.graphics.ColorMult;
+
 import howler.Howl;
 
 import spork.core.PropertyHolder;
@@ -31,7 +34,7 @@ class ChaserIdling implements ChaserState {
 
 	public function new(parent: ChaserBehaviour) {
 		this.parent = parent;
-		parent.currentShape = ChaserBehaviour.baseShape;
+		parent.indicatorMult.set(StorageLoader.instance.data.safeColor);
 		targetPos = new Point(Std.random(Constants.gameWidth), Std.random(Constants.gameHeight));
 	}
 
@@ -99,7 +102,7 @@ class ChaserChasing implements ChaserState {
 	private var onTargetDeath: () -> Void;
 
 	public function new(targetId: Int, targetPos: Point, parent: ChaserBehaviour, onTargetDeath: () -> Void) {
-		parent.currentShape = ChaserBehaviour.chasingShape;
+		parent.indicatorMult.set(StorageLoader.instance.data.warnColor);
 		this.onTargetDeath = onTargetDeath;
 		this.targetId = targetId;
 		this.targetPos = targetPos;
@@ -137,6 +140,7 @@ class ChaserAiming implements ChaserState {
 	private var targetId: Int;
 	private var onTargetDeath: () -> Void;
 	private var delay: Float;
+	private var readyToAttack = false;
 
 	public function new(targetId: Int, targetPos: Point, parent: ChaserBehaviour, onTargetDeath: () -> Void) {
 		this.targetId = targetId;
@@ -170,10 +174,11 @@ class ChaserAiming implements ChaserState {
 			}
 		} else if (delay < ChaserBehaviour.armTime + Constants.reactionTime) {
 			// change shape and stop rotating
-			if (parent.currentShape != ChaserBehaviour.attackingShape) {
+			if (!readyToAttack) {
 				SoundSystem.instance.playSound(ChaserBehaviour.beepSound, parent.pos.x);
 				TargetingSystem.instance.removeTargetDeathObserver(targetId, onTargetDeath);
-				parent.currentShape = ChaserBehaviour.attackingShape;
+				parent.indicatorMult.set(StorageLoader.instance.data.dangerColor);
+				readyToAttack = true;
 			}
 			delay += time;
 		} else {
@@ -231,24 +236,24 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 	public static inline var rotSpeed = 6; // in radians
 	public static inline var angleThresh = 0.04;
 
-	public static var baseShape(default, null): Shape;
-	public static var chasingShape(default, null): Shape;
-	public static var attackingShape(default, null): Shape;
 	public static var startSound(default, null): Howl;
 	public static var beepSound(default, null): Howl;
 
 	private var state: ChaserState;
-
 	public var startPos: Point;
-	public var pos: Point;
-	public var vel: Point;
-	public var rotation: Wrapper<Float>;
 	public var baseSide: Side; // side, that doesn't change(e.g. to hostile when attacking)
-	public var side: Wrapper<Side>;
 	public var trailSpawner: Spawner;
-	private var scale: Wrapper<Float>;
 
-	public var currentShape: Shape;
+	@prop("position")
+	public var pos: Point;
+	@prop("velocity")
+	public var vel: Point;
+	@prop
+	public var rotation: Wrapper<Float>;
+	@prop
+	public var side: Wrapper<Side>;
+	@prop("indicatorColorMult")
+	public var indicatorMult: ColorMult;
 
 	public function new() {
 		trailSpawner = new Spawner({
@@ -264,9 +269,6 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 	}
 
 	public static function init() {
-		baseShape = Shape.getShape("chaser.json");
-		chasingShape = Shape.getShape("chaserChasing.json");
-		attackingShape = Shape.getShape("chaserAttacking.json");
 		startSound = SoundSystem.instance.getSound("chaserStart.wav");
 		beepSound = SoundSystem.instance.getSound("beepNEW.mp3");
 	}
@@ -286,28 +288,22 @@ class ChaserBehaviour implements InitComponent implements UpdateComponent implem
 		}
 	}
 
-	public function assignProps(holder: PropertyHolder) {
-		pos = holder.position;
-		vel = holder.velocity;
-		rotation = holder.rotation;
-		baseSide = holder.side.value;
-		side = holder.side;
-		scale = holder.scale;
-	}
-
 	public function onInit() {
 		// init state here, so that targeting system, etc are available
 		state = new ChaserIdling(this);
 		// init speed
 		vel.x += 1;
-		// init shape
-		currentShape = baseShape;
 		trailSpawner.init();
+		baseSide = side.value;
+
+		var diff = new Point(Constants.gameWidth / 2, Constants.gameHeight / 2);
+		diff.sub(pos);
+		diff.normalize();
+		vel.set(diff.x, diff.y);
 	}
 
 	public function onUpdate(time: Float) {
 		state.onUpdate(time);
-		Renderer.instance.render(currentShape, pos.x, pos.y, rotation.value, scale.value, [1.0, 1.0, 1.0], 0.2);
 	}
 
 	public function onDeath() {

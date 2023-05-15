@@ -25,6 +25,7 @@ abstract ColorMult(Array<Float>) from Array<Float> to Array<Float> {
 	public var b(get, set): Float;
 
 	public function setInterpolation(c0: ColorMult, c1: ColorMult, mult: Float) {
+		mult = Math.max(0.0, Math.min(1.0, mult));
 		var invMult = 1.0 - mult;
 		r = c0.r * invMult + c1.r * mult;
 		g = c0.g * invMult + c1.g * mult;

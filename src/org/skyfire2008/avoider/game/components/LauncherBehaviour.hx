@@ -90,6 +90,7 @@ class LauncherBehaviour implements Interfaces.InitComponent implements Interface
 			missileProp = createMissileProp((holder) -> {
 				holder.position = pos;
 				holder.rotation = rotation;
+				holder.indicatorColorMult.set(StorageLoader.instance.data.warnColor);
 			});
 			Game.instance.addEntity(missileProp);
 		}
@@ -151,6 +152,7 @@ class LauncherBehaviour implements Interfaces.InitComponent implements Interface
 						holder.side = new Wrapper(side.value);
 						holder.missileLauncherId = new Wrapper(this.owner.id);
 						holder.missileTargetPos = shootTargetPos;
+						holder.indicatorColorMult.set(StorageLoader.instance.data.warnColor);
 					});
 					shootTargetId = -1;
 					missileProp.kill();

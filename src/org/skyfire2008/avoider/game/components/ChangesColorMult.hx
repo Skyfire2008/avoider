@@ -1,10 +1,9 @@
 package org.skyfire2008.avoider.game.components;
 
-import org.skyfire2008.avoider.util.StorageLoader;
-
 import spork.core.PropertyHolder;
 import spork.core.Wrapper;
 
+import org.skyfire2008.avoider.util.StorageLoader;
 import org.skyfire2008.avoider.graphics.ColorMult;
 
 class ChangesColorMult implements Interfaces.UpdateComponent {

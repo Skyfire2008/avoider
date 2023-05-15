@@ -3,6 +3,7 @@ package org.skyfire2008.avoider.game.components;
 import spork.core.PropertyHolder;
 
 import org.skyfire2008.avoider.graphics.ColorMult;
+import org.skyfire2008.avoider.util.StorageLoader;
 
 class AlwaysBlink implements Interfaces.UpdateComponent {
 	private var colorMult: ColorMult;
@@ -38,6 +39,35 @@ class AlwaysBlink implements Interfaces.UpdateComponent {
 			for (i in 0...3) {
 				colorMult[i] = (endColorMult[i] * curTime + startColorMult[i] * (halfTime - curTime)) / halfTime;
 			}
+		}
+
+		curTime += time;
+		while (curTime > halfTime) {
+			curTime -= halfTime;
+			flip = !flip;
+		}
+	}
+}
+
+class AlwaysBlinkWarning implements Interfaces.UpdateComponent {
+	private var halfTime = 0.1;
+	private var curTime = 0.0;
+	private var flip = false;
+
+	@prop
+	private var colorMult: ColorMult;
+
+	public function new() {}
+
+	public function onUpdate(time: Float) {
+		var color0 = StorageLoader.instance.data.warnColor;
+		var color1 = new ColorMult(0, 0, 0);
+		color1.setInterpolation(StorageLoader.instance.data.warnColor, [0.0, 0.0, 0.0], 0.5);
+		var mult = curTime / halfTime;
+		if (flip) {
+			colorMult.setInterpolation(color0, color1, mult);
+		} else {
+			colorMult.setInterpolation(color1, color0, mult);
 		}
 
 		curTime += time;

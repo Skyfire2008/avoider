@@ -1,0 +1,14 @@
+{
+	"points": [
+	  {"x": 0, "y": -22, "color": "#ffffff"},
+	  {"x": -5, "y": -13, "color": "#ffffff"},
+	  {"x": 5, "y": -13, "color": "#ffffff"},
+	  {"x": 4, "y": -18, "color": "#ffffff"},
+	  {"x": -4, "y": -18, "color": "#ffffff"}
+	],"lines": [
+	  {"from": 1, "to": 2},
+	  {"from": 3, "to": 0},
+	  {"from": 0, "to": 4},
+	  {"from": 2, "to": 3},
+	  {"from": 4, "to": 1}
+  ]}
